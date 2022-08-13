@@ -34,12 +34,12 @@ class Search:
 
 
 def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
-    try:
-        start_str, end_str = time_str.split(' - ')
-    except ValueError:
-        # in case of: time_str = 'provoz obnoven: dnes xx:xx'
+    if 'provoz obnoven:' in time_str:
         start_str = ''
         end_str = time_str
+    else:
+        start_str, end_str = time_str.split(' - ')
+
     start_date = _parse_start_date(start_str)
     end_date = _parse_today_date(end_str)
     return start_date, end_date
