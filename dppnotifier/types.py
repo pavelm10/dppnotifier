@@ -39,3 +39,15 @@ class Recepient:
     notifier: Notifiers
     uri: str
     user: str
+
+    def to_entity(self) -> Dict[str, str]:
+        entity = asdict(self)
+        entity['notifier'] = self.notifier.value
+
+    @classmethod
+    def from_entity(cls, entity: Dict[str, str]):
+        return cls(
+            notifier=Notifiers(entity['notifier']),
+            uri=entity['uri'],
+            user=entity['user'],
+        )

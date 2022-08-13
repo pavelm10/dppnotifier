@@ -81,8 +81,8 @@ class DynamoDb(BaseDb):
         if recepient.notifier != Notifiers.AWS_SES:
             _LOGGER.error('The notifier is not of type %s', Notifiers.AWS_SES)
             raise ValueError(recepient.notifier.value)
-        item = asdict(recepient)
-        item['notifier'] = recepient.notifier.value
+
+        item = recepient.to_entity()
         self._table.put_item(Item=item)
         _LOGGER.info('Added recepient')
 
@@ -93,10 +93,6 @@ class DynamoDb(BaseDb):
         items = response['Items']
         recepients = []
         for item in items:
-            recepient = Recepient(
-                notifier=Notifiers(item['notifier']),
-                uri=item['uri'],
-                user=item['user'],
-            )
+            recepient = Recepient.from_entity(item)
             recepients.append(recepient)
         return recepients
