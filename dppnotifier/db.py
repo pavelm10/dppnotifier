@@ -4,11 +4,15 @@
 
 import json
 from abc import ABC, abstractmethod
+from dataclasses import asdict
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
+
+import boto3
+from boto3.dynamodb.conditions import Attr, Key
 
 from dppnotifier.log import init_logger
-from dppnotifier.types import TrafficEvent
+from dppnotifier.types import Notifiers, Recepient, TrafficEvent
 
 _LOGGER = init_logger(__name__)
 
@@ -53,3 +57,46 @@ class JsonDb(BaseDb):
     def upsert_event(self, event: TrafficEvent):
         self.db[event.event_id] = event.to_dict()
         self._dump()
+
+
+class DynamoDb(BaseDb):
+    AWS_REGION = "eu-central-1"
+
+    def __init__(
+        self, table_name: str, profile: Optional[str] = 'dppnotifier'
+    ):
+        session = boto3.Session(profile_name=profile)
+        self._client = session.resource(
+            'dynamodb', region_name=self.AWS_REGION
+        )
+        self._table = self._client.Table(table_name)
+
+    def find_by_id(self, event_id: str) -> Optional[TrafficEvent]:
+        raise NotImplementedError
+
+    def upsert_event(self, event: TrafficEvent):
+        raise NotImplementedError
+
+    def add_recepient(self, recepient: Recepient):
+        if recepient.notifier != Notifiers.AWS_SES:
+            _LOGGER.error('The notifier is not of type %s', Notifiers.AWS_SES)
+            raise ValueError(recepient.notifier.value)
+        item = asdict(recepient)
+        item['notifier'] = recepient.notifier.value
+        self._table.put_item(Item=item)
+        _LOGGER.info('Added recepient')
+
+    def get_recepients(self, notifier_type: Notifiers) -> List[Recepient]:
+        response = self._table.query(
+            KeyConditionExpression=Key('notifier').eq(notifier_type.value)
+        )
+        items = response['Items']
+        recepients = []
+        for item in items:
+            recepient = Recepient(
+                notifier=Notifiers(item['notifier']),
+                uri=item['uri'],
+                user=item['user'],
+            )
+            recepients.append(recepient)
+        return recepients

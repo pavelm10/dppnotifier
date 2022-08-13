@@ -29,7 +29,7 @@ class AwsSesNotifier(Notifier):
     def __init__(
         self,
         sender: Optional[str] = 'marpav.py@gmail.com',
-        profile: Optional[str] = 'ddpnotifier',
+        profile: Optional[str] = 'dppnotifier',
     ):
         session = boto3.Session(profile_name=profile)
         self._client = session.client('ses', region_name=self.AWS_REGION)

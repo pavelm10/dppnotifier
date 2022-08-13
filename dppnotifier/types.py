@@ -1,6 +1,13 @@
 from dataclasses import asdict, dataclass
 from datetime import datetime
+from enum import Enum
 from typing import Dict, List, Optional
+
+
+class Notifiers(Enum):
+    AWS_SES = 'aws-ses'
+    WHATSAPP = 'whatsapp'
+    LOGGING = 'log'
 
 
 @dataclass
@@ -29,4 +36,6 @@ class TrafficEvent:
 
 @dataclass
 class Recepient:
+    notifier: Notifiers
     uri: str
+    user: str
