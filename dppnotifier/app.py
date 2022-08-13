@@ -22,20 +22,10 @@ def update_db(db: BaseDb, events: List[TrafficEvent]):
 
 
 def main():
-    arpg = argparse.ArgumentParser(description='')
-    arpg.add_argument(
-        '-a',
-        '--active-only',
-        action='store_true',
-        help='If set only active events will be used to notification',
-    )
-
-    pargs = arpg.parse_args()
-    active_only = pargs.active_only
-
     db = JsonDb(file_path=Path('data/events.json'))
-    issues = fetch_events(active_only=active_only)
-    notify(issues)
+    issues = fetch_events()
+    active_issues = [iss for iss in issues if iss.active]
+    notify(active_issues)
     update_db(db=db, events=issues)
 
 
