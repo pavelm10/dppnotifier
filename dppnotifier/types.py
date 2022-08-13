@@ -25,3 +25,8 @@ class TrafficEvent:
         self_dict['start_date'] = start_date
         self_dict['end_date'] = end_date
         return self_dict
+
+
+@dataclass
+class Recepient:
+    uri: str
