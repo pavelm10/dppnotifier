@@ -105,6 +105,11 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
     links = links_search.find_all(exception_elements)
     event_ids = _get_events_ids(links)
 
+    # check all list are of the same length
+    base_length = len(dates)
+    for list_ in [lines, messages, event_ids]:
+        assert len(list_) == base_length, f'{len(list_)} != {base_length}'
+
     issues = []
     for date, line, message, ev_id in zip(dates, lines, messages, event_ids):
         date = date.text.strip()
