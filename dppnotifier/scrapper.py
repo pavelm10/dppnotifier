@@ -72,14 +72,9 @@ def _parse_start_date(time_str: str) -> datetime:
     return start_time
 
 
-def _create_event_hash(
-    start_date: Optional[datetime], lines: List[str], message: str
-) -> str:
-    time_str = ''
-    if isinstance(start_date, datetime):
-        time_str = start_date.strftime('%Y%M%dT%H%m')
+def _create_event_hash(lines: List[str], message: str) -> str:
     line_str = ','.join(lines)
-    str_to_hash = time_str + line_str + message
+    str_to_hash = line_str + message
     hashed = hashlib.sha1(str_to_hash.encode("utf-8")).hexdigest()
     return hashed
 
@@ -111,9 +106,7 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
 
         line = line.text.strip().split(', ')
         msg = message.text.strip()
-        ev_id = _create_event_hash(
-            start_date=start_date, lines=line, message=msg
-        )
+        ev_id = _create_event_hash(lines=line, message=msg)
         issue = TrafficEvent(
             start_date=start_date,
             end_date=end_date,
