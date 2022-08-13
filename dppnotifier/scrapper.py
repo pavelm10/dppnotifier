@@ -2,7 +2,7 @@ import hashlib
 import re
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -24,10 +24,13 @@ class TrafficEvent:
 @dataclass
 class Search:
     _type: str
-    _class: str
+    _class: Optional[str] = None
+    href: Optional[bool] = False
 
     def find_all(self, elements) -> List:
-        return elements.find_all(self._type, class_=self._class)
+        return elements.find_all(
+            self._type, class_=self._class, href=self.href
+        )
 
     def find(self, elements) -> List:
         return elements.find(self._type, class_=self._class)
@@ -72,11 +75,15 @@ def _parse_start_date(time_str: str) -> datetime:
     return start_time
 
 
-def _create_event_hash(lines: List[str], message: str) -> str:
-    line_str = ','.join(lines)
-    str_to_hash = line_str + message
-    hashed = hashlib.sha1(str_to_hash.encode("utf-8")).hexdigest()
-    return hashed
+def _get_events_ids(links: List[str]) -> List[str]:
+    pattern = 'id=[\d]+-[\d]+'
+    links_set = set([l['href'] for l in links])
+    ids = []
+    for link in links_set:
+        searched = re.search(pattern, link)
+        assert searched is not None
+        ids.append(searched.group()[3:])  # strip `id=` string
+    return ids
 
 
 def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
@@ -84,6 +91,7 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
     lines_search = Search('span', 'lines-single')
     msg_search = Search('td', 'lines-title clickable')
     exceptions_search = Search('table', 'vyluka vyluka-expand vyluky-vymi')
+    links_search = Search('a', href=True)
 
     page = requests.get(CURRENT_URL)
     soup = BeautifulSoup(page.content, "html.parser")
@@ -94,9 +102,11 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
     dates = dates_search.find_all(exception_elements)
     lines = lines_search.find_all(exception_elements)
     messages = msg_search.find_all(exception_elements)
+    links = links_search.find_all(exception_elements)
+    event_ids = _get_events_ids(links)
 
     issues = []
-    for date, line, message in zip(dates, lines, messages):
+    for date, line, message, ev_id in zip(dates, lines, messages, event_ids):
         date = date.text.strip()
         start_date, end_date = _parse_time(date)
         active = end_date is None
@@ -106,7 +116,6 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
 
         line = line.text.strip().split(', ')
         msg = message.text.strip()
-        ev_id = _create_event_hash(lines=line, message=msg)
         issue = TrafficEvent(
             start_date=start_date,
             end_date=end_date,
