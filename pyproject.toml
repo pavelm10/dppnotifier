@@ -2,7 +2,7 @@
 name = "dpp-notifier"
 version = "0.1.0"
 description = ""
-authors = ["Marek Pavelka <marek.pavelka@datamole.cz>"]
+authors = ["Marek Pavelka"]
 
 packages = [
     { include = "dppnotifier" },
