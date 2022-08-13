@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "dpp-notifier"
+version = "0.1.0"
+description = ""
+authors = ["Marek Pavelka <marek.pavelka@datamole.cz>"]
+
+packages = [
+    { include = "dppnotifier" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+beautifulsoup4 = "^4.11.1"
+requests = "^2.28.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+black = {extras = ["jupyter"], version = "^22.6.0"}
+isort = "^5.10.1"
+pylint = "^2.14.5"
+pytest-mock = "^3.8.2"
+notebook = "^6.4.12"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
