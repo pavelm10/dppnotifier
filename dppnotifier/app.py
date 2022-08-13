@@ -3,16 +3,25 @@ from typing import Dict, List
 
 from dppnotifier.db import BaseDb, JsonDb
 from dppnotifier.log import init_logger
-from dppnotifier.notifier import GmailNotifier, LogNotifier, WhatsAppNotifier
+from dppnotifier.notifier import AwsSesNotifier, LogNotifier, WhatsAppNotifier
 from dppnotifier.scrapper import TrafficEvent, fetch_events
+from dppnotifier.types import Recepient
 
 _LOGGER = init_logger(__name__)
 
 
 def notify(issues: List[TrafficEvent]):
-    notifiers = [GmailNotifier(), WhatsAppNotifier(), LogNotifier()]
-    for notifier in notifiers:
-        notifier.notify(issues)
+    notifiers = [
+        AwsSesNotifier(),
+        WhatsAppNotifier(),
+        LogNotifier(),
+    ]
+    aws_recepients = (Recepient('marek.pavelka12@gmail.com'),)
+    whatsapp_recepients = ()
+    log_recepients = ()
+    recepients = [aws_recepients, whatsapp_recepients, log_recepients]
+    for notifier, recepient_list in zip(notifiers, recepients):
+        notifier.notify(issues, recepient_list)
 
 
 def update_db(db: BaseDb, events: List[TrafficEvent]):
