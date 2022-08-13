@@ -28,7 +28,7 @@ class Search:
 
 
 def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
-    if 'provoz obnoven:' in time_str:
+    if 'provoz obnoven' in time_str:
         start_str = ''
         end_str = time_str
     else:
@@ -103,7 +103,7 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
 
     issues = []
     for date, line, message, ev_id in zip(dates, lines, messages, event_ids):
-        date = date.text.strip()
+        date = date.text.replace(u'\xa0', u' ')
         start_date, end_date = _parse_time(date)
         active = end_date is None
 
