@@ -6,8 +6,10 @@ from typing import List, Optional, Tuple
 import requests
 from bs4 import BeautifulSoup
 
+from dppnotifier.log import init_logger
 from dppnotifier.types import TrafficEvent
 
+_LOGGER = init_logger(__name__)
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 ARCHIVE_URL = 'https://pid.cz/mimoradnosti/?archive=1'
 
@@ -99,7 +101,9 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
     # check all list are of the same length
     base_length = len(dates)
     for list_ in [lines, messages, event_ids]:
-        assert len(list_) == base_length, f'{len(list_)} != {base_length}'
+        if len(list_) != base_length:
+            _LOGGER.error('The elements are not of the same length')
+            raise ValueError(f'{len(list_)} != {base_length}')
 
     issues = []
     for date, line, message, ev_id in zip(dates, lines, messages, event_ids):

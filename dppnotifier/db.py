@@ -4,12 +4,13 @@
 
 import json
 from abc import ABC, abstractmethod
-from base64 import encode
-from dataclasses import asdict
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
+from dppnotifier.log import init_logger
 from dppnotifier.types import TrafficEvent
+
+_LOGGER = init_logger(__name__)
 
 
 class BaseDb(ABC):
@@ -26,6 +27,7 @@ class JsonDb(BaseDb):
     def __init__(self, file_path: Path) -> None:
         self._file_path = file_path
         self._load()
+        _LOGGER.info('DB loaded')
 
     def _load(self):
         if not self._file_path.exists():

@@ -2,22 +2,23 @@ from pathlib import Path
 from typing import Dict, List
 
 from dppnotifier.db import BaseDb, JsonDb
-from dppnotifier.notifier import GmailNotifier, WhatsAppNotifier
+from dppnotifier.log import init_logger
+from dppnotifier.notifier import GmailNotifier, LogNotifier, WhatsAppNotifier
 from dppnotifier.scrapper import TrafficEvent, fetch_events
+
+_LOGGER = init_logger(__name__)
 
 
 def notify(issues: List[TrafficEvent]):
-    gmail = GmailNotifier()
-    whatsapp = WhatsAppNotifier()
-    gmail.notify(issues)
-    whatsapp.notify(issues)
-    for issue in issues:
-        print(issue)
+    notifiers = [GmailNotifier(), WhatsAppNotifier(), LogNotifier()]
+    for notifier in notifiers:
+        notifier.notify(issues)
 
 
 def update_db(db: BaseDb, events: List[TrafficEvent]):
     for event in events:
         db.upsert_event(event)
+    _LOGGER.info('DB updated')
 
 
 def filter_new_events(
@@ -32,6 +33,7 @@ def filter_active_events(events: List[TrafficEvent]) -> List[TrafficEvent]:
 
 def main():
     db = JsonDb(file_path=Path('data/events.json'))
+    _LOGGER.info('Fetching current events')
     events = fetch_events()
     active_events = filter_active_events(events)
     new_events = filter_new_events(
