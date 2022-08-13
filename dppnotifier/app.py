@@ -1,6 +1,5 @@
-import argparse
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from dppnotifier.db import BaseDb, JsonDb
 from dppnotifier.notifier import GmailNotifier, WhatsAppNotifier
@@ -21,12 +20,25 @@ def update_db(db: BaseDb, events: List[TrafficEvent]):
         db.upsert_event(event)
 
 
+def filter_new_events(
+    db_events: Dict[str, TrafficEvent], active_events: List[TrafficEvent]
+) -> List[TrafficEvent]:
+    return [ev for ev in active_events if ev.event_id not in db_events.keys()]
+
+
+def filter_active_events(events: List[TrafficEvent]) -> List[TrafficEvent]:
+    return [ev for ev in events if ev.active]
+
+
 def main():
     db = JsonDb(file_path=Path('data/events.json'))
-    issues = fetch_events()
-    active_issues = [iss for iss in issues if iss.active]
-    notify(active_issues)
-    update_db(db=db, events=issues)
+    events = fetch_events()
+    active_events = filter_active_events(events)
+    new_events = filter_new_events(
+        db_events=db.db, active_events=active_events
+    )
+    notify(new_events)
+    update_db(db=db, events=events)
 
 
 if __name__ == '__main__':
