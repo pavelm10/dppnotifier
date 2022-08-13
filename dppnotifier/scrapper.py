@@ -1,24 +1,15 @@
-import hashlib
 import re
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional, Set, Tuple
+from typing import List, Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup
 
+from dppnotifier.types import TrafficEvent
+
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 ARCHIVE_URL = 'https://pid.cz/mimoradnosti/?archive=1'
-
-
-@dataclass
-class TrafficEvent:
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    active: bool
-    lines: List[str]
-    message: str
-    event_id: str
 
 
 @dataclass
