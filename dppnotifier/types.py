@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 
 class Notifiers(Enum):
@@ -39,10 +39,12 @@ class Recepient:
     notifier: Notifiers
     uri: str
     user: str
+    lines: Optional[Tuple[str]] = ()
 
     def to_entity(self) -> Dict[str, str]:
         entity = asdict(self)
         entity['notifier'] = self.notifier.value
+        entity['lines'] = ','.join(self.lines)
 
     @classmethod
     def from_entity(cls, entity: Dict[str, str]):
@@ -50,4 +52,5 @@ class Recepient:
             notifier=Notifiers(entity['notifier']),
             uri=entity['uri'],
             user=entity['user'],
+            lines=tuple(entity.split(',')),
         )
