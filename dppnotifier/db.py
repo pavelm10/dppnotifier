@@ -4,12 +4,11 @@
 
 import json
 from abc import ABC, abstractmethod
-from dataclasses import asdict
 from pathlib import Path
 from typing import List, Optional
 
 import boto3
-from boto3.dynamodb.conditions import Attr, Key
+from boto3.dynamodb.conditions import Key
 
 from dppnotifier.log import init_logger
 from dppnotifier.types import Notifiers, Recepient, TrafficEvent
@@ -95,7 +94,8 @@ class JsonTrafficEventsDb(TrafficEventsDb):
 class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
     def find_by_id(self, event_id: str) -> Optional[TrafficEvent]:
         response = self._table.query(
-            KeyConditionExpression=Key('event_id').eq(event_id)
+            KeyConditionExpression=Key('event_type').eq('dpp')
+            & Key('event_id').eq(event_id),
         )
         items = response['Items']
         if len(items) > 1:
@@ -104,7 +104,6 @@ class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
             return None
         else:
             entity = items[0]
-            del entity['event_type']
             return TrafficEvent.from_entity(entity)
 
     def upsert_event(self, event: TrafficEvent):
@@ -119,7 +118,7 @@ class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
             Key={'event_type': 'dpp', 'event_id': event.event_id},
             AttributeUpdates=attr_updates,
         )
-        _LOGGER.info('Added event')
+        _LOGGER.info('Upserted event %s', event.event_id)
 
 
 class DynamoSubscribersDb(SubscribersDb, DynamoDb):

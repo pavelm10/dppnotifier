@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Store and upsert events into Dynamo DB
 - Get subscribers from Dynamo DB
 - Whatsapp notifier
 - Env.vars configuration

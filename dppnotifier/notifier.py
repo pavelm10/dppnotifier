@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import List, Optional, Tuple
 
 import boto3
@@ -95,9 +94,10 @@ class LogNotifier(Notifier):
     ):
         for ev in events:
             _LOGGER.info(
-                'Event %s, started: %s. Affected lines: %s. %s',
+                'Event %s, started: %s, ended: %s. Affected lines: %s. %s',
                 ev.event_id,
                 ev.start_date,
+                ev.end_date,
                 ev.lines,
                 ev.message,
             )

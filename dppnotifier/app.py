@@ -1,7 +1,6 @@
-from pathlib import Path
-from typing import Set
+from typing import Tuple
 
-from dppnotifier.db import JsonTrafficEventsDb
+from dppnotifier.db import DynamoTrafficEventsDb
 from dppnotifier.log import init_logger
 from dppnotifier.notifier import AwsSesNotifier, LogNotifier, WhatsAppNotifier
 from dppnotifier.scrapper import TrafficEvent, fetch_events
@@ -16,7 +15,9 @@ class DppNotificationApp:
         self._whatsapp_notifer = WhatsAppNotifier()
         self._log_notifier = LogNotifier()
         self._get_subscribers()
-        self.db = JsonTrafficEventsDb(file_path=Path('data/events.json'))
+        self.events_db = DynamoTrafficEventsDb(
+            table_name='dpp-notifier-events'
+        )
 
     def _get_subscribers(self):
         self._aws_recepients = (
@@ -35,15 +36,17 @@ class DppNotificationApp:
             event, self._whatsapp_recepients
         )
 
-        self._aws_notifier.notify([event], tuple(aws_subs))
-        self._whatsapp_notifer.notify([event], tuple(whatsapp_subs))
-        self._log_notifier.notify([event])
+        self._aws_notifier.notify([event], aws_subs)
+        self._whatsapp_notifer.notify([event], whatsapp_subs)
 
     def __call__(self, *args, **kwds):
         _LOGGER.info('Fetching current events')
         for event in fetch_events():
+            self._log_notifier.notify([event])
+            db_event = self.events_db.find_by_id(event.event_id)
+
             try:
-                self.db.upsert_event(event)
+                self.events_db.upsert_event(event)
             except (ValueError, IndexError, KeyError) as exc:
                 _LOGGER.error(
                     'Failed to upsert the event - notification skipped'
@@ -51,16 +54,16 @@ class DppNotificationApp:
                 _LOGGER.error(exc)
                 continue
 
-            if event.active and event.event_id not in self.db.db.keys():
+            if event.active and db_event is None:
                 self._notify(event)
 
     @staticmethod
-    def _filter_subscriber(event, subscribers) -> Set[Recepient]:
+    def _filter_subscriber(event, subscribers) -> Tuple[Recepient]:
         subs = []
         for sub in subscribers:
             if set(sub.lines).issubset(set(event.lines)):
                 subs.append(sub)
-        return set(subs)
+        return tuple(subs)
 
 
 def main():
