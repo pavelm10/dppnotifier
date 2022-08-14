@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import Iterator, List, Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -79,7 +79,7 @@ def _get_events_ids(links: List[str]) -> List[str]:
     return ids
 
 
-def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
+def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
     dates_search = Search('div', 'date')
     lines_search = Search('span', 'lines-single')
     msg_search = Search('td', 'lines-title clickable')
@@ -105,7 +105,6 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
             _LOGGER.error('The elements are not of the same length')
             raise ValueError(f'{len(list_)} != {base_length}')
 
-    issues = []
     for date, line, message, ev_id in zip(dates, lines, messages, event_ids):
         date = date.text.replace(u'\xa0', u' ')
         start_date, end_date = _parse_time(date)
@@ -124,6 +123,4 @@ def fetch_events(active_only: bool = False) -> List[TrafficEvent]:
             message=msg,
             event_id=ev_id,
         )
-        issues.append(issue)
-
-    return issues
+        yield issue
