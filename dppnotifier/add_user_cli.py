@@ -1,4 +1,4 @@
-from dppnotifier.db import DynamoDb
+from dppnotifier.db import DynamoSubscribersDb
 from dppnotifier.types import Notifiers, Recepient
 
 
@@ -21,7 +21,7 @@ def main():
     notifier = pargs.notifier
 
     recepient = Recepient(notifier=Notifiers(notifier), uri=uri, user=user)
-    db_client = DynamoDb(table_name='dpp-notifier-recepients')
+    db_client = DynamoSubscribersDb(table_name='dpp-notifier-recepients')
     db_client.add_recepient(recepient)
 
 

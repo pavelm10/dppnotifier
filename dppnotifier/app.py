@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Set
 
-from dppnotifier.db import JsonDb
+from dppnotifier.db import JsonTrafficEventsDb
 from dppnotifier.log import init_logger
 from dppnotifier.notifier import AwsSesNotifier, LogNotifier, WhatsAppNotifier
 from dppnotifier.scrapper import TrafficEvent, fetch_events
@@ -16,7 +16,7 @@ class DppNotificationApp:
         self._whatsapp_notifer = WhatsAppNotifier()
         self._log_notifier = LogNotifier()
         self._get_subscribers()
-        self.db = JsonDb(file_path=Path('data/events.json'))
+        self.db = JsonTrafficEventsDb(file_path=Path('data/events.json'))
 
     def _get_subscribers(self):
         self._aws_recepients = (

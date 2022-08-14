@@ -17,7 +17,7 @@ from dppnotifier.types import Notifiers, Recepient, TrafficEvent
 _LOGGER = init_logger(__name__)
 
 
-class BaseDb(ABC):
+class TrafficEventsDb(ABC):
     @abstractmethod
     def find_by_id(self, event_id: str) -> Optional[TrafficEvent]:
         raise NotImplementedError
@@ -27,7 +27,40 @@ class BaseDb(ABC):
         raise NotImplementedError
 
 
-class JsonDb(BaseDb):
+class SubscribersDb(ABC):
+    @abstractmethod
+    def find_by_uri(self, uri: str) -> Optional[Recepient]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def find_by_notifier(
+        self, notifier: Notifiers
+    ) -> Optional[List[Recepient]]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def upsert_subscriber(self, subscriber: Recepient):
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete_subscriber(self, subscriber: Recepient):
+        raise NotImplementedError
+
+
+class DynamoDb:
+    AWS_REGION = "eu-central-1"
+
+    def __init__(
+        self, table_name: str, profile: Optional[str] = 'dppnotifier'
+    ):
+        session = boto3.Session(profile_name=profile)
+        self._client = session.resource(
+            'dynamodb', region_name=self.AWS_REGION
+        )
+        self._table = self._client.Table(table_name)
+
+
+class JsonTrafficEventsDb(TrafficEventsDb):
     def __init__(self, file_path: Path) -> None:
         self._file_path = file_path
         self._load()
@@ -59,24 +92,37 @@ class JsonDb(BaseDb):
         self._dump()
 
 
-class DynamoDb(BaseDb):
-    AWS_REGION = "eu-central-1"
-
-    def __init__(
-        self, table_name: str, profile: Optional[str] = 'dppnotifier'
-    ):
-        session = boto3.Session(profile_name=profile)
-        self._client = session.resource(
-            'dynamodb', region_name=self.AWS_REGION
-        )
-        self._table = self._client.Table(table_name)
-
+class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
     def find_by_id(self, event_id: str) -> Optional[TrafficEvent]:
-        raise NotImplementedError
+        response = self._table.query(
+            KeyConditionExpression=Key('event_id').eq(event_id)
+        )
+        items = response['Items']
+        if len(items) > 1:
+            raise ValueError(f'Too many events with ID {event_id}')
+        elif len(items) == 0:
+            return None
+        else:
+            entity = items[0]
+            del entity['event_type']
+            return TrafficEvent.from_entity(entity)
 
     def upsert_event(self, event: TrafficEvent):
-        raise NotImplementedError
+        attr_updates = {}
+        entity = event.to_entity()
+        del entity['event_id']
 
+        for attr, value in entity.items():
+            attr_updates[attr] = {'Value': value, 'Action': 'PUT'}
+
+        self._table.update_item(
+            Key={'event_type': 'dpp', 'event_id': event.event_id},
+            AttributeUpdates=attr_updates,
+        )
+        _LOGGER.info('Added event')
+
+
+class DynamoSubscribersDb(SubscribersDb, DynamoDb):
     def add_recepient(self, recepient: Recepient):
         if recepient.notifier != Notifiers.AWS_SES:
             _LOGGER.error('The notifier is not of type %s', Notifiers.AWS_SES)
@@ -96,3 +142,17 @@ class DynamoDb(BaseDb):
             recepient = Recepient.from_entity(item)
             recepients.append(recepient)
         return recepients
+
+    def find_by_uri(self, uri: str) -> Optional[Recepient]:
+        raise NotImplementedError
+
+    def find_by_notifier(
+        self, notifier: Notifiers
+    ) -> Optional[List[Recepient]]:
+        raise NotImplementedError
+
+    def upsert_subscriber(self, subscriber: Recepient):
+        raise NotImplementedError
+
+    def delete_subscriber(self, subscriber: Recepient):
+        raise NotImplementedError
