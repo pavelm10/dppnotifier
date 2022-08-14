@@ -3,6 +3,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
+TIME_FORMAT = '%Y%m%dT%H%M'
+
 
 class Notifiers(Enum):
     AWS_SES = 'aws-ses'
@@ -19,19 +21,43 @@ class TrafficEvent:
     message: str
     event_id: str
 
-    def to_dict(self) -> Dict:
-        start_date = self.start_date
-        if start_date is not None:
-            start_date = datetime.strftime(start_date, '%Y%m%dT%H%M')
-
-        end_date = self.end_date
-        if end_date is not None:
-            end_date = datetime.strftime(end_date, '%Y%m%dT%H%M')
-
+    def to_entity(self) -> Dict:
         self_dict = asdict(self)
-        self_dict['start_date'] = start_date
-        self_dict['end_date'] = end_date
+        del self_dict['start_date']
+        del self_dict['end_date']
+
+        if self.start_date is not None:
+            self_dict['start_date'] = datetime.strftime(
+                self.start_date, TIME_FORMAT
+            )
+
+        if self.end_date is not None:
+            self_dict['end_date'] = datetime.strftime(
+                self.end_date, TIME_FORMAT
+            )
+        self_dict['active'] = 1 if self.active else 0
+
         return self_dict
+
+    @classmethod
+    def from_entity(cls, entity: Dict[str, str]):
+        try:
+            start_date = datetime.strptime(entity['start_date'], TIME_FORMAT)
+        except (TypeError, ValueError):
+            start_date = None
+        try:
+            end_date = datetime.strptime(entity['end_date'], TIME_FORMAT)
+        except (TypeError, ValueError):
+            end_date = None
+
+        return cls(
+            start_date=start_date,
+            end_date=end_date,
+            active=bool(entity['active']),
+            lines=entity['lines'].split(','),
+            message=entity['message'],
+            event_id=entity['event_id'],
+        )
 
 
 @dataclass

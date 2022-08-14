@@ -55,7 +55,7 @@ class JsonDb(BaseDb):
         return event
 
     def upsert_event(self, event: TrafficEvent):
-        self.db[event.event_id] = event.to_dict()
+        self.db[event.event_id] = event.to_entity()
         self._dump()
 
 
