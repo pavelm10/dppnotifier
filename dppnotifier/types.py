@@ -74,9 +74,13 @@ class Recepient:
 
     @classmethod
     def from_entity(cls, entity: Dict[str, str]):
+        lines = entity.get('lines', ())
+        if len(lines) > 0:
+            lines = lines.split(',')
+
         return cls(
             notifier=Notifiers(entity['notifier']),
             uri=entity['uri'],
             user=entity['user'],
-            lines=tuple(entity.split(',')),
+            lines=lines,
         )
