@@ -5,8 +5,9 @@
 - Get subscribers from Dynamo DB
 - Whatsapp notifier
 - Env.vars configuration
-- Solve secret handling
-- Prepare Dockerfile
+- Solve secret handling - might not be needed when using `AWS Lambda` for
+deployment
+- Prepare AWS Lambda [deployment](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html)
 
 ## Introduction
 
@@ -35,6 +36,8 @@ TODO
 
 TODO
 
-## Containarization
+## AWS Lambda
 
-TODO
+- Authentication via [Lambda Execution Role](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html)
+- [Deployment](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html)
+- [Env.vars. configuration](https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html)
