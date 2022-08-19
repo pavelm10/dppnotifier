@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Get subscribers from Dynamo DB
 - Whatsapp notifier
 - Env.vars configuration
 - Solve secret handling - might not be needed when using `AWS Lambda` for
