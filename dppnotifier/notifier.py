@@ -1,6 +1,6 @@
 import json
 import os
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -10,7 +10,7 @@ from botocore.exceptions import ClientError
 
 from dppnotifier.credentials import WhatsAppCredential
 from dppnotifier.log import init_logger
-from dppnotifier.types import Recepient, TrafficEvent
+from dppnotifier.types import Notifiers, Recepient, TrafficEvent
 
 _LOGGER = init_logger(__name__)
 
@@ -22,6 +22,14 @@ class Notifier(ABC):
         event: TrafficEvent,
         recepient_list: Optional[Tuple[Recepient]] = (),
     ):
+        pass
+
+    @abstractproperty
+    def notifier_type(self) -> Notifiers:
+        pass
+
+    @abstractproperty
+    def enabled(self) -> bool:
         pass
 
 
@@ -43,6 +51,10 @@ class AwsSesNotifier(Notifier):
     @property
     def enabled(self) -> bool:
         return self._enabled
+
+    @property
+    def notifier_type(self) -> Notifiers:
+        return Notifiers.AWS_SES
 
     def notify(
         self,
@@ -106,6 +118,10 @@ class WhatsAppNotifier(Notifier):
         return self._enabled
 
     @property
+    def notifier_type(self) -> Notifiers:
+        return Notifiers.WHATSAPP
+
+    @property
     def _headers(self) -> Dict[str, str]:
         return {
             "Authorization": f"Bearer {self._credential.token}",
@@ -144,6 +160,14 @@ class WhatsAppNotifier(Notifier):
 
 
 class LogNotifier(Notifier):
+    @property
+    def notifier_type(self) -> Notifiers:
+        return Notifiers.LOGGING
+
+    @property
+    def enabled(self) -> bool:
+        return True
+
     def notify(
         self,
         event: TrafficEvent,
