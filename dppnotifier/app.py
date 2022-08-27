@@ -38,8 +38,8 @@ class DppNotificationApp:
             event, self._whatsapp_subscribers
         )
 
-        self._aws_notifier.notify([event], aws_subs)
-        self._whatsapp_notifer.notify([event], whatsapp_subs)
+        self._aws_notifier.notify(event, aws_subs)
+        self._whatsapp_notifer.notify(event, whatsapp_subs)
 
     def __call__(self, *args, **kwds):
         _LOGGER.info('Getting subscribers')
@@ -47,7 +47,7 @@ class DppNotificationApp:
 
         _LOGGER.info('Fetching current events')
         for event in fetch_events():
-            self._log_notifier.notify([event])
+            self._log_notifier.notify(event)
             db_event = self.events_db.find_by_id(event.event_id)
 
             try:

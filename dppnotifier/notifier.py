@@ -2,7 +2,7 @@ import json
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import boto3
 import requests
@@ -19,7 +19,7 @@ class Notifier(ABC):
     @abstractmethod
     def notify(
         self,
-        events: List[TrafficEvent],
+        event: TrafficEvent,
         recepient_list: Optional[Tuple[Recepient]] = (),
     ):
         pass
@@ -41,16 +41,15 @@ class AwsSesNotifier(Notifier):
 
     def notify(
         self,
-        events: List[TrafficEvent],
+        event: TrafficEvent,
         recepient_list: Optional[Tuple[Recepient]] = (),
     ):
-        for event in events:
-            try:
-                response = self._send_email(event, recepient_list)
-            except ClientError as error:
-                _LOGGER.error('An error occurred %s', error)
-            else:
-                _LOGGER.info('Email sent: %s', response['MessageId'])
+        try:
+            response = self._send_email(event, recepient_list)
+        except ClientError as error:
+            _LOGGER.error('An error occurred %s', error)
+        else:
+            _LOGGER.info('Email sent: %s', response['MessageId'])
 
     def _send_email(
         self,
@@ -113,44 +112,42 @@ class WhatsAppNotifier(Notifier):
 
     def notify(
         self,
-        events: List[TrafficEvent],
+        event: TrafficEvent,
         recepient_list: Optional[Tuple[Recepient]] = (),
     ):
-        for event in events:
-            for sub in recepient_list:
-                data = {
-                    'messaging_product': 'whatsapp',
-                    'to': sub.uri,
-                    'type': 'text',
-                    'text': {
-                        'preview_url': False,
-                        'body': (
-                            f'Start time: {event.start_date}\n'
-                            f'Message: {event.message}\n'
-                            f'Lines: {event.lines}\n'
-                            f'URL: https://pid.cz/mimoradnost/?id={event.event_id}\n'
-                        ),
-                    },
-                }
-                response = requests.post(
-                    self._api_url, headers=self._headers, data=json.dumps(data)
-                )
-                if not response.ok:
-                    _LOGGER.error(response.text)
+        for sub in recepient_list:
+            data = {
+                'messaging_product': 'whatsapp',
+                'to': sub.uri,
+                'type': 'text',
+                'text': {
+                    'preview_url': False,
+                    'body': (
+                        f'Start time: {event.start_date}\n'
+                        f'Message: {event.message}\n'
+                        f'Lines: {event.lines}\n'
+                        f'URL: https://pid.cz/mimoradnost/?id={event.event_id}\n'
+                    ),
+                },
+            }
+            response = requests.post(
+                self._api_url, headers=self._headers, data=json.dumps(data)
+            )
+            if not response.ok:
+                _LOGGER.error(response.text)
 
 
 class LogNotifier(Notifier):
     def notify(
         self,
-        events: List[TrafficEvent],
+        event: TrafficEvent,
         recepient_list: Optional[Tuple[Recepient]] = (),
     ):
-        for ev in events:
-            _LOGGER.info(
-                'Event %s, started: %s, ended: %s. Affected lines: %s. %s',
-                ev.event_id,
-                ev.start_date,
-                ev.end_date,
-                ev.lines,
-                ev.message,
-            )
+        _LOGGER.info(
+            'Event %s, started: %s, ended: %s. Affected lines: %s. %s',
+            event.event_id,
+            event.start_date,
+            event.end_date,
+            event.lines,
+            event.message,
+        )
