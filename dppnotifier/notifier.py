@@ -38,6 +38,11 @@ class AwsSesNotifier(Notifier):
         session = boto3.Session(profile_name=profile)
         self._client = session.client('ses', region_name=self.AWS_REGION)
         self._sender = sender
+        self._enabled = True
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled
 
     def notify(
         self,
