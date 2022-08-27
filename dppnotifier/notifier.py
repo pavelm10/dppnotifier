@@ -65,9 +65,10 @@ class AwsSesNotifier(Notifier):
                     'Text': {
                         'Charset': self.CHARSET,
                         'Data': (
-                            f'Started: {event.start_date}\n'
+                            f'Start time: {event.start_date}\n'
+                            f'Message: {event.message}\n'
                             f'Lines: {event.lines}\n'
-                            f'Info: {event.message}\n'
+                            f'URL: https://pid.cz/mimoradnost/?id={event.event_id}\n'
                         ),
                     },
                 },
