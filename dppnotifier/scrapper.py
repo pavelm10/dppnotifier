@@ -70,12 +70,14 @@ def _parse_start_date(time_str: str) -> datetime:
 
 def _get_events_ids(links: List[str]) -> List[str]:
     pattern = 'id=[\d]+-[\d]+'
-    links_set = set([l['href'] for l in links])
+    links_set = [l['href'] for l in links]
     ids = []
     for link in links_set:
         searched = re.search(pattern, link)
         assert searched is not None
-        ids.append(searched.group()[3:])  # strip `id=` string
+        idx = searched.group()[3:]  # strip `id=` string
+        if idx not in ids:
+            ids.append(idx)
     return ids
 
 
