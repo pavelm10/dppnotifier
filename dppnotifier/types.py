@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 TIME_FORMAT = '%Y%m%dT%H%M'
 
@@ -87,3 +87,9 @@ class Recepient:
             user=entity['user'],
             lines=lines,
         )
+
+
+@dataclass
+class NotifierSubscribers:
+    notifier: Any
+    subscribers: List[Recepient]
