@@ -10,7 +10,7 @@ _LOGGER = init_logger(__name__)
 
 
 class DppNotificationApp:
-    def __init__(self) -> None:
+    def __init__(self):
         self._aws_notifier = AwsSesNotifier()
         self._whatsapp_notifer = WhatsAppNotifier()
         self._log_notifier = LogNotifier()
@@ -72,8 +72,7 @@ class DppNotificationApp:
 
 
 def main():
-    app = DppNotificationApp()
-    app()
+    DppNotificationApp()()
 
 
 if __name__ == '__main__':
