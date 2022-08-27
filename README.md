@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Whatsapp notifier
 - Env.vars configuration
 - Solve secret handling - might not be needed when using `AWS Lambda` for
 deployment
@@ -29,7 +28,37 @@ To move out of sandbox follow the
 
 ### WhatsApp
 
-TODO
+- [send message](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages)
+- [message templates](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates)
+
+#### Setup never expires WhatsApp Cloud API access token
+
+Login to your Facebook developer account and choose the WhatsApp app and then
+go to the Business settings page. You will see the System users under the
+section of Users on the left sidebar. Click the Add button and you will get
+the pop-up window. Enter the user name and choose the admin as the system
+user role.
+
+Now, your new system user should be created. Click on the Add Asserts on the
+current page(System user page) the pop-up will appear.
+Choose App>Select App Name>Full control option & click save changes button.
+
+Now, click on the “WhatsApp Account” on the left sidebar and then select the
+WhatsApp business app and click the “Add people” button. Popup will appear,
+choose the recently created system user and check the full control and then
+click the Assign button.
+
+Now, go back again to the system users page and select the recently created
+system user from the list and then click the “Generate new token” button.
+
+Pop up will appear, choose the business app from the dropdown and make sure
+the whatsapp_business_management and whatsapp_business_messaging must be
+checked, if not then click on the checkbox and click the
+“Generate token” button.
+
+The token should be generated at this time. Now, this token will not expire
+and live forever until and unless you do not click the revoke token button.
+You can use this token in the API instead of a temporary access token.
 
 ## Configuration
 
