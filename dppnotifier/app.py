@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple
 
 from dppnotifier.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.log import init_logger
@@ -11,8 +11,6 @@ _LOGGER = init_logger(__name__)
 
 class DppNotificationApp:
     def __init__(self):
-        self._aws_notifier = AwsSesNotifier()
-        self._whatsapp_notifier = WhatsAppNotifier()
         self._log_notifier = LogNotifier()
 
         self.events_db = DynamoTrafficEventsDb(
@@ -24,21 +22,24 @@ class DppNotificationApp:
         self._notifiers = self._build_notifiers()
 
     def _build_notifiers(self) -> List[NotifierSubscribers]:
-        possible_notifiers = (self._aws_notifier, self._whatsapp_notifier)
+        possible_notifiers = (AwsSesNotifier, WhatsAppNotifier)
         notifiers = []
-        for notifier in possible_notifiers:
-            if notifier.enabled:
-                notifiers.append(
-                    NotifierSubscribers(
-                        notifier=notifier,
-                        subscribers=self.subs_db.get_recepients(
-                            notifier_type=notifier.notifier_type
-                        ),
+        for notifier_class in possible_notifiers:
+            subscribers = self.subs_db.get_recepients(
+                notifier_type=notifier_class.NOTIFIER_TYPE
+            )
+            if len(subscribers) > 0:
+                notifier = notifier_class()
+                if notifier.enabled:
+                    notifiers.append(
+                        NotifierSubscribers(
+                            notifier=notifier,
+                            subscribers=subscribers,
+                        )
                     )
-                )
-                _LOGGER.info(
-                    '%s notifier registered', notifier.notifier_type.value
-                )
+                    _LOGGER.info(
+                        '%s notifier registered', notifier.NOTIFIER_TYPE.value
+                    )
 
         _LOGGER.info('Notifiers and subscribers set up')
         return notifiers

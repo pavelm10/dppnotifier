@@ -16,16 +16,14 @@ _LOGGER = init_logger(__name__)
 
 
 class Notifier(ABC):
+    NOTIFIER_TYPE = None
+
     @abstractmethod
     def notify(
         self,
         event: TrafficEvent,
         recepient_list: Optional[Tuple[Recepient]] = (),
     ):
-        pass
-
-    @abstractproperty
-    def notifier_type(self) -> Notifiers:
         pass
 
     @abstractproperty
@@ -37,6 +35,7 @@ class AwsSesNotifier(Notifier):
     AWS_REGION = "eu-central-1"
     CHARSET = "UTF-8"
     SUBJECT = "DPP NOTIFICATION"
+    NOTIFIER_TYPE = Notifiers.AWS_SES
 
     def __init__(
         self,
@@ -51,10 +50,6 @@ class AwsSesNotifier(Notifier):
     @property
     def enabled(self) -> bool:
         return self._enabled
-
-    @property
-    def notifier_type(self) -> Notifiers:
-        return Notifiers.AWS_SES
 
     def notify(
         self,
@@ -101,6 +96,7 @@ class AwsSesNotifier(Notifier):
 
 class WhatsAppNotifier(Notifier):
     API_VERSION = 'v13.0'
+    NOTIFIER_TYPE = Notifiers.WHATSAPP
 
     def __init__(self, credential: Optional[WhatsAppCredential] = None):
         cred_path = os.getenv('WHATSAPP_CRED_PATH')
@@ -171,9 +167,7 @@ class WhatsAppNotifier(Notifier):
 
 
 class LogNotifier(Notifier):
-    @property
-    def notifier_type(self) -> Notifiers:
-        return Notifiers.LOGGING
+    NOTIFIER_TYPE = Notifiers.LOGGING
 
     @property
     def enabled(self) -> bool:
