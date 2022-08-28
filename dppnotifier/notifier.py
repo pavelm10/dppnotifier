@@ -130,7 +130,7 @@ class WhatsAppNotifier(Notifier):
 
     @property
     def _api_url(self) -> str:
-        f"https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages"
+        return f"https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages"
 
     def notify(
         self,
@@ -140,18 +140,29 @@ class WhatsAppNotifier(Notifier):
         for sub in recepient_list:
             data = {
                 'messaging_product': 'whatsapp',
+                'recipient_type': "individual",
                 'to': sub.uri,
-                'type': 'text',
-                'text': {
-                    'preview_url': False,
-                    'body': (
-                        f'Start time: {event.start_date}\n'
-                        f'Message: {event.message}\n'
-                        f'Lines: {event.lines}\n'
-                        f'URL: https://pid.cz/mimoradnost/?id={event.event_id}\n'
-                    ),
+                'type': 'template',
+                "template": {
+                    "name": "dppnotification",
+                    "language": {"code": "en_US"},
+                    "components": [
+                        {
+                            "type": "body",
+                            "parameters": [
+                                {"type": "text", "text": event.message},
+                                {"type": "text", "text": event.start_date},
+                                {"type": "text", "text": event.lines},
+                                {
+                                    "type": "text",
+                                    "text": f'https://pid.cz/mimoradnost/?id={event.event_id}',
+                                },
+                            ],
+                        }
+                    ],
                 },
             }
+
             response = requests.post(
                 self._api_url, headers=self._headers, data=json.dumps(data)
             )
