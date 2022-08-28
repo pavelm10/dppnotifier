@@ -80,7 +80,7 @@ class AwsSesNotifier(Notifier):
                             f'Start time: {event.start_date}\n'
                             f'Message: {event.message}\n'
                             f'Lines: {event.lines}\n'
-                            f'URL: https://pid.cz/mimoradnost/?id={event.event_id}\n'
+                            f'URL: {event.url}\n'
                         ),
                     },
                 },
@@ -149,9 +149,7 @@ class WhatsAppNotifier(Notifier):
                                 {"type": "text", "text": event.message},
                                 {"type": "text", "text": event.start_date},
                                 {"type": "text", "text": event.lines},
-                                {
-                                    "type": "text",
-                                    "text": f'https://pid.cz/mimoradnost/?id={event.event_id}',
+                                {"type": "text", "text": event.url,
                                 },
                             ],
                         }
