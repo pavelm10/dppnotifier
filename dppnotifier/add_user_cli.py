@@ -1,5 +1,8 @@
 from dppnotifier.db import DynamoSubscribersDb
+from dppnotifier.log import init_logger
 from dppnotifier.types import Notifiers, Recepient
+
+_LOGGER = init_logger(__name__)
 
 
 def main():
@@ -22,6 +25,7 @@ def main():
 
     recepient = Recepient(notifier=Notifiers(notifier), uri=uri, user=user)
     db_client = DynamoSubscribersDb(table_name='dpp-notifier-recepients')
+    _LOGGER.info('Adding subscriber %s', recepient)
     db_client.add_recepient(recepient)
 
 
