@@ -74,6 +74,7 @@ class Recepient:
         entity = asdict(self)
         entity['notifier'] = self.notifier.value
         entity['lines'] = ','.join(self.lines)
+        return entity
 
     @classmethod
     def from_entity(cls, entity: Dict[str, str]):
