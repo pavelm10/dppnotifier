@@ -68,17 +68,19 @@ def _parse_start_date(time_str: str) -> datetime:
     return start_time
 
 
-def _get_events_ids(links: List[str]) -> List[str]:
+def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
     pattern = 'id=[\d]+-[\d]+'
-    links_set = [l['href'] for l in links]
+    links_list = [l['href'] for l in links]
     ids = []
-    for link in links_set:
+    urls = []
+    for link in links_list:
         searched = re.search(pattern, link)
         assert searched is not None
         idx = searched.group()[3:]  # strip `id=` string
         if idx not in ids:
             ids.append(idx)
-    return ids
+            urls.append(link)
+    return ids, urls
 
 
 def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
@@ -98,16 +100,18 @@ def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
     lines = lines_search.find_all(exception_elements)
     messages = msg_search.find_all(exception_elements)
     links = links_search.find_all(exception_elements)
-    event_ids = _get_events_ids(links)
+    event_ids, urls = _get_events_ids(links)
 
     # check all list are of the same length
     base_length = len(dates)
-    for list_ in [lines, messages, event_ids]:
+    for list_ in [lines, messages, event_ids, urls]:
         if len(list_) != base_length:
             _LOGGER.error('The elements are not of the same length')
             raise ValueError(f'{len(list_)} != {base_length}')
 
-    for date, line, message, ev_id in zip(dates, lines, messages, event_ids):
+    for date, line, message, ev_id, url in zip(
+        dates, lines, messages, event_ids, urls
+    ):
         date = date.text.replace(u'\xa0', u' ')
         start_date, end_date = _parse_time(date)
         active = end_date is None
@@ -124,5 +128,6 @@ def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
             lines=line,
             message=msg,
             event_id=ev_id,
+            url=url,
         )
         yield issue

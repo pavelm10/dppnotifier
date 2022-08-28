@@ -18,6 +18,7 @@ class TrafficEvent:
     lines: List[str]
     message: str
     event_id: str
+    url: str
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
 
@@ -60,6 +61,7 @@ class TrafficEvent:
             lines=entity['lines'],
             message=entity['message'],
             event_id=entity['event_id'],
+            url=entity['url'],
         )
 
 
