@@ -4,7 +4,7 @@ from dppnotifier.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.log import init_logger
 from dppnotifier.notifier import AwsSesNotifier, LogNotifier, WhatsAppNotifier
 from dppnotifier.scrapper import TrafficEvent, fetch_events
-from dppnotifier.types import Notifiers, NotifierSubscribers, Recepient
+from dppnotifier.types import NotifierSubscribers, Recepient
 
 _LOGGER = init_logger(__name__)
 
