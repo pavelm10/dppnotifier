@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from dppnotifier.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.log import init_logger
-from dppnotifier.notifier import AwsSesNotifier, LogNotifier, WhatsAppNotifier
+from dppnotifier.notifier import AwsSesNotifier, WhatsAppNotifier
 from dppnotifier.scrapper import TrafficEvent, fetch_events
 from dppnotifier.types import NotifierSubscribers, Recepient
 
@@ -11,8 +11,6 @@ _LOGGER = init_logger(__name__)
 
 class DppNotificationApp:
     def __init__(self):
-        self._log_notifier = LogNotifier()
-
         self.events_db = DynamoTrafficEventsDb(
             table_name='dpp-notifier-events'
         )
@@ -52,10 +50,13 @@ class DppNotificationApp:
             if len(subs) > 0:
                 notifier_subscribers.notifier.notify(event, subs)
 
+    def _log_event(self, event: TrafficEvent):
+        _LOGGER.info('Started %s, URL: %s', event.start_date, event.url)
+
     def __call__(self, *args, **kwds):
         _LOGGER.info('Fetching current events')
         for event in fetch_events():
-            self._log_notifier.notify(event)
+            self._log_event(event)
             db_event = self.events_db.find_by_id(event.event_id)
 
             try:

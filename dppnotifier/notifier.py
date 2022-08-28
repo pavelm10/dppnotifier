@@ -149,8 +149,7 @@ class WhatsAppNotifier(Notifier):
                                 {"type": "text", "text": event.message},
                                 {"type": "text", "text": event.start_date},
                                 {"type": "text", "text": event.lines},
-                                {"type": "text", "text": event.url,
-                                },
+                                {"type": "text", "text": event.url},
                             ],
                         }
                     ],
@@ -162,25 +161,3 @@ class WhatsAppNotifier(Notifier):
             )
             if not response.ok:
                 _LOGGER.error(response.text)
-
-
-class LogNotifier(Notifier):
-    NOTIFIER_TYPE = Notifiers.LOGGING
-
-    @property
-    def enabled(self) -> bool:
-        return True
-
-    def notify(
-        self,
-        event: TrafficEvent,
-        recepient_list: Optional[Tuple[Recepient]] = (),
-    ):
-        _LOGGER.info(
-            'Event %s, started: %s, ended: %s. Affected lines: %s. %s',
-            event.event_id,
-            event.start_date,
-            event.end_date,
-            event.lines,
-            event.message,
-        )
