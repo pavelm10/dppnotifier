@@ -161,3 +161,5 @@ class WhatsAppNotifier(Notifier):
             )
             if not response.ok:
                 _LOGGER.error(response.text)
+            else:
+                _LOGGER.info('Whatsapp message sent')
