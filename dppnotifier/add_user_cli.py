@@ -17,14 +17,18 @@ def main():
         help='email address, whatsapp id, etc. of the user',
     )
     argp.add_argument('-n', '--notifier', required=True, help='notifier type')
+    argp.add_argument(
+        '-t', '--table', required=False, default='dpp-notifier-recepients'
+    )
 
     pargs = argp.parse_args()
     user = pargs.user
     uri = pargs.uri
     notifier = pargs.notifier
+    table = pargs.table
 
     recepient = Recepient(notifier=Notifiers(notifier), uri=uri, user=user)
-    db_client = DynamoSubscribersDb(table_name='dpp-notifier-recepients')
+    db_client = DynamoSubscribersDb(table_name=table)
     _LOGGER.info('Adding subscriber %s', recepient)
     db_client.add_recepient(recepient)
 

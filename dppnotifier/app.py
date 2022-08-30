@@ -1,3 +1,4 @@
+import os
 from typing import List, Tuple
 
 from dppnotifier.db import DynamoSubscribersDb, DynamoTrafficEventsDb
@@ -12,10 +13,12 @@ _LOGGER = init_logger(__name__)
 class DppNotificationApp:
     def __init__(self):
         self.events_db = DynamoTrafficEventsDb(
-            table_name='dpp-notifier-events'
+            table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
         )
         self.subs_db = DynamoSubscribersDb(
-            table_name='dpp-notifier-recepients'
+            table_name=os.getenv(
+                'SUBSCRIBERS_TABLE', 'dpp-notifier-recepients'
+            )
         )
         self._notifiers = self._build_notifiers()
 

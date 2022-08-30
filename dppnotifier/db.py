@@ -1,8 +1,5 @@
-# TODO: class to store traffic events to NoSQL database and is also able to
-# update its active state. It is needed for notifier so that it is known,
-# which event was already notified or not.
-
 import json
+import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Optional
@@ -49,9 +46,8 @@ class SubscribersDb(ABC):
 class DynamoDb:
     AWS_REGION = "eu-central-1"
 
-    def __init__(
-        self, table_name: str, profile: Optional[str] = 'dppnotifier'
-    ):
+    def __init__(self, table_name: str):
+        profile = os.environ['AWS_PROFILE']
         session = boto3.Session(profile_name=profile)
         self._client = session.resource(
             'dynamodb', region_name=self.AWS_REGION

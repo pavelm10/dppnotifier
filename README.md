@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Env.vars configuration
 - Solve secret handling - might not be needed when using `AWS Lambda` for
 deployment
 - Prepare AWS Lambda [deployment](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html)
@@ -62,7 +61,22 @@ You can use this token in the API instead of a temporary access token.
 
 ## Configuration
 
-TODO
+### Environment variables
+
+Mandatory environment variables:
+- `AWS_SENDER_EMAIL` - `AWS SES` service email name that is used to send email
+notifications.
+- `AWS_PROFILE` - `AWS` profile used for email notifications and DB access
+
+All these variables have a default values, which can be overridden by defining
+these environment variables:
+- `EVENTS_TABLE` - name of the events table in the Dynamo DB
+- `SUBSCRIBERS_TABLE` - name of the subscribers table in the Dynamo DB
+- `WHATSAPP_TEMPLATE` - name of the WhatsApp messaging template
+
+Optional environment variables without any default values:
+- `WHATSAPP_CRED_PATH` - path to the WhatsApp credential file, if not provided
+then the `WhatsApp Notifier` will not be enabled.
 
 ## AWS Lambda
 

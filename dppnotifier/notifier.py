@@ -37,14 +37,11 @@ class AwsSesNotifier(Notifier):
     SUBJECT = "DPP NOTIFICATION"
     NOTIFIER_TYPE = Notifiers.AWS_SES
 
-    def __init__(
-        self,
-        sender: Optional[str] = 'marpav.py@gmail.com',
-        profile: Optional[str] = 'dppnotifier',
-    ):
+    def __init__(self):
+        profile = os.environ['AWS_PROFILE']
+        self._sender = os.environ['AWS_SENDER_EMAIL']
         session = boto3.Session(profile_name=profile)
         self._client = session.client('ses', region_name=self.AWS_REGION)
-        self._sender = sender
         self._enabled = True
 
     @property
@@ -133,6 +130,7 @@ class WhatsAppNotifier(Notifier):
         event: TrafficEvent,
         recepient_list: Optional[Tuple[Recepient]] = (),
     ):
+        template_name = os.getenv('WHATSAPP_TEMPLATE', 'dppnotification')
         for sub in recepient_list:
             data = {
                 'messaging_product': 'whatsapp',
@@ -140,7 +138,7 @@ class WhatsAppNotifier(Notifier):
                 'to': sub.uri,
                 'type': 'template',
                 "template": {
-                    "name": "dppnotification",
+                    "name": template_name,
                     "language": {"code": "en_US"},
                     "components": [
                         {
