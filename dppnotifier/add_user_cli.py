@@ -1,6 +1,6 @@
 from dppnotifier.db import DynamoSubscribersDb
 from dppnotifier.log import init_logger
-from dppnotifier.types import Notifiers, Recepient
+from dppnotifier.types import Notifiers, Subscriber
 
 _LOGGER = init_logger(__name__)
 
@@ -27,10 +27,10 @@ def main():
     notifier = pargs.notifier
     table = pargs.table
 
-    recepient = Recepient(notifier=Notifiers(notifier), uri=uri, user=user)
+    subscriber = Subscriber(notifier=Notifiers(notifier), uri=uri, user=user)
     db_client = DynamoSubscribersDb(table_name=table)
-    _LOGGER.info('Adding subscriber %s', recepient)
-    db_client.add_recepient(recepient)
+    _LOGGER.info('Adding subscriber %s', subscriber)
+    db_client.add_subscriber(subscriber)
 
 
 if __name__ == '__main__':

@@ -66,7 +66,7 @@ class TrafficEvent:
 
 
 @dataclass
-class Recepient:
+class Subscriber:
     notifier: Notifiers
     uri: str
     user: str
@@ -95,4 +95,4 @@ class Recepient:
 @dataclass
 class NotifierSubscribers:
     notifier: Any
-    subscribers: List[Recepient]
+    subscribers: List[Subscriber]

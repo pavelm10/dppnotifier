@@ -5,7 +5,7 @@ from dppnotifier.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.log import init_logger
 from dppnotifier.notifier import AwsSesNotifier, WhatsAppNotifier
 from dppnotifier.scrapper import TrafficEvent, fetch_events
-from dppnotifier.types import NotifierSubscribers, Recepient
+from dppnotifier.types import NotifierSubscribers, Subscriber
 
 _LOGGER = init_logger(__name__)
 
@@ -16,7 +16,7 @@ def build_notifiers(
     possible_notifiers = (AwsSesNotifier, WhatsAppNotifier)
     notifiers = []
     for notifier_class in possible_notifiers:
-        subscribers = subscribers_db.get_recepients(
+        subscribers = subscribers_db.get_subscriber(
             notifier_type=notifier_class.NOTIFIER_TYPE
         )
         if len(subscribers) > 0:
@@ -48,8 +48,8 @@ def log_event(event: TrafficEvent):
 
 
 def filter_subscriber(
-    event: TrafficEvent, subscribers: List[Recepient]
-) -> Tuple[Recepient]:
+    event: TrafficEvent, subscribers: List[Subscriber]
+) -> Tuple[Subscriber]:
     subs = []
     for sub in subscribers:
         if set(sub.lines).issubset(set(event.lines)):

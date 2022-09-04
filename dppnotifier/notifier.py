@@ -10,7 +10,7 @@ from botocore.exceptions import ClientError
 
 from dppnotifier.credentials import WhatsAppCredential
 from dppnotifier.log import init_logger
-from dppnotifier.types import Notifiers, Recepient, TrafficEvent
+from dppnotifier.types import Notifiers, Subscriber, TrafficEvent
 
 _LOGGER = init_logger(__name__)
 
@@ -22,7 +22,7 @@ class Notifier(ABC):
     def notify(
         self,
         event: TrafficEvent,
-        recepient_list: Optional[Tuple[Recepient]] = (),
+        subscribers_list: Optional[Tuple[Subscriber]] = (),
     ):
         pass
 
@@ -51,10 +51,10 @@ class AwsSesNotifier(Notifier):
     def notify(
         self,
         event: TrafficEvent,
-        recepient_list: Optional[Tuple[Recepient]] = (),
+        subscribers: Optional[Tuple[Subscriber]] = (),
     ):
         try:
-            response = self._send_email(event, recepient_list)
+            response = self._send_email(event, subscribers)
         except ClientError as error:
             _LOGGER.error('An error occurred %s', error)
         else:
@@ -63,11 +63,11 @@ class AwsSesNotifier(Notifier):
     def _send_email(
         self,
         event: TrafficEvent,
-        recepient_list: Optional[Tuple[Recepient]] = (),
+        subscribers_list: Optional[Tuple[Subscriber]] = (),
     ):
         response = self._client.send_email(
             Destination={
-                'ToAddresses': [r.uri for r in recepient_list],
+                'ToAddresses': [r.uri for r in subscribers_list],
             },
             Message={
                 'Body': {
@@ -128,10 +128,10 @@ class WhatsAppNotifier(Notifier):
     def notify(
         self,
         event: TrafficEvent,
-        recepient_list: Optional[Tuple[Recepient]] = (),
+        subscribers_list: Optional[Tuple[Subscriber]] = (),
     ):
         template_name = os.getenv('WHATSAPP_TEMPLATE', 'dppnotification')
-        for sub in recepient_list:
+        for sub in subscribers_list:
             data = {
                 'messaging_product': 'whatsapp',
                 'recipient_type': "individual",

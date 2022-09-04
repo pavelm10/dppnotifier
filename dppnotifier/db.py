@@ -8,7 +8,7 @@ import boto3
 from boto3.dynamodb.conditions import Key
 
 from dppnotifier.log import init_logger
-from dppnotifier.types import Notifiers, Recepient, TrafficEvent
+from dppnotifier.types import Notifiers, Subscriber, TrafficEvent
 
 _LOGGER = init_logger(__name__)
 
@@ -25,21 +25,21 @@ class TrafficEventsDb(ABC):
 
 class SubscribersDb(ABC):
     @abstractmethod
-    def find_by_uri(self, uri: str) -> Optional[Recepient]:
+    def find_by_uri(self, uri: str) -> Optional[Subscriber]:
         raise NotImplementedError
 
     @abstractmethod
     def find_by_notifier(
         self, notifier: Notifiers
-    ) -> Optional[List[Recepient]]:
+    ) -> Optional[List[Subscriber]]:
         raise NotImplementedError
 
     @abstractmethod
-    def upsert_subscriber(self, subscriber: Recepient):
+    def upsert_subscriber(self, subscriber: Subscriber):
         raise NotImplementedError
 
     @abstractmethod
-    def delete_subscriber(self, subscriber: Recepient):
+    def delete_subscriber(self, subscriber: Subscriber):
         raise NotImplementedError
 
 
@@ -118,33 +118,33 @@ class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
 
 
 class DynamoSubscribersDb(SubscribersDb, DynamoDb):
-    def add_recepient(self, recepient: Recepient):
-        item = recepient.to_entity()
+    def add_subscriber(self, subscriber: Subscriber):
+        item = subscriber.to_entity()
         _LOGGER.info(item)
         self._table.put_item(Item=item)
-        _LOGGER.info('Added recepient')
+        _LOGGER.info('Added subscriber')
 
-    def get_recepients(self, notifier_type: Notifiers) -> List[Recepient]:
+    def get_subscriber(self, notifier_type: Notifiers) -> List[Subscriber]:
         response = self._table.query(
             KeyConditionExpression=Key('notifier').eq(notifier_type.value)
         )
         items = response['Items']
-        recepients = []
+        subscribers = []
         for item in items:
-            recepient = Recepient.from_entity(item)
-            recepients.append(recepient)
-        return recepients
+            subscriber = Subscriber.from_entity(item)
+            subscribers.append(subscriber)
+        return subscribers
 
-    def find_by_uri(self, uri: str) -> Optional[Recepient]:
+    def find_by_uri(self, uri: str) -> Optional[Subscriber]:
         raise NotImplementedError
 
     def find_by_notifier(
         self, notifier: Notifiers
-    ) -> Optional[List[Recepient]]:
+    ) -> Optional[List[Subscriber]]:
         raise NotImplementedError
 
-    def upsert_subscriber(self, subscriber: Recepient):
+    def upsert_subscriber(self, subscriber: Subscriber):
         raise NotImplementedError
 
-    def delete_subscriber(self, subscriber: Recepient):
+    def delete_subscriber(self, subscriber: Subscriber):
         raise NotImplementedError
