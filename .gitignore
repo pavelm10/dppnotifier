@@ -2,3 +2,5 @@
 .ipynb_checkpoints
 **/data
 **/.env
+**/*.ipynb
+*_token.json
