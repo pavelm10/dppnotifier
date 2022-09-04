@@ -2,6 +2,9 @@
 
 ## TODO
 
+- unittests
+- docstring
+- [telegram notifier](https://core.telegram.org/bots)
 - Solve secret handling - might not be needed when using `AWS Lambda` for
 deployment
 - Prepare AWS Lambda [deployment](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html)
