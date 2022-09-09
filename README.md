@@ -4,7 +4,6 @@
 
 - unittests
 - docstring
-- [telegram notifier](https://core.telegram.org/bots)
 - Solve secret handling - might not be needed when using `AWS Lambda` for
 deployment
 - Prepare AWS Lambda [deployment](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html)
@@ -61,6 +60,13 @@ checked, if not then click on the checkbox and click the
 The token should be generated at this time. Now, this token will not expire
 and live forever until and unless you do not click the revoke token button.
 You can use this token in the API instead of a temporary access token.
+
+### Telegram
+
+- [telegram bots](https://core.telegram.org/bots)
+- token from the bot used in the URI
+- get `chat_id`:
+  - each user shall send `/start` message to `@RawDataBot` to get the `chat_id`
 
 ## Configuration
 

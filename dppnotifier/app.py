@@ -3,7 +3,11 @@ from typing import List, Tuple
 
 from dppnotifier.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.log import init_logger
-from dppnotifier.notifier import AwsSesNotifier, WhatsAppNotifier
+from dppnotifier.notifier import (
+    AwsSesNotifier,
+    TelegramNotifier,
+    WhatsAppNotifier,
+)
 from dppnotifier.scrapper import TrafficEvent, fetch_events
 from dppnotifier.types import NotifierSubscribers, Subscriber
 
@@ -13,7 +17,7 @@ _LOGGER = init_logger(__name__)
 def build_notifiers(
     subscribers_db: DynamoSubscribersDb,
 ) -> List[NotifierSubscribers]:
-    possible_notifiers = (AwsSesNotifier, WhatsAppNotifier)
+    possible_notifiers = (AwsSesNotifier, TelegramNotifier, WhatsAppNotifier)
     notifiers = []
     for notifier_class in possible_notifiers:
         subscribers = subscribers_db.get_subscriber(

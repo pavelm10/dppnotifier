@@ -8,7 +8,7 @@ import boto3
 import requests
 from botocore.exceptions import ClientError
 
-from dppnotifier.credentials import WhatsAppCredential
+from dppnotifier.credentials import TelegramCredential, WhatsAppCredential
 from dppnotifier.log import init_logger
 from dppnotifier.types import Notifiers, Subscriber, TrafficEvent
 
@@ -161,3 +161,58 @@ class WhatsAppNotifier(Notifier):
                 _LOGGER.error(response.text)
             else:
                 _LOGGER.info('Whatsapp message sent')
+
+
+class TelegramNotifier(Notifier):
+    NOTIFIER_TYPE = Notifiers.TELEGRAM
+
+    def __init__(self, credential: Optional[TelegramCredential] = None):
+        cred_path = os.getenv('TELEGRAM_CRED_PATH')
+        if cred_path is not None and credential is None:
+            self._credential = TelegramCredential.from_file(Path(cred_path))
+        else:
+            self._credential = credential
+
+        self._enabled = False
+        if self._credential is not None:
+            self._enabled = True
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled
+
+    @property
+    def _api_url(self) -> str:
+        return (
+            f'https://api.telegram.org/bot{self._credential.token}/sendMessage'
+        )
+
+    def _send_message(self, event: TrafficEvent, subscriber: Subscriber):
+        message = (
+            f'Start time: {event.start_date}\n'
+            f'Message: {event.message}\n'
+            f'Lines: {event.lines}\n'
+            f'URL: {event.url}\n'
+        )
+        url = f"{self._api_url}?chat_id={int(subscriber.uri)}&text={message}"
+        res = requests.get(url)
+        if res.status_code != 200:
+            raise FailedToSendMessage(res.text)
+        _LOGGER.debug(
+            'Sent message to subscriber with chat_id %s', subscriber.uri
+        )
+
+    def notify(
+        self,
+        event: TrafficEvent,
+        subscribers_list: Optional[Tuple[Subscriber]] = (),
+    ):
+        for sub in subscribers_list:
+            try:
+                self._send_message(event, sub)
+            except FailedToSendMessage as exc:
+                _LOGGER.error(exc)
+
+
+class FailedToSendMessage(Exception):
+    pass

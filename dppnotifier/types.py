@@ -10,6 +10,7 @@ class Notifiers(Enum):
     AWS_SES = 'aws-ses'
     WHATSAPP = 'whatsapp'
     LOGGING = 'log'
+    TELEGRAM = 'telegram'
 
 
 @dataclass
