@@ -73,12 +73,7 @@ class AwsSesNotifier(Notifier):
                 'Body': {
                     'Text': {
                         'Charset': self.CHARSET,
-                        'Data': (
-                            f'Start time: {event.start_date}\n'
-                            f'Message: {event.message}\n'
-                            f'Lines: {event.lines}\n'
-                            f'URL: {event.url}\n'
-                        ),
+                        'Data': event.to_message(),
                     },
                 },
                 'Subject': {
@@ -188,12 +183,7 @@ class TelegramNotifier(Notifier):
         )
 
     def _send_message(self, event: TrafficEvent, subscriber: Subscriber):
-        message = (
-            f'Start time: {event.start_date}\n'
-            f'Message: {event.message}\n'
-            f'Lines: {event.lines}\n'
-            f'URL: {event.url}\n'
-        )
+        message = event.to_message()
         url = f"{self._api_url}?chat_id={int(subscriber.uri)}&text={message}"
         res = requests.get(url)
         if res.status_code != 200:

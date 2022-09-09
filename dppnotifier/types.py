@@ -65,6 +65,14 @@ class TrafficEvent:
             url=entity['url'],
         )
 
+    def to_message(self) -> str:
+        return (
+            f'Start time: {self.start_date}\n'
+            f'Message: {self.message}\n'
+            f'Lines: {self.lines}\n'
+            f'URL: {self.url}\n'
+        )
+
 
 @dataclass
 class Subscriber:
