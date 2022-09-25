@@ -59,7 +59,7 @@ class TrafficEvent:
             start_date=start_date,
             end_date=end_date,
             active=bool(entity['active']),
-            lines=entity['lines'],
+            lines=entity.get('lines', list()),
             message=entity['message'],
             event_id=entity['event_id'],
             url=entity['url'],
@@ -99,6 +99,9 @@ class Subscriber:
             user=entity['user'],
             lines=lines,
         )
+
+    def __repr__(self) -> str:
+        return f'{self.notifier}, {self.user}, {self.uri}, {self.lines}'
 
 
 @dataclass
