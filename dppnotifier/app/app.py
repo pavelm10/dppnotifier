@@ -67,7 +67,7 @@ def filter_subscriber(
 def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
     db_event = events_db.find_by_id(event.event_id)
 
-    if not event == db_event:
+    if event != db_event:
         try:
             events_db.upsert_event(event)
         except (ValueError, IndexError, KeyError) as exc:
