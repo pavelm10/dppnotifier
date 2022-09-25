@@ -6,7 +6,7 @@ def init_logger():
     initializes basic console logger
     """
     logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO)
