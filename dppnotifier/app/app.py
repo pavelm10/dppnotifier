@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import List, Tuple
+from typing import Any, List, Optional, Tuple
 
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.app.log import init_logger
@@ -49,7 +49,9 @@ def notify(notifiers: List[NotifierSubscribers], event: TrafficEvent):
 
 
 def log_event(event: TrafficEvent):
-    _LOGGER.info('Started %s, URL: %s', event.start_date, event.url)
+    _LOGGER.info(
+        'Started %s, URL: %s', event.start_date.isoformat(), event.url
+    )
 
 
 def filter_subscriber(
@@ -62,7 +64,22 @@ def filter_subscriber(
     return tuple(subs)
 
 
-def run_job(trigger_event, context):
+def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
+    db_event = events_db.find_by_id(event.event_id)
+
+    if not event == db_event:
+        try:
+            events_db.upsert_event(event)
+        except (ValueError, IndexError, KeyError) as exc:
+            _LOGGER.error('Failed to upsert the event - notification skipped')
+            _LOGGER.error(exc)
+            raise FailedUpsertEvent(event.event_id) from exc
+    return db_event
+
+
+def run_job(
+    trigger_event: Optional[Any] = None, context: Optional[Any] = None
+):
     init_logger()
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
@@ -75,14 +92,14 @@ def run_job(trigger_event, context):
     _LOGGER.info('Fetching current events')
     for event in fetch_events():
         log_event(event)
-        db_event = events_db.find_by_id(event.event_id)
-
         try:
-            events_db.upsert_event(event)
-        except (ValueError, IndexError, KeyError) as exc:
-            _LOGGER.error('Failed to upsert the event - notification skipped')
-            _LOGGER.error(exc)
+            db_event = update_db(event, events_db)
+        except FailedUpsertEvent:
             continue
 
         if event.active and db_event is None:
             notify(notifiers, event)
+
+
+class FailedUpsertEvent(Exception):
+    """Upsert to DynamoDB failed"""
