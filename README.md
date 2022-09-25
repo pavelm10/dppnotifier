@@ -94,3 +94,29 @@ then the `Telegram Notifier` will not be enabled.
 - Authentication via [Lambda Execution Role](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html)
 - [Deployment](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html)
 - [Env.vars. configuration](https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html)
+
+- To use `aws cli` add `aws user access id` and `secret key` to the
+`aws configure` for a use that should manage the lambda function
+- Add this user to the `lambda function > Configuration > Permissions > `
+`Resource-based policy statements`. You must know the principal:
+`arn:aws:iam::[user_id]:user/[user_name]`.
+Select action `lambda:UpdateFunctionCode`.
+- In `Code > Runtime Settings` set `Handler` to
+`dppnotifier.lambda_function.lambda_handler`
+- To create a package run:
+```
+cd .venv/lib/python3.9/site-packages
+zip -r ../../../../dppnotifier_package.zip .
+cd ../../../../
+zip -g dppnotifier_package.zip dppnotifier
+```
+- To create/update lambda function run:
+```
+aws lambda update-function-code \
+  --function-name dpp_notifier \
+  --zip-file fileb://dppnotifier_package.zip
+```
+- To invoke the function run:
+```
+aws lambda invoke --function-name dpp_notifier out --log-type Tail
+```

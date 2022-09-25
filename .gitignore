@@ -4,3 +4,4 @@
 **/.env
 **/*.ipynb
 *_token.json
+*.zip
