@@ -47,7 +47,7 @@ class DynamoDb:
     AWS_REGION = "eu-central-1"
 
     def __init__(self, table_name: str):
-        profile = os.environ['AWS_PROFILE']
+        profile = os.environ.get('AWS_PROFILE')
         session = boto3.Session(profile_name=profile)
         self._client = session.resource(
             'dynamodb', region_name=self.AWS_REGION

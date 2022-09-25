@@ -38,7 +38,7 @@ class AwsSesNotifier(Notifier):
     NOTIFIER_TYPE = Notifiers.AWS_SES
 
     def __init__(self):
-        profile = os.environ['AWS_PROFILE']
+        profile = os.environ.get('AWS_PROFILE')
         self._sender = os.environ['AWS_SENDER_EMAIL']
         session = boto3.Session(profile_name=profile)
         self._client = session.client('ses', region_name=self.AWS_REGION)
@@ -140,8 +140,14 @@ class WhatsAppNotifier(Notifier):
                             "type": "body",
                             "parameters": [
                                 {"type": "text", "text": event.message},
-                                {"type": "text", "text": event.start_date},
-                                {"type": "text", "text": event.lines},
+                                {
+                                    "type": "text",
+                                    "text": event.start_date.isoformat(),
+                                },
+                                {
+                                    "type": "text",
+                                    "text": ','.join(event.lines),
+                                },
                                 {"type": "text", "text": event.url},
                             ],
                         }
