@@ -86,6 +86,8 @@ these environment variables:
 Optional environment variables without any default values:
 - `WHATSAPP_CRED_PATH` - path to the WhatsApp credential file, if not provided
 then the `WhatsApp Notifier` will not be enabled.
+- `TELEGRAM_CRED_PATH` - path to the Telegram credential file, if not provided
+then the `Telegram Notifier` will not be enabled.
 
 ## AWS Lambda
 
