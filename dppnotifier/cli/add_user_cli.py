@@ -1,12 +1,15 @@
-from dppnotifier.db import DynamoSubscribersDb
-from dppnotifier.log import init_logger
-from dppnotifier.types import Notifiers, Subscriber
+import argparse
+import logging
 
-_LOGGER = init_logger(__name__)
+from dppnotifier.app.db import DynamoSubscribersDb
+from dppnotifier.app.log import init_logger
+from dppnotifier.app.types import Notifiers, Subscriber
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def main():
-    import argparse
+    init_logger()
 
     argp = argparse.ArgumentParser()
     argp.add_argument('-u', '--user', required=True, help='user name')
@@ -29,8 +32,8 @@ def main():
 
     subscriber = Subscriber(notifier=Notifiers(notifier), uri=uri, user=user)
     db_client = DynamoSubscribersDb(table_name=table)
-    _LOGGER.info('Adding subscriber %s', subscriber)
     db_client.add_subscriber(subscriber)
+    _LOGGER.info('Added subscriber %s', subscriber)
 
 
 if __name__ == '__main__':

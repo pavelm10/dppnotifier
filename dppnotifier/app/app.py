@@ -1,17 +1,18 @@
+import logging
 import os
 from typing import List, Tuple
 
-from dppnotifier.db import DynamoSubscribersDb, DynamoTrafficEventsDb
-from dppnotifier.log import init_logger
-from dppnotifier.notifier import (
+from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
+from dppnotifier.app.log import init_logger
+from dppnotifier.app.notifier import (
     AwsSesNotifier,
     TelegramNotifier,
     WhatsAppNotifier,
 )
-from dppnotifier.scrapper import TrafficEvent, fetch_events
-from dppnotifier.types import NotifierSubscribers, Subscriber
+from dppnotifier.app.scrapper import TrafficEvent, fetch_events
+from dppnotifier.app.types import NotifierSubscribers, Subscriber
 
-_LOGGER = init_logger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def build_notifiers(
@@ -62,6 +63,7 @@ def filter_subscriber(
 
 
 def main():
+    init_logger()
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
     )

@@ -1,3 +1,4 @@
+import logging
 import re
 from dataclasses import dataclass
 from datetime import datetime
@@ -6,10 +7,9 @@ from typing import Iterator, List, Optional, Tuple
 import requests
 from bs4 import BeautifulSoup
 
-from dppnotifier.log import init_logger
-from dppnotifier.types import TrafficEvent
+from dppnotifier.app.types import TrafficEvent
 
-_LOGGER = init_logger(__name__)
+_LOGGER = logging.getLogger(__name__)
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 ARCHIVE_URL = 'https://pid.cz/mimoradnosti/?archive=1'
 

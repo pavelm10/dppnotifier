@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -7,10 +8,9 @@ from typing import List, Optional
 import boto3
 from boto3.dynamodb.conditions import Key
 
-from dppnotifier.log import init_logger
-from dppnotifier.types import Notifiers, Subscriber, TrafficEvent
+from dppnotifier.app.types import Notifiers, Subscriber, TrafficEvent
 
-_LOGGER = init_logger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class TrafficEventsDb(ABC):

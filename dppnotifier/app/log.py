@@ -1,17 +1,18 @@
 import logging
 
 
-def init_logger(name: str) -> logging.Logger:
+def init_logger():
     """
     initializes basic console logger
-    :param name: (str) name of the logger
-    :return: (logging.Logger) the actual logger instance
     """
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
     handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
     handler.setFormatter(formatter)
     if len(logger.handlers) == 0:
         logger.addHandler(handler)
-    return logger
+
+    logging.getLogger('botocore').setLevel(logging.WARNING)

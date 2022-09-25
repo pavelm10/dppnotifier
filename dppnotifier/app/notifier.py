@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from abc import ABC, abstractmethod, abstractproperty
 from pathlib import Path
@@ -8,11 +9,10 @@ import boto3
 import requests
 from botocore.exceptions import ClientError
 
-from dppnotifier.credentials import TelegramCredential, WhatsAppCredential
-from dppnotifier.log import init_logger
-from dppnotifier.types import Notifiers, Subscriber, TrafficEvent
+from dppnotifier.app.credentials import TelegramCredential, WhatsAppCredential
+from dppnotifier.app.types import Notifiers, Subscriber, TrafficEvent
 
-_LOGGER = init_logger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class Notifier(ABC):
