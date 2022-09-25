@@ -62,7 +62,7 @@ def filter_subscriber(
     return tuple(subs)
 
 
-def main():
+def run_job(trigger_event, context):
     init_logger()
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
@@ -86,7 +86,3 @@ def main():
 
         if event.active and db_event is None:
             notify(notifiers, event)
-
-
-if __name__ == '__main__':
-    main()
