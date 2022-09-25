@@ -3,8 +3,6 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-TIME_FORMAT = '%Y%m%dT%H%M'
-
 
 class Notifiers(Enum):
     AWS_SES = 'aws-ses'
@@ -27,16 +25,12 @@ class TrafficEvent:
         self_dict = asdict(self)
 
         if self.start_date is not None:
-            self_dict['start_date'] = datetime.strftime(
-                self.start_date, TIME_FORMAT
-            )
+            self_dict['start_date'] = self.start_date.isoformat()
         else:
             self_dict['start_date'] = 'NULL'
 
         if self.end_date is not None:
-            self_dict['end_date'] = datetime.strftime(
-                self.end_date, TIME_FORMAT
-            )
+            self_dict['end_date'] = self.end_date.isoformat()
         else:
             self_dict['end_date'] = 'NULL'
 
@@ -47,11 +41,11 @@ class TrafficEvent:
     @classmethod
     def from_entity(cls, entity: Dict[str, str]):
         try:
-            start_date = datetime.strptime(entity['start_date'], TIME_FORMAT)
+            start_date = datetime.fromisoformat(entity['start_date'])
         except (TypeError, ValueError, KeyError):
             start_date = None
         try:
-            end_date = datetime.strptime(entity['end_date'], TIME_FORMAT)
+            end_date = datetime.fromisoformat(entity['end_date'])
         except (TypeError, ValueError, KeyError):
             end_date = None
 
@@ -67,11 +61,16 @@ class TrafficEvent:
 
     def to_message(self) -> str:
         return (
-            f'Start time: {self.start_date}\n'
+            f'Start time: {self.start_date.isoformat()}\n'
             f'Message: {self.message}\n'
-            f'Lines: {self.lines}\n'
+            f'Lines: {",".join(self.lines)}\n'
             f'URL: {self.url}\n'
         )
+
+    def __eq__(self, other: object) -> bool:
+        if other is None:
+            return False
+        return self.to_entity() == other.to_entity()
 
 
 @dataclass
