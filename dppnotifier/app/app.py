@@ -48,12 +48,6 @@ def notify(notifiers: List[NotifierSubscribers], event: TrafficEvent):
             notifier_subscribers.notifier.notify(event, subs)
 
 
-def log_event(event: TrafficEvent):
-    _LOGGER.info(
-        'Started %s, URL: %s', event.start_date.isoformat(), event.url
-    )
-
-
 def filter_subscriber(
     event: TrafficEvent, subscribers: List[Subscriber]
 ) -> Tuple[Subscriber]:
@@ -91,7 +85,7 @@ def run_job(
 
     _LOGGER.info('Fetching current events')
     for event in fetch_events():
-        log_event(event)
+        _LOGGER.info(event.to_log_message())
         try:
             db_event = update_db(event, events_db)
         except FailedUpsertEvent:

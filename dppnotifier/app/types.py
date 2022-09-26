@@ -71,6 +71,14 @@ class TrafficEvent:
             f'URL: {self.url}\n'
         )
 
+    def to_log_message(self) -> str:
+        started = self.start_date
+        if started is not None:
+            started = started.isoformat()
+        else:
+            started = 'unknown'
+        return f'Started {started}, URL: {self.url}'
+
     def __eq__(self, other: object) -> bool:
         if other is None:
             return False

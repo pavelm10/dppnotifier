@@ -10,7 +10,9 @@ def init_logger():
 
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s %(name)s [%(levelname)s]: %(message)s')
+    formatter = logging.Formatter(
+        '%(asctime)s %(name)s [%(levelname)s]: %(message)s'
+    )
     handler.setFormatter(formatter)
     if len(logger.handlers) == 0:
         logger.addHandler(handler)
