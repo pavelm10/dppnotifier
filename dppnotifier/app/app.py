@@ -53,7 +53,10 @@ def filter_subscriber(
 ) -> Tuple[Subscriber]:
     subs = []
     for sub in subscribers:
-        if set(sub.lines).issubset(set(event.lines)):
+        if len(sub.lines) == 0:
+            subs.append(sub)
+            continue
+        if set(sub.lines).intersection(set(event.lines)):
             subs.append(sub)
     return tuple(subs)
 
