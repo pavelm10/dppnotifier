@@ -60,8 +60,12 @@ class TrafficEvent:
         )
 
     def to_message(self) -> str:
+        start_date = self.start_date
+        if start_date is not None:
+            start_date = start_date.isoformat()
+
         return (
-            f'Start time: {self.start_date.isoformat()}\n'
+            f'Start time: {start_date}\n'
             f'Message: {self.message}\n'
             f'Lines: {",".join(self.lines)}\n'
             f'URL: {self.url}\n'
