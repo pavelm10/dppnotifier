@@ -84,6 +84,7 @@ def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
 
 
 def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
+    now = datetime.now()
     dates_search = Search('div', 'date')
     lines_search = Search('span', 'lines-single')
     msg_search = Search('td', 'lines-title clickable')
@@ -114,7 +115,7 @@ def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
     ):
         date = date.text.replace(u'\xa0', u' ')
         start_date, end_date = _parse_time(date)
-        active = end_date is None
+        active = end_date is None or end_date > now
 
         if active_only and not active:
             continue
