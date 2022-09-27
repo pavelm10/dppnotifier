@@ -2,11 +2,15 @@
 
 ## TODO
 
+- Delete dead events:
+  - download all active
+  - intersect with scrapped events
+  - process intersection
+  - delete the difference
+- optimization
 - unittests
 - docstring
-- Solve secret handling - might not be needed when using `AWS Lambda` for
-deployment
-- Prepare AWS Lambda [deployment](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html)
+- readme
 
 ## Introduction
 
