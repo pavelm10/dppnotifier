@@ -106,13 +106,16 @@ then the `Telegram Notifier` will not be enabled.
 `arn:aws:iam::[user_id]:user/[user_name]`.
 Select action `lambda:UpdateFunctionCode`.
 - In `Code > Runtime Settings` set `Handler` to
-`dppnotifier.lambda_function.lambda_handler`
+`dppnotifier.app.app.run_job`
+- Ensure the `execution role` created to run the function has `invokeFunction`
+right.
+- No need to specify `AWS_PROFILE` env.var.
 - To create a package run:
 ```
 cd .venv/lib/python3.9/site-packages
 zip -r ../../../../dppnotifier_package.zip .
 cd ../../../../
-zip -g dppnotifier_package.zip dppnotifier
+zip -g dppnotifier_package.zip dppnotifier/app
 ```
 - To create/update lambda function run:
 ```
