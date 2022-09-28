@@ -1,8 +1,8 @@
 import json
 import logging
-from multiprocessing import Event
 import os
 from abc import ABC, abstractmethod
+from multiprocessing import Event
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -18,6 +18,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class Notifier(ABC):
     NOTIFIER_TYPE = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        pass
 
     @abstractmethod
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
@@ -46,6 +52,9 @@ class AwsSesNotifier(Notifier):
         return self._enabled
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
+        if len(subscribers) == 0:
+            return
+
         try:
             response = self.send_email(event, subscribers)
         except ClientError as error:
@@ -95,6 +104,15 @@ class WhatsAppNotifier(Notifier):
         if self._credential is not None:
             self._enabled = True
 
+        self._session = None
+
+    def __enter__(self):
+        self._session = requests.Session()
+        return self
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        self._session.close()
+
     @property
     def enabled(self) -> bool:
         return self._enabled
@@ -120,7 +138,7 @@ class WhatsAppNotifier(Notifier):
 
     def send_message(self, event: Event, subscriber: Subscriber):
         data = self._build_message(event=event, subscriber=subscriber)
-        response = requests.post(
+        response = self._session.post(
             self._api_url,
             headers=self._headers,
             data=json.dumps(data),
@@ -182,6 +200,15 @@ class TelegramNotifier(Notifier):
         if self._credential is not None:
             self._enabled = True
 
+        self._session = None
+
+    def __enter__(self):
+        self._session = requests.Session()
+        return self
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        self._session.close()
+
     @property
     def enabled(self) -> bool:
         return self._enabled
@@ -195,7 +222,7 @@ class TelegramNotifier(Notifier):
     def send_message(self, event: TrafficEvent, subscriber: Subscriber):
         message = event.to_message()
         url = f"{self._api_url}?chat_id={int(subscriber.uri)}&text={message}"
-        res = requests.get(url, timeout=10)
+        res = self._session.get(url, timeout=10)
         if res.status_code != 200:
             _LOGGER.error(res.text)
         _LOGGER.debug(

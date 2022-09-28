@@ -42,11 +42,15 @@ def build_notifiers(
     return notifiers
 
 
-def notify(notifiers: List[NotifierSubscribers], event: TrafficEvent):
+def notify(notifiers: List[NotifierSubscribers], events: List[TrafficEvent]):
     for notifier_subscribers in notifiers:
-        subs = filter_subscriber(event, notifier_subscribers.subscribers)
-        if len(subs) > 0:
-            notifier_subscribers.notifier.notify(event, subs)
+        with notifier_subscribers.notifier as notifier:
+            for event in events:
+                _LOGGER.info(event.to_log_message())
+                subs = filter_subscriber(
+                    event=event, subscribers=notifier_subscribers.subscribers
+                )
+                notifier.notify(event, subs)
 
 
 def filter_subscriber(
@@ -129,10 +133,7 @@ def run_job(
         table_name=os.getenv('SUBSCRIBERS_TABLE', 'dpp-notifier-recepients')
     )
     notifiers = build_notifiers(subs_db)
-
-    for event in to_notify:
-        _LOGGER.info(event.to_log_message())
-        notify(notifiers, event)
+    notify(notifiers, to_notify)
 
     _LOGGER.info('Job finished')
 
