@@ -1,5 +1,6 @@
 import json
 import logging
+from multiprocessing import Event
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -19,11 +20,7 @@ class Notifier(ABC):
     NOTIFIER_TYPE = None
 
     @abstractmethod
-    def notify(
-        self,
-        event: TrafficEvent,
-        subscribers: Optional[Tuple[Subscriber]] = (),
-    ):
+    def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
         pass
 
     @property
@@ -48,26 +45,22 @@ class AwsSesNotifier(Notifier):
     def enabled(self) -> bool:
         return self._enabled
 
-    def notify(
-        self,
-        event: TrafficEvent,
-        subscribers: Optional[Tuple[Subscriber]] = (),
-    ):
+    def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
         try:
-            response = self._send_email(event, subscribers)
+            response = self.send_email(event, subscribers)
         except ClientError as error:
             _LOGGER.error('An error occurred %s', error)
         else:
             _LOGGER.info('Email sent: %s', response['MessageId'])
 
-    def _send_email(
+    def send_email(
         self,
         event: TrafficEvent,
-        subscribers_list: Optional[Tuple[Subscriber]] = (),
+        subscribers: Optional[Tuple[Subscriber]] = (),
     ):
         response = self._client.send_email(
             Destination={
-                'ToAddresses': [r.uri for r in subscribers_list],
+                'ToAddresses': [r.uri for r in subscribers],
             },
             Message={
                 'Body': {
@@ -92,6 +85,7 @@ class WhatsAppNotifier(Notifier):
 
     def __init__(self, credential: Optional[WhatsAppCredential] = None):
         cred_path = os.getenv('WHATSAPP_CRED_PATH')
+        self._template_name = os.getenv('WHATSAPP_TEMPLATE', 'dppnotification')
         if cred_path is not None and credential is None:
             self._credential = WhatsAppCredential.from_file(Path(cred_path))
         else:
@@ -120,54 +114,58 @@ class WhatsAppNotifier(Notifier):
     def _api_url(self) -> str:
         return f'https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages'
 
-    def notify(
-        self,
-        event: TrafficEvent,
-        subscribers: Optional[Tuple[Subscriber]] = (),
-    ):
+    def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
+        for sub in subscribers:
+            self.send_message(event, sub)
+
+    def send_message(self, event: Event, subscriber: Subscriber):
+        data = self._build_message(event=event, subscriber=subscriber)
+        response = requests.post(
+            self._api_url,
+            headers=self._headers,
+            data=json.dumps(data),
+            timeout=10,
+        )
+        if not response.ok:
+            _LOGGER.error(response.text)
+        else:
+            _LOGGER.info('Whatsapp message sent')
+
+    def _build_message(
+        self, event: TrafficEvent, subscriber: Subscriber
+    ) -> Dict[str, str]:
         start_date = event.start_date
         if start_date is not None:
             start_date = start_date.isoformat()
-        template_name = os.getenv('WHATSAPP_TEMPLATE', 'dppnotification')
-        for sub in subscribers:
-            data = {
-                'messaging_product': 'whatsapp',
-                'recipient_type': "individual",
-                'to': sub.uri,
-                'type': 'template',
-                "template": {
-                    "name": template_name,
-                    "language": {"code": "en_US"},
-                    "components": [
-                        {
-                            "type": "body",
-                            "parameters": [
-                                {"type": "text", "text": event.message},
-                                {
-                                    "type": "text",
-                                    "text": start_date,
-                                },
-                                {
-                                    "type": "text",
-                                    "text": ','.join(event.lines),
-                                },
-                                {"type": "text", "text": event.url},
-                            ],
-                        }
-                    ],
-                },
-            }
 
-            response = requests.post(
-                self._api_url,
-                headers=self._headers,
-                data=json.dumps(data),
-                timeout=10,
-            )
-            if not response.ok:
-                _LOGGER.error(response.text)
-            else:
-                _LOGGER.info('Whatsapp message sent')
+        data = {
+            'messaging_product': 'whatsapp',
+            'recipient_type': "individual",
+            'to': subscriber.uri,
+            'type': 'template',
+            "template": {
+                "name": self._template_name,
+                "language": {"code": "en_US"},
+                "components": [
+                    {
+                        "type": "body",
+                        "parameters": [
+                            {"type": "text", "text": event.message},
+                            {
+                                "type": "text",
+                                "text": start_date,
+                            },
+                            {
+                                "type": "text",
+                                "text": ','.join(event.lines),
+                            },
+                            {"type": "text", "text": event.url},
+                        ],
+                    }
+                ],
+            },
+        }
+        return data
 
 
 class TelegramNotifier(Notifier):
@@ -194,27 +192,16 @@ class TelegramNotifier(Notifier):
             f'https://api.telegram.org/bot{self._credential.token}/sendMessage'
         )
 
-    def _send_message(self, event: TrafficEvent, subscriber: Subscriber):
+    def send_message(self, event: TrafficEvent, subscriber: Subscriber):
         message = event.to_message()
         url = f"{self._api_url}?chat_id={int(subscriber.uri)}&text={message}"
         res = requests.get(url, timeout=10)
         if res.status_code != 200:
-            raise FailedToSendMessage(res.text)
+            _LOGGER.error(res.text)
         _LOGGER.debug(
             'Sent message to subscriber with chat_id %s', subscriber.uri
         )
 
-    def notify(
-        self,
-        event: TrafficEvent,
-        subscribers: Optional[Tuple[Subscriber]] = (),
-    ):
+    def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
         for sub in subscribers:
-            try:
-                self._send_message(event, sub)
-            except FailedToSendMessage as exc:
-                _LOGGER.error(exc)
-
-
-class FailedToSendMessage(Exception):
-    pass
+            self.send_message(event, sub)
