@@ -62,16 +62,12 @@ def filter_subscriber(
 
 
 def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
-    db_event = events_db.find_by_id(event.event_id)
-
-    if event != db_event:
-        try:
-            events_db.upsert_event(event)
-        except (ValueError, IndexError, KeyError) as exc:
-            _LOGGER.error('Failed to upsert the event - notification skipped')
-            _LOGGER.error(exc)
-            raise FailedUpsertEvent(event.event_id) from exc
-    return db_event
+    try:
+        events_db.upsert_event(event)
+    except (ValueError, IndexError, KeyError) as exc:
+        _LOGGER.error('Failed to upsert the event - notification skipped')
+        _LOGGER.error(exc)
+        raise FailedUpsertEvent(event.event_id) from exc
 
 
 def run_job(
@@ -81,23 +77,40 @@ def run_job(
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
     )
+
+    _LOGGER.info('Fetching current events')
+    events = []
+    db_events = []
+    to_notify = False
+    for event in fetch_events():
+        db_event = events_db.find_by_id(event.event_id)
+        events.append(event)
+        db_events.append(db_event)
+        if event.active and db_event is None:
+            to_notify = True
+
+    if not to_notify:
+        _LOGGER.info('No new events - terminating')
+        return
+
     subs_db = DynamoSubscribersDb(
         table_name=os.getenv('SUBSCRIBERS_TABLE', 'dpp-notifier-recepients')
     )
     notifiers = build_notifiers(subs_db)
 
-    _LOGGER.info('Fetching current events')
-    for event in fetch_events():
-        try:
-            db_event = update_db(event, events_db)
-        except FailedUpsertEvent:
-            continue
+    for event, db_event in zip(events, db_events):
+        if event != db_event:
+            try:
+                update_db(event, events_db)
+            except FailedUpsertEvent:
+                continue
 
         if event.active and db_event is None:
             _LOGGER.info(event.to_log_message())
             notify(notifiers, event)
 
     _LOGGER.info('Job finished')
+
 
 class FailedUpsertEvent(Exception):
     """Upsert to DynamoDB failed"""
