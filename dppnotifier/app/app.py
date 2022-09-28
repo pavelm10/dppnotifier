@@ -50,7 +50,12 @@ def notify(notifiers: List[NotifierSubscribers], events: List[TrafficEvent]):
                 subs = filter_subscriber(
                     event=event, subscribers=notifier_subscribers.subscribers
                 )
-                notifier.notify(event, subs)
+                try:
+                    notifier.notify(event, subs)
+                except BaseException as exc:  # pylint: disable=broad-except
+                    # Catch everything so that other events and notifiers can
+                    # continue
+                    _LOGGER.error(exc.args[0])
 
 
 def filter_subscriber(
