@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List, Optional
 
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Attr, Key
 
 from dppnotifier.app.types import Notifiers, Subscriber, TrafficEvent
 
@@ -88,10 +88,16 @@ class JsonTrafficEventsDb(TrafficEventsDb):
 
 
 class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
+    PARTITION_KEY_NAME = 'event_type'
+    PARTITION_KEY_VALUE = 'dpp'
+    SORT_KEY_NAME = 'event_id'
+
     def find_by_id(self, event_id: str) -> Optional[TrafficEvent]:
         response = self._table.query(
-            KeyConditionExpression=Key('event_type').eq('dpp')
-            & Key('event_id').eq(event_id),
+            KeyConditionExpression=Key(self.PARTITION_KEY_NAME).eq(
+                self.PARTITION_KEY_VALUE
+            )
+            & Key(self.SORT_KEY_NAME).eq(event_id),
         )
         items = response['Items']
         if len(items) > 1:
@@ -105,16 +111,31 @@ class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
     def upsert_event(self, event: TrafficEvent):
         attr_updates = {}
         entity = event.to_entity()
-        del entity['event_id']
+        del entity[self.SORT_KEY_NAME]
 
         for attr, value in entity.items():
             attr_updates[attr] = {'Value': value, 'Action': 'PUT'}
 
         self._table.update_item(
-            Key={'event_type': 'dpp', 'event_id': event.event_id},
+            Key={
+                self.PARTITION_KEY_NAME: self.PARTITION_KEY_VALUE,
+                self.SORT_KEY_NAME: event.event_id,
+            },
             AttributeUpdates=attr_updates,
         )
         _LOGGER.info('Upserted event %s', event.event_id)
+
+    def get_end_date_null_events(self):
+        response = self._table.query(
+            KeyConditionExpression=Key(self.PARTITION_KEY_NAME).eq(
+                self.PARTITION_KEY_VALUE
+            ),
+            FilterExpression=Attr('end_date').eq('NULL'),
+        )
+        items = response['Items']
+        return {
+            item['event_id']: TrafficEvent.from_entity(item) for item in items
+        }
 
 
 class DynamoSubscribersDb(SubscribersDb, DynamoDb):

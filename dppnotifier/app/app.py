@@ -1,6 +1,7 @@
 import logging
 import os
-from typing import Any, List, Optional, Tuple
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple
 
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.app.log import init_logger
@@ -70,6 +71,23 @@ def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
         raise FailedUpsertEvent(event.event_id) from exc
 
 
+def inactivate_dead_events(
+    null_end_date_events: Dict[str, TrafficEvent],
+    events_db: DynamoTrafficEventsDb,
+) -> None:
+    now = datetime.now()
+    now_2d = now - timedelta(days=2)
+    for event in null_end_date_events.values():
+        if event.start_date < now_2d:
+            event.active = False
+            event.end_date = now
+            try:
+                update_db(event, events_db)
+            except FailedUpsertEvent:
+                continue
+            _LOGGER.info('Inactivated dead event %s', event.event_id)
+
+
 def run_job(
     trigger_event: Optional[Any] = None, context: Optional[Any] = None
 ):
@@ -77,6 +95,7 @@ def run_job(
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
     )
+    null_end_date_events = events_db.get_end_date_null_events()
 
     _LOGGER.info('Fetching current events')
     events = []
@@ -89,6 +108,21 @@ def run_job(
         if event.active and db_event is None:
             to_notify = True
 
+        try:
+            del null_end_date_events[event.event_id]
+        except KeyError:
+            pass
+
+        if event != db_event:
+            try:
+                update_db(event, events_db)
+            except FailedUpsertEvent:
+                continue
+
+    inactivate_dead_events(
+        null_end_date_events=null_end_date_events, events_db=events_db
+    )
+
     if not to_notify:
         _LOGGER.info('No new events - terminating')
         return
@@ -99,12 +133,6 @@ def run_job(
     notifiers = build_notifiers(subs_db)
 
     for event, db_event in zip(events, db_events):
-        if event != db_event:
-            try:
-                update_db(event, events_db)
-            except FailedUpsertEvent:
-                continue
-
         if event.active and db_event is None:
             _LOGGER.info(event.to_log_message())
             notify(notifiers, event)
