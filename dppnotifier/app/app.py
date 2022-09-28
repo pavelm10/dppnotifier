@@ -92,22 +92,19 @@ def inactivate_dead_events(
 def run_job(
     trigger_event: Optional[Any] = None, context: Optional[Any] = None
 ):
+    to_notify = []
     init_logger()
+
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
     )
     null_end_date_events = events_db.get_end_date_null_events()
 
     _LOGGER.info('Fetching current events')
-    events = []
-    db_events = []
-    to_notify = False
     for event in fetch_events():
         db_event = events_db.find_by_id(event.event_id)
-        events.append(event)
-        db_events.append(db_event)
         if event.active and db_event is None:
-            to_notify = True
+            to_notify.append(event)
 
         try:
             del null_end_date_events[event.event_id]
@@ -124,7 +121,7 @@ def run_job(
         null_end_date_events=null_end_date_events, events_db=events_db
     )
 
-    if not to_notify:
+    if len(to_notify) == 0:
         _LOGGER.info('No new events - terminating')
         return
 
@@ -133,10 +130,9 @@ def run_job(
     )
     notifiers = build_notifiers(subs_db)
 
-    for event, db_event in zip(events, db_events):
-        if event.active and db_event is None:
-            _LOGGER.info(event.to_log_message())
-            notify(notifiers, event)
+    for event in to_notify:
+        _LOGGER.info(event.to_log_message())
+        notify(notifiers, event)
 
     _LOGGER.info('Job finished')
 
