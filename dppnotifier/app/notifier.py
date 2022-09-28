@@ -22,7 +22,7 @@ class Notifier(ABC):
     def notify(
         self,
         event: TrafficEvent,
-        subscribers_list: Optional[Tuple[Subscriber]] = (),
+        subscribers: Optional[Tuple[Subscriber]] = (),
     ):
         pass
 
@@ -123,13 +123,13 @@ class WhatsAppNotifier(Notifier):
     def notify(
         self,
         event: TrafficEvent,
-        subscribers_list: Optional[Tuple[Subscriber]] = (),
+        subscribers: Optional[Tuple[Subscriber]] = (),
     ):
         start_date = event.start_date
         if start_date is not None:
             start_date = start_date.isoformat()
         template_name = os.getenv('WHATSAPP_TEMPLATE', 'dppnotification')
-        for sub in subscribers_list:
+        for sub in subscribers:
             data = {
                 'messaging_product': 'whatsapp',
                 'recipient_type': "individual",
@@ -159,7 +159,10 @@ class WhatsAppNotifier(Notifier):
             }
 
             response = requests.post(
-                self._api_url, headers=self._headers, data=json.dumps(data)
+                self._api_url,
+                headers=self._headers,
+                data=json.dumps(data),
+                timeout=10,
             )
             if not response.ok:
                 _LOGGER.error(response.text)
@@ -194,7 +197,7 @@ class TelegramNotifier(Notifier):
     def _send_message(self, event: TrafficEvent, subscriber: Subscriber):
         message = event.to_message()
         url = f"{self._api_url}?chat_id={int(subscriber.uri)}&text={message}"
-        res = requests.get(url)
+        res = requests.get(url, timeout=10)
         if res.status_code != 200:
             raise FailedToSendMessage(res.text)
         _LOGGER.debug(
@@ -204,9 +207,9 @@ class TelegramNotifier(Notifier):
     def notify(
         self,
         event: TrafficEvent,
-        subscribers_list: Optional[Tuple[Subscriber]] = (),
+        subscribers: Optional[Tuple[Subscriber]] = (),
     ):
-        for sub in subscribers_list:
+        for sub in subscribers:
             try:
                 self._send_message(event, sub)
             except FailedToSendMessage as exc:

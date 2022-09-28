@@ -1,0 +1,11 @@
+[MASTER]
+
+jobs=0
+
+[MESSAGES CONTROL]
+
+disable=missing-function-docstring,
+        missing-module-docstring,
+        wrong-import-order,  # isort handles import ordering
+        too-few-public-methods,
+        too-many-arguments,

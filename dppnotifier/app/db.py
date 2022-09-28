@@ -102,11 +102,12 @@ class DynamoTrafficEventsDb(TrafficEventsDb, DynamoDb):
         items = response['Items']
         if len(items) > 1:
             raise ValueError(f'Too many events with ID {event_id}')
-        elif len(items) == 0:
+
+        if len(items) == 0:
             return None
-        else:
-            entity = items[0]
-            return TrafficEvent.from_entity(entity)
+
+        entity = items[0]
+        return TrafficEvent.from_entity(entity)
 
     def upsert_event(self, event: TrafficEvent):
         attr_updates = {}

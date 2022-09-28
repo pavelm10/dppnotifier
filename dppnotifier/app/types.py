@@ -53,7 +53,7 @@ class TrafficEvent:
             start_date=start_date,
             end_date=end_date,
             active=bool(entity['active']),
-            lines=entity.get('lines', list()),
+            lines=entity.get('lines', []),
             message=entity['message'],
             event_id=entity['event_id'],
             url=entity['url'],

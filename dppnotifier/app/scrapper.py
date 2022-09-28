@@ -29,6 +29,15 @@ class Search:
         return elements.find(self._type, class_=self._class)
 
 
+@dataclass
+class RawContainer:
+    dates: List[str]
+    lines: List[str]
+    messages: List[str]
+    event_ids: List[str]
+    urls: List[str]
+
+
 def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
     if 'provoz obnoven' in time_str:
         start_str = ''
@@ -43,20 +52,20 @@ def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
 
 def _parse_today_date(time_str: str) -> Optional[datetime]:
     today = datetime.today()
-    pattern_today = '[\d]+:[\d]+'
+    pattern_today = r'[\d]+:[\d]+'
     searched = re.search(pattern_today, time_str)
     time = None
     if searched is not None:
         time = datetime.strptime(searched.group(), '%H:%M')
         time = datetime(
-            today.year, today.month, today.day, time.hour, time.minute
+            today.year, today.month, today.day, time.hour, time.minute, 0
         )
     return time
 
 
 def _parse_start_date(time_str: str) -> datetime:
     today = datetime.today()
-    pattern_not_today = '[\d]+.[\d]+. [\d]+:[\d]+'
+    pattern_not_today = r'[\d]+.[\d]+. [\d]+:[\d]+'
     searched = re.search(pattern_not_today, time_str)
     if searched is None:
         start_time = _parse_today_date(time_str)
@@ -69,7 +78,7 @@ def _parse_start_date(time_str: str) -> datetime:
 
 
 def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
-    pattern = 'id=[\d]+-[\d]+'
+    pattern = r'id=[\d]+-[\d]+'
     links_list = [l['href'] for l in links]
     ids = []
     urls = []
@@ -83,15 +92,14 @@ def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
     return ids, urls
 
 
-def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
-    now = datetime.now()
+def find_events() -> RawContainer:
     dates_search = Search('div', 'date')
     lines_search = Search('span', 'lines-single')
     msg_search = Search('td', 'lines-title clickable')
     exceptions_search = Search('table', 'vyluka vyluka-expand vyluky-vymi')
     links_search = Search('a', href=True)
 
-    page = requests.get(CURRENT_URL)
+    page = requests.get(CURRENT_URL, timeout=30)
     soup = BeautifulSoup(page.content, "html.parser")
 
     results = soup.find(id="st-container")
@@ -110,10 +118,29 @@ def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
             _LOGGER.error('The elements are not of the same length')
             raise ValueError(f'{len(list_)} != {base_length}')
 
+    return RawContainer(
+        dates=dates,
+        lines=lines,
+        messages=messages,
+        event_ids=event_ids,
+        urls=urls,
+    )
+
+
+def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
+    now = datetime.now()
+
+    raw_data = find_events()
+    dates = raw_data.dates
+    lines = raw_data.lines
+    messages = raw_data.messages
+    event_ids = raw_data.event_ids
+    urls = raw_data.urls
+
     for date, line, message, ev_id, url in zip(
         dates, lines, messages, event_ids, urls
     ):
-        date = date.text.replace(u'\xa0', u' ')
+        date = date.text.replace('\xa0', ' ')
         start_date, end_date = _parse_time(date)
         active = end_date is None or end_date > now
 
@@ -122,7 +149,7 @@ def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
 
         line = line.text.strip().split(', ')
         msg = message.text.strip()
-        issue = TrafficEvent(
+        yield TrafficEvent(
             start_date=start_date,
             end_date=end_date,
             active=active,
@@ -131,4 +158,3 @@ def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
             event_id=ev_id,
             url=url,
         )
-        yield issue
