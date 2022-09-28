@@ -88,15 +88,16 @@ def run_job(
 
     _LOGGER.info('Fetching current events')
     for event in fetch_events():
-        _LOGGER.info(event.to_log_message())
         try:
             db_event = update_db(event, events_db)
         except FailedUpsertEvent:
             continue
 
         if event.active and db_event is None:
+            _LOGGER.info(event.to_log_message())
             notify(notifiers, event)
 
+    _LOGGER.info('Job finished')
 
 class FailedUpsertEvent(Exception):
     """Upsert to DynamoDB failed"""
