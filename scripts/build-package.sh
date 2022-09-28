@@ -2,7 +2,6 @@
 
 set -e
 
-SHA=`git rev-parse HEAD`
 PACKAGE_NAME=dppnotifier_package.zip
 
 if [ -f ${PACKAGE_NAME} ]; then
