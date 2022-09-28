@@ -23,7 +23,7 @@ black = {version = "^22.8.0", extras = ["jupyter"]}
 
 [tool.poetry.scripts]
 notify = "dppnotifier.app.app:run_job"
-add-user = 'dppnotifier.add_user_cli:main'
+add-user = 'dppnotifier.cli.add_user_cli:main'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
