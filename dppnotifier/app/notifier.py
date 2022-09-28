@@ -118,13 +118,16 @@ class WhatsAppNotifier(Notifier):
 
     @property
     def _api_url(self) -> str:
-        return f"https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages"
+        return f'https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages'
 
     def notify(
         self,
         event: TrafficEvent,
         subscribers_list: Optional[Tuple[Subscriber]] = (),
     ):
+        start_date = event.start_date
+        if start_date is not None:
+            start_date = start_date.isoformat()
         template_name = os.getenv('WHATSAPP_TEMPLATE', 'dppnotification')
         for sub in subscribers_list:
             data = {
@@ -142,7 +145,7 @@ class WhatsAppNotifier(Notifier):
                                 {"type": "text", "text": event.message},
                                 {
                                     "type": "text",
-                                    "text": event.start_date.isoformat(),
+                                    "text": start_date,
                                 },
                                 {
                                     "type": "text",
