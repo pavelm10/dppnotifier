@@ -12,7 +12,7 @@ if [ -f ${PACKAGE_NAME}_* ]; then
 fi
 
 rm -rf .venv
-pyenv local 3.9.10
+poetry env use 3.9.10
 poetry install --no-dev
 cd .venv/lib/python3.9/site-packages
 zip -r ../../../../$PACKAGE_NAME_FULL .
