@@ -88,6 +88,7 @@ def inactivate_dead_events(
             _LOGGER.info('Inactivated dead event %s', event.event_id)
 
 
+# pylint: disable=unused-argument
 def run_job(
     trigger_event: Optional[Any] = None, context: Optional[Any] = None
 ):

@@ -9,3 +9,5 @@ disable=missing-function-docstring,
         wrong-import-order,  # isort handles import ordering
         too-few-public-methods,
         too-many-arguments,
+        missing-class-docstring,
+        too-many-locals,
