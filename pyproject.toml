@@ -20,9 +20,6 @@ isort = "^5.10.1"
 pylint = "^2.15.3"
 pytest-mock = "^3.8.2"
 black = {version = "^22.8.0", extras = ["jupyter"]}
-jupyterlab = "^3.4.7"
-nbconvert = "^7.0.0"
-jupytext = "^1.14.1"
 
 [tool.poetry.scripts]
 notify = "dppnotifier.app.app:run_job"
