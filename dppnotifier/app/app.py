@@ -46,7 +46,6 @@ def notify(notifiers: List[NotifierSubscribers], events: List[TrafficEvent]):
     for notifier_subscribers in notifiers:
         with notifier_subscribers.notifier as notifier:
             for event in events:
-                _LOGGER.info(event.to_log_message())
                 subs = filter_subscriber(
                     event=event, subscribers=notifier_subscribers.subscribers
                 )
@@ -114,6 +113,7 @@ def run_job(
         db_event = events_db.find_by_id(event.event_id)
         if event.active and db_event is None:
             to_notify.append(event)
+            _LOGGER.info(event.to_log_message())
 
         try:
             del null_end_date_events[event.event_id]
