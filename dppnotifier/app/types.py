@@ -35,6 +35,7 @@ class TrafficEvent:
             self_dict['end_date'] = 'NULL'
 
         self_dict['active'] = 1 if self.active else 0
+        self_dict['updated'] = datetime.now().isoformat()
 
         return self_dict
 
@@ -80,9 +81,13 @@ class TrafficEvent:
         return f'Started {started}, URL: {self.url}'
 
     def __eq__(self, other: object) -> bool:
-        if other is None:
+        if other is None or not isinstance(other, TrafficEvent):
             return False
-        return self.to_entity() == other.to_entity()
+        self_dict = self.to_entity()
+        other_dict = other.to_entity()
+        del self_dict['updated']
+        del other_dict['updated']
+        return self_dict == other_dict
 
 
 @dataclass
