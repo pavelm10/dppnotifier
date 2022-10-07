@@ -96,6 +96,18 @@ def inactivate_dead_events(
             _LOGGER.info('Inactivated dead event %s', event.event_id)
 
 
+def inactivate_expired_events(
+    active_expired: Dict[str, TrafficEvent], events_db: DynamoTrafficEventsDb
+) -> None:
+    for event in active_expired.values():
+        event.active = False
+        try:
+            update_db(event, events_db)
+        except FailedUpsertEvent:
+            continue
+        _LOGGER.info('Inactivated expired event %s', event.event_id)
+
+
 # pylint: disable=unused-argument
 def run_job(
     trigger_event: Optional[Any] = None, context: Optional[Any] = None
@@ -107,6 +119,7 @@ def run_job(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
     )
     null_end_date_events = events_db.get_end_date_null_events()
+    active_expired = events_db.get_active_but_expired_events()
 
     _LOGGER.info('Fetching current events')
     for event in fetch_events():
@@ -119,6 +132,10 @@ def run_job(
             del null_end_date_events[event.event_id]
         except KeyError:
             pass
+        try:
+            del active_expired[event.event_id]
+        except KeyError:
+            pass
 
         if event != db_event:
             try:
@@ -128,6 +145,10 @@ def run_job(
 
     inactivate_dead_events(
         null_end_date_events=null_end_date_events, events_db=events_db
+    )
+
+    inactivate_expired_events(
+        active_expired=active_expired, events_db=events_db
     )
 
     if len(to_notify) == 0:
