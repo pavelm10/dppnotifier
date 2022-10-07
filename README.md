@@ -2,12 +2,6 @@
 
 ## TODO
 
-- Delete dead events:
-  - download all active
-  - intersect with scrapped events
-  - process intersection
-  - delete the difference
-- optimization
 - unittests
 - docstring
 - readme
