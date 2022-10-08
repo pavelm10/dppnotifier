@@ -7,7 +7,7 @@ from typing import Iterator, List, Optional, Tuple
 import requests
 from bs4 import BeautifulSoup
 
-from dppnotifier.app.types import TrafficEvent
+from dppnotifier.app.dpptypes import TrafficEvent
 
 _LOGGER = logging.getLogger(__name__)
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'

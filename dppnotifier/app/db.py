@@ -7,7 +7,7 @@ from typing import List, Optional
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
 
-from dppnotifier.app.types import Notifiers, Subscriber, TrafficEvent
+from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
 
 _LOGGER = logging.getLogger(__name__)
 

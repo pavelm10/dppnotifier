@@ -11,7 +11,7 @@ import requests
 from botocore.exceptions import ClientError
 
 from dppnotifier.app.credentials import TelegramCredential, WhatsAppCredential
-from dppnotifier.app.types import Notifiers, Subscriber, TrafficEvent
+from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
 
 _LOGGER = logging.getLogger(__name__)
 

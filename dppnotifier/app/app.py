@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
+from dppnotifier.app.dpptypes import NotifierSubscribers, Subscriber
 from dppnotifier.app.log import init_logger
 from dppnotifier.app.notifier import (
     AwsSesNotifier,
@@ -11,7 +12,6 @@ from dppnotifier.app.notifier import (
     WhatsAppNotifier,
 )
 from dppnotifier.app.scrapper import TrafficEvent, fetch_events
-from dppnotifier.app.types import NotifierSubscribers, Subscriber
 
 _LOGGER = logging.getLogger(__name__)
 

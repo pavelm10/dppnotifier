@@ -2,8 +2,8 @@ import argparse
 import logging
 
 from dppnotifier.app.db import DynamoSubscribersDb
+from dppnotifier.app.dpptypes import Notifiers, Subscriber
 from dppnotifier.app.log import init_logger
-from dppnotifier.app.types import Notifiers, Subscriber
 
 _LOGGER = logging.getLogger(__name__)
 
