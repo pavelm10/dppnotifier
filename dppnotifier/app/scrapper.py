@@ -1,15 +1,21 @@
 import logging
+import os
 import re
 from dataclasses import dataclass
 from datetime import datetime
+from io import BytesIO
 from typing import Iterator, List, Optional, Tuple
 
+import boto3
 import requests
 from bs4 import BeautifulSoup
 
 from dppnotifier.app.dpptypes import TrafficEvent
 
+AWS_REGION = "eu-central-1"
+
 _LOGGER = logging.getLogger(__name__)
+
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 ARCHIVE_URL = 'https://pid.cz/mimoradnosti/?archive=1'
 
@@ -100,6 +106,10 @@ def find_events() -> RawContainer:
     links_search = Search('a', href=True)
 
     page = requests.get(CURRENT_URL, timeout=30)
+
+    # Temporarily store HTML to S3 bucket to collect some test data
+    store_html(page.content)
+
     soup = BeautifulSoup(page.content, "html.parser")
 
     results = soup.find(id="st-container")
@@ -158,3 +168,19 @@ def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
             event_id=ev_id,
             url=url,
         )
+
+
+def store_html(html_content: bytes) -> None:
+    s3_bucket = os.getenv('AWS_S3_RAW_DATA_BUCKET')
+    if s3_bucket is None:
+        return
+
+    profile = os.getenv('AWS_PROFILE')
+    now = datetime.now().strftime('%Y_%m_%dT%H_%M_%S')
+    object_name = f'{now}.html'
+    data = BytesIO(html_content)
+
+    session = boto3.Session(profile_name=profile)
+    s3_client = session.resource('s3', region_name=AWS_REGION)
+    s3_client.Bucket(s3_bucket).upload_fileobj(data, object_name)
+    _LOGGER.info('Stored current HTML of the source URL')
