@@ -7,6 +7,7 @@ from typing import List, Optional
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
 
+from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,14 +34,10 @@ class SubscribersDb(ABC):
 
 
 class DynamoDb:
-    AWS_REGION = "eu-central-1"
-
     def __init__(self, table_name: str):
         profile = os.environ.get('AWS_PROFILE')
         session = boto3.Session(profile_name=profile)
-        self._client = session.resource(
-            'dynamodb', region_name=self.AWS_REGION
-        )
+        self._client = session.resource('dynamodb', region_name=AWS_REGION)
         self._table = self._client.Table(table_name)
 
 

@@ -10,9 +10,8 @@ import boto3
 import requests
 from bs4 import BeautifulSoup
 
+from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.dpptypes import TrafficEvent
-
-AWS_REGION = "eu-central-1"
 
 _LOGGER = logging.getLogger(__name__)
 

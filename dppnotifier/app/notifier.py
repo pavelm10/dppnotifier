@@ -10,6 +10,7 @@ import boto3
 import requests
 from botocore.exceptions import ClientError
 
+from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.credentials import TelegramCredential, WhatsAppCredential
 from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
 
@@ -35,7 +36,6 @@ class Notifier(ABC):
 
 
 class AwsSesNotifier(Notifier):
-    AWS_REGION = "eu-central-1"
     CHARSET = "UTF-8"
     SUBJECT = "DPP NOTIFICATION"
     NOTIFIER_TYPE = Notifiers.AWS_SES
@@ -44,7 +44,7 @@ class AwsSesNotifier(Notifier):
         profile = os.environ.get('AWS_PROFILE')
         self._sender = os.environ['AWS_SENDER_EMAIL']
         session = boto3.Session(profile_name=profile)
-        self._client = session.client('ses', region_name=self.AWS_REGION)
+        self._client = session.client('ses', region_name=AWS_REGION)
         self._enabled = True
 
     @property
