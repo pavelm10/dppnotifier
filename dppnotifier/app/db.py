@@ -1,7 +1,6 @@
 import logging
 import os
 from abc import ABC, abstractmethod
-from datetime import datetime
 from typing import List, Optional
 
 import boto3
@@ -80,25 +79,12 @@ class DynamoTrafficEventsDb(DynamoDb):
         )
         _LOGGER.info('Upserted event %s', event.event_id)
 
-    def get_end_date_null_events(self):
+    def get_active_events(self):
         response = self._table.query(
             KeyConditionExpression=Key(self.PARTITION_KEY_NAME).eq(
                 self.PARTITION_KEY_VALUE
             ),
-            FilterExpression=Attr('end_date').eq('NULL'),
-        )
-        items = response['Items']
-        return {
-            item['event_id']: TrafficEvent.from_entity(item) for item in items
-        }
-
-    def get_active_but_expired_events(self):
-        now = datetime.now().isoformat()
-        response = self._table.query(
-            KeyConditionExpression=Key(self.PARTITION_KEY_NAME).eq(
-                self.PARTITION_KEY_VALUE
-            ),
-            FilterExpression=Attr('end_date').lt(now) & Attr('active').eq(1),
+            FilterExpression=Attr('active').eq(1),
         )
         items = response['Items']
         return {

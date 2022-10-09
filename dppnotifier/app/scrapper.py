@@ -183,3 +183,21 @@ def store_html(html_content: bytes) -> None:
     s3_client = session.resource('s3', region_name=AWS_REGION)
     s3_client.Bucket(s3_bucket).upload_fileobj(data, object_name)
     _LOGGER.info('Stored current HTML of the source URL')
+
+
+def is_event_active(event_uri: str) -> bool:
+    res = requests.get(event_uri, timeout=30)
+    soup = BeautifulSoup(res.content, 'html.parser')
+    results = soup.find(id="st-container")
+
+    content = Search('div', 'content')
+    contents = content.find_all(results)
+    if len(contents) == 1:
+        if 'Požadovaná stránka nebyla nalezena' in contents[0].text:
+            return False
+
+    termination = Search('div', 'stops-table-alert')
+    terminations = termination.find_all(results)
+    if len(terminations) > 0:
+        return False
+    return True
