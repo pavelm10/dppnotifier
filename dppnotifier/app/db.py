@@ -1,4 +1,3 @@
-import logging
 import os
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -8,8 +7,6 @@ from boto3.dynamodb.conditions import Attr, Key
 
 from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class SubscribersDb(ABC):
@@ -77,7 +74,6 @@ class DynamoTrafficEventsDb(DynamoDb):
             },
             AttributeUpdates=attr_updates,
         )
-        _LOGGER.info('Upserted event %s', event.event_id)
 
     def get_active_events(self):
         response = self._table.query(
@@ -95,9 +91,7 @@ class DynamoTrafficEventsDb(DynamoDb):
 class DynamoSubscribersDb(SubscribersDb, DynamoDb):
     def add_subscriber(self, subscriber: Subscriber):
         item = subscriber.to_entity()
-        _LOGGER.info(item)
         self._table.put_item(Item=item)
-        _LOGGER.info('Added subscriber')
 
     def get_subscriber(self, notifier_type: Notifiers) -> List[Subscriber]:
         response = self._table.query(

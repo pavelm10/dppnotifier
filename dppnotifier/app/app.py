@@ -78,7 +78,6 @@ def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
     try:
         events_db.upsert_event(event)
     except (ValueError, IndexError, KeyError) as exc:
-        _LOGGER.error('Failed to upsert the event - notification skipped')
         _LOGGER.error(exc)
         raise FailedUpsertEvent(event.event_id) from exc
 
@@ -100,17 +99,19 @@ def run_job(
     _LOGGER.info('Fetching current events')
     for event in fetch_events():
         db_event = db_active_events.get(event.event_id)
-        if event.active and db_event is None:
-            to_notify.append(event)
-            _LOGGER.info(event.to_log_message())
-
         current_events.add(event.event_id)
 
         if event != db_event:
             try:
                 update_db(event, events_db)
             except FailedUpsertEvent:
+                _LOGGER.error('Failed to upsert the event %s', event.event_id)
                 continue
+            else:
+                _LOGGER.info('Upserted event %s', event.event_id)
+                if event.active and db_event is None:
+                    to_notify.append(event)
+                    _LOGGER.info(event.to_log_message())
 
     db_active = set(db_active_events.keys()) - current_events
     db_active_events = {eid: db_active_events[eid] for eid in db_active}
@@ -145,9 +146,11 @@ def handle_active_event(
         event.end_date = utcnow_localized()
         try:
             update_db(event=event, events_db=events_db)
-            _LOGGER.info('Deactivated finished event')
+            _LOGGER.info('Deactivated finished event %s', event.event_id)
         except FailedUpsertEvent:
-            pass
+            _LOGGER.error(
+                'Failed to deactivate finished event %s', event.event_id
+            )
 
 
 class FailedUpsertEvent(Exception):
