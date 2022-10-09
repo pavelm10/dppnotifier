@@ -1,6 +1,5 @@
 import logging
 import os
-from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
@@ -11,7 +10,12 @@ from dppnotifier.app.notifier import (
     TelegramNotifier,
     WhatsAppNotifier,
 )
-from dppnotifier.app.scrapper import TrafficEvent, fetch_events
+from dppnotifier.app.scrapper import (
+    TrafficEvent,
+    fetch_events,
+    is_event_active,
+)
+from dppnotifier.app.utils import utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,38 +78,8 @@ def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
     try:
         events_db.upsert_event(event)
     except (ValueError, IndexError, KeyError) as exc:
-        _LOGGER.error('Failed to upsert the event - notification skipped')
         _LOGGER.error(exc)
         raise FailedUpsertEvent(event.event_id) from exc
-
-
-def inactivate_dead_events(
-    null_end_date_events: Dict[str, TrafficEvent],
-    events_db: DynamoTrafficEventsDb,
-) -> None:
-    now = datetime.now()
-    now_2d = now - timedelta(days=2)
-    for event in null_end_date_events.values():
-        if event.start_date < now_2d:
-            event.active = False
-            event.end_date = now
-            try:
-                update_db(event, events_db)
-            except FailedUpsertEvent:
-                continue
-            _LOGGER.info('Inactivated dead event %s', event.event_id)
-
-
-def inactivate_expired_events(
-    active_expired: Dict[str, TrafficEvent], events_db: DynamoTrafficEventsDb
-) -> None:
-    for event in active_expired.values():
-        event.active = False
-        try:
-            update_db(event, events_db)
-        except FailedUpsertEvent:
-            continue
-        _LOGGER.info('Inactivated expired event %s', event.event_id)
 
 
 # pylint: disable=unused-argument
@@ -118,38 +92,30 @@ def run_job(
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
     )
-    null_end_date_events = events_db.get_end_date_null_events()
-    active_expired = events_db.get_active_but_expired_events()
+
+    db_active_events = events_db.get_active_events()
+    current_events = set()
 
     _LOGGER.info('Fetching current events')
     for event in fetch_events():
-        db_event = events_db.find_by_id(event.event_id)
-        if event.active and db_event is None:
-            to_notify.append(event)
-            _LOGGER.info(event.to_log_message())
-
-        try:
-            del null_end_date_events[event.event_id]
-        except KeyError:
-            pass
-        try:
-            del active_expired[event.event_id]
-        except KeyError:
-            pass
+        db_event = db_active_events.get(event.event_id)
+        current_events.add(event.event_id)
 
         if event != db_event:
             try:
                 update_db(event, events_db)
             except FailedUpsertEvent:
+                _LOGGER.error('Failed to upsert the event %s', event.event_id)
                 continue
+            else:
+                _LOGGER.info('Upserted event %s', event.event_id)
+                if event.active and db_event is None:
+                    to_notify.append(event)
+                    _LOGGER.info(event.to_log_message())
 
-    inactivate_dead_events(
-        null_end_date_events=null_end_date_events, events_db=events_db
-    )
-
-    inactivate_expired_events(
-        active_expired=active_expired, events_db=events_db
-    )
+    db_active = set(db_active_events.keys()) - current_events
+    db_active_events = {eid: db_active_events[eid] for eid in db_active}
+    handle_active_db_events(db_active_events, events_db)
 
     if len(to_notify) == 0:
         _LOGGER.info('No new events - terminating')
@@ -162,6 +128,29 @@ def run_job(
     notify(notifiers, to_notify)
 
     _LOGGER.info('Job finished')
+
+
+def handle_active_db_events(
+    events: Dict[str, TrafficEvent], events_db: DynamoTrafficEventsDb
+) -> None:
+    for event in events.values():
+        handle_active_event(event, events_db)
+
+
+def handle_active_event(
+    event: TrafficEvent, events_db: DynamoTrafficEventsDb
+) -> None:
+    active = is_event_active(event_uri=event.url)
+    if not active:
+        event.active = False
+        event.end_date = utcnow_localized()
+        try:
+            update_db(event=event, events_db=events_db)
+            _LOGGER.info('Deactivated finished event %s', event.event_id)
+        except FailedUpsertEvent:
+            _LOGGER.error(
+                'Failed to deactivate finished event %s', event.event_id
+            )
 
 
 class FailedUpsertEvent(Exception):

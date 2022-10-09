@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 
 from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.dpptypes import TrafficEvent
+from dppnotifier.app.utils import localize_datetime, utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,6 +66,7 @@ def _parse_today_date(time_str: str) -> Optional[datetime]:
         time = datetime(
             today.year, today.month, today.day, time.hour, time.minute, 0
         )
+        time = localize_datetime(time)
     return time
 
 
@@ -79,6 +81,7 @@ def _parse_start_date(time_str: str) -> datetime:
         start_time = datetime(
             today.year, time.month, time.day, time.hour, time.minute
         )
+        start_time = localize_datetime(start_time)
     return start_time
 
 
@@ -137,7 +140,7 @@ def find_events() -> RawContainer:
 
 
 def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
-    now = datetime.now()
+    now = utcnow_localized()
 
     raw_data = find_events()
     dates = raw_data.dates
@@ -175,7 +178,7 @@ def store_html(html_content: bytes) -> None:
         return
 
     profile = os.getenv('AWS_PROFILE')
-    now = datetime.now().strftime('%Y_%m_%dT%H_%M_%S')
+    now = utcnow_localized().strftime('%Y_%m_%dT%H_%M_%S')
     object_name = f'{now}.html'
     data = BytesIO(html_content)
 
@@ -183,3 +186,21 @@ def store_html(html_content: bytes) -> None:
     s3_client = session.resource('s3', region_name=AWS_REGION)
     s3_client.Bucket(s3_bucket).upload_fileobj(data, object_name)
     _LOGGER.info('Stored current HTML of the source URL')
+
+
+def is_event_active(event_uri: str) -> bool:
+    res = requests.get(event_uri, timeout=30)
+    soup = BeautifulSoup(res.content, 'html.parser')
+    results = soup.find(id="st-container")
+
+    content = Search('div', 'content')
+    contents = content.find_all(results)
+    if len(contents) == 1:
+        if 'Požadovaná stránka nebyla nalezena' in contents[0].text:
+            return False
+
+    termination = Search('div', 'stops-table-alert')
+    terminations = termination.find_all(results)
+    if len(terminations) > 0:
+        return False
+    return True
