@@ -56,11 +56,11 @@ class AwsSesNotifier(Notifier):
             return
 
         try:
-            response = self.send_email(event, subscribers)
+            self.send_email(event, subscribers)
         except ClientError as error:
             _LOGGER.error('An error occurred %s', error)
         else:
-            _LOGGER.info('Email sent: %s', response['MessageId'])
+            _LOGGER.info('Email sent')
 
     def send_email(
         self,
@@ -225,9 +225,8 @@ class TelegramNotifier(Notifier):
         res = self._session.get(url, timeout=10)
         if res.status_code != 200:
             _LOGGER.error(res.text)
-        _LOGGER.debug(
-            'Sent message to subscriber with chat_id %s', subscriber.uri
-        )
+            return
+        _LOGGER.info('Telegram message sent')
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
         for sub in subscribers:
