@@ -3,6 +3,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
+from dppnotifier.app.utils import utcnow_localized
+
 
 class Notifiers(Enum):
     AWS_SES = 'aws-ses'
@@ -35,7 +37,7 @@ class TrafficEvent:
             self_dict['end_date'] = 'NULL'
 
         self_dict['active'] = 1 if self.active else 0
-        self_dict['updated'] = datetime.now().isoformat()
+        self_dict['updated'] = utcnow_localized().isoformat()
 
         return self_dict
 
