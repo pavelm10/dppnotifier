@@ -100,19 +100,14 @@ def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
     return ids, urls
 
 
-def find_events() -> RawContainer:
+def find_events(html_contents: bytes) -> RawContainer:
     dates_search = Search('div', 'date')
     lines_search = Search('span', 'lines-single')
     msg_search = Search('td', 'lines-title clickable')
     exceptions_search = Search('table', 'vyluka vyluka-expand vyluky-vymi')
     links_search = Search('a', href=True)
 
-    page = requests.get(CURRENT_URL, timeout=30)
-
-    # Temporarily store HTML to S3 bucket to collect some test data
-    store_html(page.content)
-
-    soup = BeautifulSoup(page.content, "html.parser")
+    soup = BeautifulSoup(html_contents, "html.parser")
 
     results = soup.find(id="st-container")
     exception_elements = exceptions_search.find(results)
@@ -139,10 +134,12 @@ def find_events() -> RawContainer:
     )
 
 
-def fetch_events(active_only: bool = False) -> Iterator[TrafficEvent]:
+def fetch_events(
+    html_content: bytes, active_only: bool = False
+) -> Iterator[TrafficEvent]:
     now = utcnow_localized()
 
-    raw_data = find_events()
+    raw_data = find_events(html_content)
     dates = raw_data.dates
     lines = raw_data.lines
     messages = raw_data.messages

@@ -2,6 +2,8 @@ import logging
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
+import requests
+
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.app.dpptypes import NotifierSubscribers, Subscriber
 from dppnotifier.app.log import init_logger
@@ -10,14 +12,22 @@ from dppnotifier.app.notifier import (
     TelegramNotifier,
     WhatsAppNotifier,
 )
-from dppnotifier.app.scrapper import (
+from dppnotifier.app.parser import (
     TrafficEvent,
     fetch_events,
     is_event_active,
+    store_html,
 )
 from dppnotifier.app.utils import utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)
+
+CURRENT_URL = 'https://pid.cz/mimoradnosti/'
+
+
+def scrape() -> bytes:
+    page = requests.get(CURRENT_URL, timeout=30)
+    return page.content
 
 
 def build_notifiers(
@@ -87,6 +97,7 @@ def run_job(
     trigger_event: Optional[Any] = None, context: Optional[Any] = None
 ):
     to_notify = []
+    save_html_content = False
     init_logger()
 
     events_db = DynamoTrafficEventsDb(
@@ -96,12 +107,15 @@ def run_job(
     db_active_events = events_db.get_active_events()
     current_events = set()
 
+    html_content = scrape()
+
     _LOGGER.info('Fetching current events')
-    for event in fetch_events():
+    for event in fetch_events(html_content):
         db_event = db_active_events.get(event.event_id)
         current_events.add(event.event_id)
 
         if event != db_event:
+            save_html_content = True
             try:
                 update_db(event, events_db)
             except FailedUpsertEvent:
@@ -112,6 +126,10 @@ def run_job(
                 if event.active and db_event is None:
                     to_notify.append(event)
                     _LOGGER.info(event.to_log_message())
+
+    if save_html_content:
+        # Temporarily store HTML to S3 bucket to collect some test data
+        store_html(html_content)
 
     db_active = set(db_active_events.keys()) - current_events
     db_active_events = {eid: db_active_events[eid] for eid in db_active}
