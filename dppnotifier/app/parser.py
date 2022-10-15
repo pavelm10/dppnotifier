@@ -22,6 +22,8 @@ ARCHIVE_URL = 'https://pid.cz/mimoradnosti/?archive=1'
 
 @dataclass
 class Search:
+    """Search object to parse particular HTML element"""
+
     _type: str
     _class: Optional[str] = None
     href: Optional[bool] = False
@@ -37,6 +39,22 @@ class Search:
 
 @dataclass
 class RawContainer:
+    """Container for holding raw parsed data
+
+    Parameters
+    ----------
+    dates : List[str]
+        List of events dates
+    lines : List[str]
+        List of events lines being affected
+    messages : List[str]
+        List of events messages describing the event
+    event_ids : List[str]
+        List of events IDs
+    urls : List[str]
+        List of events URL links
+    """
+
     dates: List[str]
     lines: List[str]
     messages: List[str]
@@ -45,6 +63,18 @@ class RawContainer:
 
 
 def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
+    """Parses found time string for start and end datetime.
+
+    Parameters
+    ----------
+    time_str : str
+        Time string found
+
+    Returns
+    -------
+    Tuple[datetime, Optional[datetime]]
+        Start datetime and end datetime
+    """
     if 'provoz obnoven' in time_str:
         start_str = ''
         end_str = time_str
@@ -57,6 +87,18 @@ def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
 
 
 def _parse_today_date(time_str: str) -> Optional[datetime]:
+    """Tries to parse time string that should be from today date.
+
+    Parameters
+    ----------
+    time_str : str
+        Time string found
+
+    Returns
+    -------
+    Optional[datetime]
+        If parsed returns datetime else None
+    """
     today = datetime.today()
     pattern_today = r'[\d]+:[\d]+'
     searched = re.search(pattern_today, time_str)
@@ -71,6 +113,18 @@ def _parse_today_date(time_str: str) -> Optional[datetime]:
 
 
 def _parse_start_date(time_str: str) -> datetime:
+    """Parses start date from times string
+
+    Parameters
+    ----------
+    time_str : str
+        Time string to parse
+
+    Returns
+    -------
+    datetime
+        Start datetime
+    """
     today = datetime.today()
     pattern_not_today = r'[\d]+.[\d]+. [\d]+:[\d]+'
     searched = re.search(pattern_not_today, time_str)
@@ -86,6 +140,18 @@ def _parse_start_date(time_str: str) -> datetime:
 
 
 def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
+    """Parses URL links to get events IDs
+
+    Parameters
+    ----------
+    links : List[str]
+        List of URL links to parse
+
+    Returns
+    -------
+    Tuple[List[str], List[str]]
+        Event IDs and its URL links
+    """
     pattern = r'id=[\d]+-[\d]+'
     links_list = [l['href'] for l in links]
     ids = []
@@ -101,6 +167,23 @@ def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
 
 
 def find_events(html_contents: bytes) -> RawContainer:
+    """Finds all the events in the HTML contents and parses them.
+
+    Parameters
+    ----------
+    html_contents : bytes
+        Scrapped HTML content
+
+    Returns
+    -------
+    RawContainer
+        Container of parsed data
+
+    Raises
+    ------
+    ValueError
+        If the found elements are not of the same length.
+    """
     dates_search = Search('div', 'date')
     lines_search = Search('span', 'lines-single')
     msg_search = Search('td', 'lines-title clickable')
@@ -137,6 +220,20 @@ def find_events(html_contents: bytes) -> RawContainer:
 def fetch_events(
     html_content: bytes, active_only: bool = False
 ) -> Iterator[TrafficEvent]:
+    """Parses the HTML content and retrieves all the events.
+
+    Parameters
+    ----------
+    html_content : bytes
+        Scrapped HTML content
+    active_only : bool, optional
+        If only active events shall be returned, by default False
+
+    Yields
+    ------
+    Iterator[TrafficEvent]
+        Iterator of the parsed deserialized traffic events objects.
+    """
     now = utcnow_localized()
 
     raw_data = find_events(html_content)
@@ -170,6 +267,13 @@ def fetch_events(
 
 
 def store_html(html_content: bytes) -> None:
+    """Stores the HTML content to the AWS S3 bucket.
+
+    Parameters
+    ----------
+    html_content : bytes
+        Scrapped HTML content
+    """
     s3_bucket = os.getenv('AWS_S3_RAW_DATA_BUCKET')
     if s3_bucket is None:
         return
@@ -186,6 +290,19 @@ def store_html(html_content: bytes) -> None:
 
 
 def is_event_active(event_uri: str) -> bool:
+    """Scrapes the event web page and checks for terminations signs, if found
+    the event is inactive, else is active.
+
+    Parameters
+    ----------
+    event_uri : str
+        The events URL link
+
+    Returns
+    -------
+    bool
+        True if active else False
+    """
     res = requests.get(event_uri, timeout=30)
     soup = BeautifulSoup(res.content, 'html.parser')
     results = soup.find(id="st-container")

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
@@ -7,6 +9,8 @@ from dppnotifier.app.utils import utcnow_localized
 
 
 class Notifiers(Enum):
+    """Notifiers types"""
+
     AWS_SES = 'aws-ses'
     WHATSAPP = 'whatsapp'
     LOGGING = 'log'
@@ -15,6 +19,26 @@ class Notifiers(Enum):
 
 @dataclass
 class TrafficEvent:
+    """The traffic event
+
+    Parameters
+    ----------
+    active : bool
+        Indicator whether the event is still active or not
+    lines : List[str]
+        List of lines affected by the event
+    message : str
+        The event message
+    event_id : str
+        The event ID
+    url : str
+        The URL link to the event
+    start_date : Optional[datetime]
+        The event start datetime
+    end_date : Optional[datetime]
+        The event end datetime
+    """
+
     active: bool
     lines: List[str]
     message: str
@@ -24,6 +48,13 @@ class TrafficEvent:
     end_date: Optional[datetime] = None
 
     def to_entity(self) -> Dict:
+        """Serializes the event object to the entity.
+
+        Returns
+        -------
+        Dict
+            The entity
+        """
         self_dict = asdict(self)
 
         if self.start_date is not None:
@@ -42,7 +73,19 @@ class TrafficEvent:
         return self_dict
 
     @classmethod
-    def from_entity(cls, entity: Dict[str, str]):
+    def from_entity(cls, entity: Dict[str, Any]) -> TrafficEvent:
+        """Deserializes the entity to the event object.
+
+        Parameters
+        ----------
+        entity : Dict[str, Any]
+            The traffic event entity to deserialize
+
+        Returns
+        -------
+        TrafficEvent
+            The deserialized event
+        """
         try:
             start_date = datetime.fromisoformat(entity['start_date'])
         except (TypeError, ValueError, KeyError):
@@ -63,6 +106,7 @@ class TrafficEvent:
         )
 
     def to_message(self) -> str:
+        """Generates notification message from the event."""
         start_date = self.start_date
         if start_date is not None:
             start_date = start_date.isoformat()
@@ -75,6 +119,7 @@ class TrafficEvent:
         )
 
     def to_log_message(self) -> str:
+        """Generates logging message of the event."""
         started = self.start_date
         if started is not None:
             started = started.isoformat()
@@ -82,7 +127,19 @@ class TrafficEvent:
             started = 'unknown'
         return f'Started {started}, URL: {self.url}'
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: TrafficEvent) -> bool:
+        """Implemented to be able to compare to events objects.
+
+        Parameters
+        ----------
+        other : TrafficEvent
+            Other traffic event to compare with
+
+        Returns
+        -------
+        bool
+            True ff the events are the same, else False
+        """
         if other is None or not isinstance(other, TrafficEvent):
             return False
         self_dict = self.to_entity()
@@ -94,19 +151,53 @@ class TrafficEvent:
 
 @dataclass
 class Subscriber:
+    """The subscriber object
+
+    Parameters
+    ----------
+    notifier : Notifiers
+        The notifier type the subscriber wants the notification from
+    uri : str
+        The identifier of the subscriber, e.g. email, phone number, etc.
+    user : str
+        The user name
+    lines : Optional[Tuple[str]] = ()
+        The lines that the user wants to receive notifications for if the line
+        is affected by an event.
+    """
+
     notifier: Notifiers
     uri: str
     user: str
     lines: Optional[Tuple[str]] = ()
 
-    def to_entity(self) -> Dict[str, str]:
+    def to_entity(self) -> Dict[str, Any]:
+        """Serializes the subscriber object.
+
+        Returns
+        -------
+        Dict[str, Any]
+            Serialized subscriber
+        """
         entity = asdict(self)
         entity['notifier'] = self.notifier.value
         entity['lines'] = ','.join(self.lines)
         return entity
 
     @classmethod
-    def from_entity(cls, entity: Dict[str, str]):
+    def from_entity(cls, entity: Dict[str, str]) -> Subscriber:
+        """Deserializes the subscriber entity to the object.
+
+        Parameters
+        ----------
+        entity : Dict[str, str]
+            The subscriber entity to deserialize
+
+        Returns
+        -------
+        Subscriber
+            The deserialized subscriber object
+        """
         lines = entity.get('lines', ())
         if len(lines) > 0:
             lines = lines.split(',')
@@ -124,5 +215,7 @@ class Subscriber:
 
 @dataclass
 class NotifierSubscribers:
+    """Container of holding notifier object and its subscribers"""
+
     notifier: Any
     subscribers: List[Subscriber]

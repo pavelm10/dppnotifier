@@ -26,6 +26,13 @@ CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 
 
 def scrape() -> bytes:
+    """Scraps the webpage with the traffic events for the HTML content.
+
+    Returns
+    -------
+    bytes
+        HTML content
+    """
     page = requests.get(CURRENT_URL, timeout=30)
     return page.content
 
@@ -33,6 +40,19 @@ def scrape() -> bytes:
 def build_notifiers(
     subscribers_db: DynamoSubscribersDb,
 ) -> List[NotifierSubscribers]:
+    """Based on the subscribers DB initializes particular notifiers and
+    builds mapping between notifier and its subscribers.
+
+    Parameters
+    ----------
+    subscribers_db : DynamoSubscribersDb
+        Subscribers DB client
+
+    Returns
+    -------
+    List[NotifierSubscribers]
+        List of NotifierSubscribers instances
+    """
     possible_notifiers = (AwsSesNotifier, TelegramNotifier, WhatsAppNotifier)
     notifiers = []
     for notifier_class in possible_notifiers:
@@ -57,6 +77,16 @@ def build_notifiers(
 
 
 def notify(notifiers: List[NotifierSubscribers], events: List[TrafficEvent]):
+    """For each initialized notifier filters subscribers for the event
+    and notifies the subscribers.
+
+    Parameters
+    ----------
+    notifiers : List[NotifierSubscribers]
+         List of NotifierSubscribers instances
+    events : List[TrafficEvent]
+        List of the traffic events
+    """
     for notifier_subscribers in notifiers:
         with notifier_subscribers.notifier as notifier:
             for event in events:
@@ -74,6 +104,21 @@ def notify(notifiers: List[NotifierSubscribers], events: List[TrafficEvent]):
 def filter_subscriber(
     event: TrafficEvent, subscribers: List[Subscriber]
 ) -> Tuple[Subscriber]:
+    """Filters the subscribers for the event so that only subscribers that are
+    interested in the event based on the lines set are notified.
+
+    Parameters
+    ----------
+    event : TrafficEvent
+        The traffic event
+    subscribers : List[Subscriber]
+        List of subscribers
+
+    Returns
+    -------
+    Tuple[Subscriber]
+        Filtered subscribers
+    """
     subs = []
     for sub in subscribers:
         if len(sub.lines) == 0:
@@ -85,6 +130,20 @@ def filter_subscriber(
 
 
 def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
+    """Updates the event in the events DB.
+
+    Parameters
+    ----------
+    event : TrafficEvent
+        The traffic event to update
+    events_db : DynamoTrafficEventsDb
+        Events DB client
+
+    Raises
+    ------
+    FailedUpsertEvent
+        When the event failed to be updated.
+    """
     try:
         events_db.upsert_event(event)
     except (ValueError, IndexError, KeyError) as exc:
@@ -96,6 +155,15 @@ def update_db(event: TrafficEvent, events_db: DynamoTrafficEventsDb):
 def run_job(
     trigger_event: Optional[Any] = None, context: Optional[Any] = None
 ):
+    """The main entrypoint method of the AWS lambda job.
+
+    Parameters
+    ----------
+    trigger_event : Optional[Any], optional
+        AWS lambda trigger event object, unused.
+    context : Optional[Any], optional
+        AWS lambda context, unused.
+    """
     to_notify = []
     save_html_content = False
     init_logger()
@@ -155,6 +223,17 @@ def run_job(
 def handle_active_db_events(
     events: Dict[str, TrafficEvent], events_db: DynamoTrafficEventsDb
 ) -> None:
+    """For each active event in the DB downloads the event HTML content
+    and checks if the event is still active. If it is not active, sets it to
+    inactive state in the DB.
+
+    Parameters
+    ----------
+    events : Dict[str, TrafficEvent]
+        Mapping of event ID and the event instance
+    events_db : DynamoTrafficEventsDb
+        Events DB client
+    """
     for event in events.values():
         handle_active_event(event, events_db)
 
@@ -162,6 +241,17 @@ def handle_active_db_events(
 def handle_active_event(
     event: TrafficEvent, events_db: DynamoTrafficEventsDb
 ) -> None:
+    """For the active event downloads the event HTML content and checks if the
+    event is still active. If it is not active, sets it to inactive state in
+    the DB.
+
+    Parameters
+    ----------
+    event : TrafficEvent
+        Mapping of event ID and the event instance
+    events_db : DynamoTrafficEventsDb
+        Events DB client
+    """
     active = is_event_active(event_uri=event.url)
     if not active:
         event.active = False

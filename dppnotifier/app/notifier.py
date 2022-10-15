@@ -4,7 +4,7 @@ import os
 from abc import ABC, abstractmethod
 from multiprocessing import Event
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import boto3
 import requests
@@ -18,6 +18,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Notifier(ABC):
+    """Notifier interface class"""
+
     NOTIFIER_TYPE = None
 
     def __enter__(self):
@@ -36,6 +38,11 @@ class Notifier(ABC):
 
 
 class AwsSesNotifier(Notifier):
+    """AWS SES notifier which sends emails. It's the default notifier
+    hence must be always initialized, i.e. AWS_SENDER_EMAIL env.var. must
+    be provided.
+    """
+
     CHARSET = "UTF-8"
     SUBJECT = "DPP NOTIFICATION"
     NOTIFIER_TYPE = Notifiers.AWS_SES
@@ -52,6 +59,15 @@ class AwsSesNotifier(Notifier):
         return self._enabled
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
+        """Sends email to all the subscribers for the given event.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            The event to be sent
+        subscribers : Tuple[Subscriber]
+            The subscribers to be notified
+        """
         if len(subscribers) == 0:
             return
 
@@ -65,9 +81,19 @@ class AwsSesNotifier(Notifier):
     def send_email(
         self,
         event: TrafficEvent,
-        subscribers: Optional[Tuple[Subscriber]] = (),
+        subscribers: Tuple[Subscriber],
     ):
-        response = self._client.send_email(
+        """Main method that send email to all the subscribers for the given
+        event.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            The event to be sent
+        subscribers : Tuple[Subscriber]
+            The subscribers to be notified
+        """
+        self._client.send_email(
             Destination={
                 'ToAddresses': [r.uri for r in subscribers],
             },
@@ -85,10 +111,11 @@ class AwsSesNotifier(Notifier):
             },
             Source=self._sender,
         )
-        return response
 
 
 class WhatsAppNotifier(Notifier):
+    """WhatsApp notifier that sends messages to the WhatsApp"""
+
     API_VERSION = 'v13.0'
     NOTIFIER_TYPE = Notifiers.WHATSAPP
 
@@ -119,6 +146,7 @@ class WhatsAppNotifier(Notifier):
 
     @property
     def notifier_type(self) -> Notifiers:
+        """TODO: remove"""
         return Notifiers.WHATSAPP
 
     @property
@@ -133,10 +161,28 @@ class WhatsAppNotifier(Notifier):
         return f'https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages'
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
+        """For each subscriber sends the WhatsApp message about the event.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            The event to be sent
+        subscribers : Tuple[Subscriber]
+            The subscribers to be notified
+        """
         for sub in subscribers:
             self.send_message(event, sub)
 
     def send_message(self, event: Event, subscriber: Subscriber):
+        """Sends the WhatsApp message about the event.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            The event to be sent
+        subscriber : Subscriber
+            The subscriber to be notified
+        """
         data = self._build_message(event=event, subscriber=subscriber)
         response = self._session.post(
             self._api_url,
@@ -151,7 +197,21 @@ class WhatsAppNotifier(Notifier):
 
     def _build_message(
         self, event: TrafficEvent, subscriber: Subscriber
-    ) -> Dict[str, str]:
+    ) -> Dict[str, Any]:
+        """Builds the event message.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            The event to be sent
+        subscribers : Subscriber
+            The subscriber to be notified
+
+        Returns
+        -------
+        Dict[str, Any]
+            The deserialized event message
+        """
         start_date = event.start_date
         if start_date is not None:
             start_date = start_date.isoformat()
@@ -187,6 +247,8 @@ class WhatsAppNotifier(Notifier):
 
 
 class TelegramNotifier(Notifier):
+    """Telegram notifier that sends telegram messages about the events."""
+
     NOTIFIER_TYPE = Notifiers.TELEGRAM
 
     def __init__(self, credential: Optional[TelegramCredential] = None):
@@ -220,6 +282,15 @@ class TelegramNotifier(Notifier):
         )
 
     def send_message(self, event: TrafficEvent, subscriber: Subscriber):
+        """Sends the Telegram message about the event.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            The event to be sent
+        subscriber : Subscriber
+            The subscriber to be notified
+        """
         message = event.to_message()
         url = f"{self._api_url}?chat_id={int(subscriber.uri)}&text={message}"
         res = self._session.get(url, timeout=10)
@@ -229,5 +300,14 @@ class TelegramNotifier(Notifier):
         _LOGGER.info('Telegram message sent')
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
+        """For each subscriber sends the WhatsApp message about the event.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            The event to be sent
+        subscribers : Tuple[Subscriber]
+            The subscribers to be notified
+        """
         for sub in subscribers:
             self.send_message(event, sub)
