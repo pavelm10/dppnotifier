@@ -11,9 +11,6 @@ from dppnotifier.app.utils import localize_datetime, utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)
 
-CURRENT_URL = 'https://pid.cz/mimoradnosti/'
-ARCHIVE_URL = 'https://pid.cz/mimoradnosti/?archive=1'
-
 
 @dataclass
 class Search:
