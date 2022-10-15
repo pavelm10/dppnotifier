@@ -248,7 +248,8 @@ def handle_active_event(
     events_db : DynamoTrafficEventsDb
         Events DB client
     """
-    active = is_event_active(event_uri=event.url)
+    res = requests.get(event.url, timeout=30)
+    active = is_event_active(res.content)
     if not active:
         event.active = False
         event.end_date = utcnow_localized()

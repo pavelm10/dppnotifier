@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Iterator, List, Optional, Tuple
 
-import requests
 from bs4 import BeautifulSoup
 
 from dppnotifier.app.dpptypes import TrafficEvent
@@ -262,22 +261,21 @@ def fetch_events(
         )
 
 
-def is_event_active(event_uri: str) -> bool:
+def is_event_active(html_content: bytes) -> bool:
     """Scrapes the event web page and checks for terminations signs, if found
     the event is inactive, else is active.
 
     Parameters
     ----------
-    event_uri : str
-        The events URL link
+    html_content : bytes
+        The events web page HTML content
 
     Returns
     -------
     bool
         True if active else False
     """
-    res = requests.get(event_uri, timeout=30)
-    soup = BeautifulSoup(res.content, 'html.parser')
+    soup = BeautifulSoup(html_content, 'html.parser')
     results = soup.find(id="st-container")
 
     content = Search('div', 'content')
