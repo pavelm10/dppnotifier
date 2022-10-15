@@ -114,6 +114,10 @@ def run_job(
         db_event = db_active_events.get(event.event_id)
         current_events.add(event.event_id)
 
+        if db_event is not None and db_event.start_date is not None:
+            # keep the original start date
+            event.start_date = db_event.start_date
+
         if event != db_event:
             save_html_content = True
             try:
