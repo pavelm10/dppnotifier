@@ -21,15 +21,15 @@ _LOGGER = logging.getLogger(__name__)
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 
 
-def scrape() -> bytes:
-    """Scraps the webpage with the traffic events for the HTML content.
+def scrape(url: str) -> bytes:
+    """Scraps the webpage url for the HTML content.
 
     Returns
     -------
     bytes
         HTML content
     """
-    page = requests.get(CURRENT_URL, timeout=30)
+    page = requests.get(url, timeout=30)
     return page.content
 
 
@@ -171,7 +171,7 @@ def run_job(
     db_active_events = events_db.get_active_events()
     current_events = set()
 
-    html_content = scrape()
+    html_content = scrape(CURRENT_URL)
 
     _LOGGER.info('Fetching current events')
     for event in fetch_events(html_content):
@@ -248,8 +248,8 @@ def handle_active_event(
     events_db : DynamoTrafficEventsDb
         Events DB client
     """
-    res = requests.get(event.url, timeout=30)
-    active = is_event_active(res.content)
+    html_content = scrape(event.url)
+    active = is_event_active(html_content)
     if not active:
         event.active = False
         event.end_date = utcnow_localized()
