@@ -145,11 +145,6 @@ class WhatsAppNotifier(Notifier):
         return self._enabled
 
     @property
-    def notifier_type(self) -> Notifiers:
-        """TODO: remove"""
-        return Notifiers.WHATSAPP
-
-    @property
     def _headers(self) -> Dict[str, str]:
         return {
             "Authorization": f"Bearer {self._credential.token}",
