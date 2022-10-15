@@ -6,18 +6,14 @@ import requests
 
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.app.dpptypes import NotifierSubscribers, Subscriber
+from dppnotifier.app.historizer import store_html
 from dppnotifier.app.log import init_logger
 from dppnotifier.app.notifier import (
     AwsSesNotifier,
     TelegramNotifier,
     WhatsAppNotifier,
 )
-from dppnotifier.app.parser import (
-    TrafficEvent,
-    fetch_events,
-    is_event_active,
-    store_html,
-)
+from dppnotifier.app.parser import TrafficEvent, fetch_events, is_event_active
 from dppnotifier.app.utils import utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)

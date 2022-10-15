@@ -1,16 +1,12 @@
 import logging
-import os
 import re
 from dataclasses import dataclass
 from datetime import datetime
-from io import BytesIO
 from typing import Iterator, List, Optional, Tuple
 
-import boto3
 import requests
 from bs4 import BeautifulSoup
 
-from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.dpptypes import TrafficEvent
 from dppnotifier.app.utils import localize_datetime, utcnow_localized
 
@@ -264,29 +260,6 @@ def fetch_events(
             event_id=ev_id,
             url=url,
         )
-
-
-def store_html(html_content: bytes) -> None:
-    """Stores the HTML content to the AWS S3 bucket.
-
-    Parameters
-    ----------
-    html_content : bytes
-        Scrapped HTML content
-    """
-    s3_bucket = os.getenv('AWS_S3_RAW_DATA_BUCKET')
-    if s3_bucket is None:
-        return
-
-    profile = os.getenv('AWS_PROFILE')
-    now = utcnow_localized().strftime('%Y_%m_%dT%H_%M_%S')
-    object_name = f'{now}.html'
-    data = BytesIO(html_content)
-
-    session = boto3.Session(profile_name=profile)
-    s3_client = session.resource('s3', region_name=AWS_REGION)
-    s3_client.Bucket(s3_bucket).upload_fileobj(data, object_name)
-    _LOGGER.info('Stored current HTML of the source URL')
 
 
 def is_event_active(event_uri: str) -> bool:
