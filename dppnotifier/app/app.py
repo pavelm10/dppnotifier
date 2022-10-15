@@ -56,7 +56,7 @@ def build_notifiers(
     possible_notifiers = (AwsSesNotifier, TelegramNotifier, WhatsAppNotifier)
     notifiers = []
     for notifier_class in possible_notifiers:
-        subscribers = subscribers_db.get_subscriber(
+        subscribers = subscribers_db.get_subscribers(
             notifier_type=notifier_class.NOTIFIER_TYPE
         )
         if len(subscribers) > 0:

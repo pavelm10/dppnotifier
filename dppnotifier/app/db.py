@@ -116,7 +116,7 @@ class DynamoSubscribersDb(DynamoDb):
         item = subscriber.to_entity()
         self._table.put_item(Item=item)
 
-    def get_subscriber(self, notifier_type: Notifiers) -> List[Subscriber]:
+    def get_subscribers(self, notifier_type: Notifiers) -> List[Subscriber]:
         """Gets list of all subscribers based on the notifier's type.
 
         Parameters

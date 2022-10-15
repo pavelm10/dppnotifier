@@ -21,6 +21,6 @@ if __name__ == '__main__':
     table = pargs.table
 
     db = DynamoSubscribersDb(table)
-    subs = db.get_subscriber(Notifiers(notifier))
+    subs = db.get_subscribers(Notifiers(notifier))
     for sub in subs:
         _LOGGER.info(sub)
