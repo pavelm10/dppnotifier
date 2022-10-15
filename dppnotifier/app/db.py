@@ -1,5 +1,4 @@
 import os
-from abc import ABC, abstractmethod
 from typing import List, Optional
 
 import boto3
@@ -7,26 +6,6 @@ from boto3.dynamodb.conditions import Attr, Key
 
 from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
-
-
-class SubscribersDb(ABC):
-    @abstractmethod
-    def find_by_uri(self, uri: str) -> Optional[Subscriber]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def find_by_notifier(
-        self, notifier: Notifiers
-    ) -> Optional[List[Subscriber]]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def upsert_subscriber(self, subscriber: Subscriber):
-        raise NotImplementedError
-
-    @abstractmethod
-    def delete_subscriber(self, subscriber: Subscriber):
-        raise NotImplementedError
 
 
 class DynamoDb:
@@ -88,7 +67,7 @@ class DynamoTrafficEventsDb(DynamoDb):
         }
 
 
-class DynamoSubscribersDb(SubscribersDb, DynamoDb):
+class DynamoSubscribersDb(DynamoDb):
     def add_subscriber(self, subscriber: Subscriber):
         item = subscriber.to_entity()
         self._table.put_item(Item=item)
@@ -103,17 +82,3 @@ class DynamoSubscribersDb(SubscribersDb, DynamoDb):
             subscriber = Subscriber.from_entity(item)
             subscribers.append(subscriber)
         return subscribers
-
-    def find_by_uri(self, uri: str) -> Optional[Subscriber]:
-        raise NotImplementedError
-
-    def find_by_notifier(
-        self, notifier: Notifiers
-    ) -> Optional[List[Subscriber]]:
-        raise NotImplementedError
-
-    def upsert_subscriber(self, subscriber: Subscriber):
-        raise NotImplementedError
-
-    def delete_subscriber(self, subscriber: Subscriber):
-        raise NotImplementedError
