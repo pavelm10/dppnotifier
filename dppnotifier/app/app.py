@@ -3,6 +3,7 @@ import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
+from requests.exceptions import ReadTimeout
 
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
 from dppnotifier.app.dpptypes import NotifierSubscribers, Subscriber
@@ -21,15 +22,19 @@ _LOGGER = logging.getLogger(__name__)
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 
 
-def scrape(url: str) -> bytes:
+def scrape(url: str) -> Optional[bytes]:
     """Scraps the webpage url for the HTML content.
 
     Returns
     -------
-    bytes
-        HTML content
+    Optional[bytes]
+        HTML content, if times out returns None
     """
-    page = requests.get(url, timeout=30)
+    try:
+        page = requests.get(url, timeout=30)
+    except ReadTimeout as exc:
+        _LOGGER.error(exc.args[0])
+        return None
     return page.content
 
 
@@ -172,6 +177,9 @@ def run_job(
     current_events = set()
 
     html_content = scrape(CURRENT_URL)
+    if html_content is None:
+        _LOGGER.error('Failed to scrape the traffic events - terminating')
+        return
 
     _LOGGER.info('Fetching current events')
     for event in fetch_events(html_content):
@@ -249,6 +257,10 @@ def handle_active_event(
         Events DB client
     """
     html_content = scrape(event.url)
+    if html_content is None:
+        _LOGGER.error('Failed to scrape event web page - skipping')
+        return
+
     active = is_event_active(html_content)
     if not active:
         event.active = False
