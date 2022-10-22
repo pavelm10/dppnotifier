@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
+from dppnotifier.app.constants import WEEKDAYS
 from dppnotifier.app.utils import utcnow_localized
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class Notifiers(Enum):
@@ -164,12 +168,22 @@ class Subscriber:
     lines : Optional[Tuple[str]] = ()
         The lines that the user wants to receive notifications for if the line
         is affected by an event.
+    time_filter_expression : Optional[Tuple[int]] = ()
+        Time expression to enable/disable notification for particular days
+        and hours. The format is tuple and each element can be 0 or 1.
+        The format of the tuple is (Mon, Tue, ... , Sun, 0, 1, 2, ... , 23).
+        First 7 elements are days, if the day position is 1 the user will be
+        notified, else won't be. The next 24 positions are for the day hour.
+        The same notification logic applies as for the days.
+        If the expression is empty, the subscriber will be notified any day
+        and any hour.
     """
 
     notifier: Notifiers
     uri: str
     user: str
     lines: Optional[Tuple[str]] = ()
+    time_filter_expression: Optional[Tuple[int]] = ()
 
     def to_entity(self) -> Dict[str, Any]:
         """Serializes the subscriber object.
@@ -182,6 +196,7 @@ class Subscriber:
         entity = asdict(self)
         entity['notifier'] = self.notifier.value
         entity['lines'] = ','.join(self.lines)
+        entity['timeFilterExpr'] = ','.join(self.time_filter_expression)
         return entity
 
     @classmethod
@@ -202,15 +217,65 @@ class Subscriber:
         if len(lines) > 0:
             lines = lines.split(',')
 
+        time_filter_expr = entity.get('timeFilterExpr', ())
+        if len(time_filter_expr) > 0:
+            time_filter_expr = time_filter_expr.split(',')
+            try:
+                time_filter_expr = tuple(int(el) for el in time_filter_expr)
+            except ValueError as exc:
+                _LOGGER.error(
+                    '%s: Wrong timeFilterExpr flag, can be 0 or 1',
+                    entity['uri'],
+                )
+                _LOGGER.error(exc.args[0])
+                # Since the time filter is ill-formatted it is safer to just
+                # notify the subscriber.
+                time_filter_expr = tuple()
+
         return cls(
             notifier=Notifiers(entity['notifier']),
             uri=entity['uri'],
             user=entity['user'],
             lines=lines,
+            time_filter_expression=time_filter_expr,
         )
 
     def __repr__(self) -> str:
         return f'{self.notifier}, {self.user}, {self.uri}, {self.lines}'
+
+    def can_be_notified(self, event_start_datetime: datetime) -> bool:
+        """Checks whether the event started at the day and hour when the
+        subscriber wants to receive notifications.
+
+        Parameters
+        ----------
+        event_start_datetime : datetime
+            Event start datetime
+
+        Returns
+        -------
+        bool
+            True if the subscriber wants to receive the event, else False
+        """
+        if len(self.time_filter_expression) == 0:
+            return True
+
+        if len(self.time_filter_expression) != 31:
+            _LOGGER.error(
+                '%s: timeFilterExpr does not have correct number of elements',
+                self.uri,
+            )
+            return True
+
+        day = event_start_datetime.strftime('%A')
+        day_idx = WEEKDAYS.index(day)
+        day_enabled = bool(self.time_filter_expression[day_idx])
+        if not day_enabled:
+            return False
+
+        hour_idx = 7 + event_start_datetime.hour
+        hour_enabled = bool(self.time_filter_expression[hour_idx])
+        return hour_enabled
 
 
 @dataclass
