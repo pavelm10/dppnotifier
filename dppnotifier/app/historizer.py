@@ -10,18 +10,16 @@ from dppnotifier.app.utils import utcnow_localized
 _LOGGER = logging.getLogger(__name__)
 
 
-def store_html(html_content: bytes) -> None:
+def store_html(html_content: bytes, bucket_name: str) -> None:
     """Stores the HTML content to the AWS S3 bucket.
 
     Parameters
     ----------
     html_content : bytes
         Scrapped HTML content
+    bucket_name : str
+        Name of the HTML historization bucket
     """
-    s3_bucket = os.getenv('AWS_S3_RAW_DATA_BUCKET')
-    if s3_bucket is None:
-        return
-
     profile = os.getenv('AWS_PROFILE')
     now = utcnow_localized().strftime('%Y_%m_%dT%H_%M_%S')
     object_name = f'{now}.html'
@@ -29,5 +27,5 @@ def store_html(html_content: bytes) -> None:
 
     session = boto3.Session(profile_name=profile)
     s3_client = session.resource('s3', region_name=AWS_REGION)
-    s3_client.Bucket(s3_bucket).upload_fileobj(data, object_name)
+    s3_client.Bucket(bucket_name).upload_fileobj(data, object_name)
     _LOGGER.info('Stored current HTML of the source URL')

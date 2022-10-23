@@ -198,7 +198,7 @@ def find_events(html_contents: bytes) -> RawContainer:
     for list_ in [lines, messages, event_ids, urls]:
         if len(list_) != base_length:
             _LOGGER.error('The elements are not of the same length')
-            raise ValueError(f'{len(list_)} != {base_length}')
+            raise ParserError(f'{len(list_)} != {base_length}')
 
     return RawContainer(
         dates=dates,
@@ -286,3 +286,7 @@ def is_event_active(html_content: bytes) -> bool:
     if len(terminations) > 0:
         return False
     return True
+
+
+class ParserError(Exception):
+    """Parsing error occurred"""

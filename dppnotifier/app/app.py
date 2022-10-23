@@ -14,7 +14,12 @@ from dppnotifier.app.notifier import (
     TelegramNotifier,
     WhatsAppNotifier,
 )
-from dppnotifier.app.parser import TrafficEvent, fetch_events, is_event_active
+from dppnotifier.app.parser import (
+    ParserError,
+    TrafficEvent,
+    fetch_events,
+    is_event_active,
+)
 from dppnotifier.app.utils import utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)
@@ -166,6 +171,8 @@ def run_job(
         AWS lambda context, unused.
     """
     to_notify = []
+    raw_data_bucket_name = os.environ['AWS_S3_RAW_DATA_BUCKET']
+    enable_debug_input_storing = 'HISTORIZE' in os.environ
     save_html_content = False
     init_logger()
 
@@ -182,30 +189,36 @@ def run_job(
         return
 
     _LOGGER.info('Fetching current events')
-    for event in fetch_events(html_content):
-        db_event = db_active_events.get(event.event_id)
-        current_events.add(event.event_id)
+    try:
+        for event in fetch_events(html_content):
+            db_event = db_active_events.get(event.event_id)
+            current_events.add(event.event_id)
 
-        if db_event is not None and db_event.start_date is not None:
-            # keep the original start date
-            event.start_date = db_event.start_date
+            if db_event is not None and db_event.start_date is not None:
+                # keep the original start date
+                event.start_date = db_event.start_date
 
-        if event != db_event:
-            save_html_content = True
-            try:
-                update_db(event, events_db)
-            except FailedUpsertEvent:
-                _LOGGER.error('Failed to upsert the event %s', event.event_id)
-                continue
-            else:
-                _LOGGER.info('Upserted event %s', event.event_id)
-                if event.active and db_event is None:
-                    to_notify.append(event)
-                    _LOGGER.info(event.to_log_message())
+            if event != db_event:
+                save_html_content = True
+                try:
+                    update_db(event, events_db)
+                except FailedUpsertEvent:
+                    _LOGGER.error(
+                        'Failed to upsert the event %s', event.event_id
+                    )
+                    continue
+                else:
+                    _LOGGER.info('Upserted event %s', event.event_id)
+                    if event.active and db_event is None:
+                        to_notify.append(event)
+                        _LOGGER.info(event.to_log_message())
+    except ParserError:
+        store_html(html_content, raw_data_bucket_name)
+        raise
 
-    if save_html_content:
+    if save_html_content and enable_debug_input_storing:
         # Temporarily store HTML to S3 bucket to collect some test data
-        store_html(html_content)
+        store_html(html_content, raw_data_bucket_name)
 
     db_active = set(db_active_events.keys()) - current_events
     db_active_events = {eid: db_active_events[eid] for eid in db_active}

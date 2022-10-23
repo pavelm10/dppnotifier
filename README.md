@@ -133,6 +133,9 @@ Mandatory environment variables:
 - `AWS_SENDER_EMAIL` - `AWS SES` service email name that is used to send email
 notifications.
 - `AWS_PROFILE` - `AWS` profile used for email notifications and DB access
+- `AWS_S3_RAW_DATA_BUCKET` - Name of the `AWS S3` storage bucket where to
+store the HTML input data in case of parsing error or when `HISTORIZE` variable
+is set.
 
 All these variables have a default values, which can be overridden by defining
 these environment variables:
@@ -145,6 +148,8 @@ Optional environment variables without any default values:
 then the `WhatsApp Notifier` will not be enabled.
 - `TELEGRAM_CRED_PATH` - path to the Telegram credential file, if not provided
 then the `Telegram Notifier` will not be enabled.
+- `HISTORIZE` - When set to any value the input HTML content will be stored to
+`AWS_S3_RAW_DATA_BUCKET` if there is a change of the content.
 
 ## AWS Lambda
 
