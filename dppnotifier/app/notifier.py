@@ -207,7 +207,8 @@ class WhatsAppNotifier(Notifier):
         """
         data = self._build_message(event=event, subscriber=subscriber)
         response = self._session.post(
-            self._api_url,
+        """_summary_
+        """            self._api_url,
             headers=self._headers,
             data=json.dumps(data),
             timeout=10,
@@ -237,6 +238,8 @@ class WhatsAppNotifier(Notifier):
         start_date = event.start_date
         if start_date is not None:
             start_date = start_date.isoformat()
+        else:
+            start_date = 'Unknown'
 
         data = {
             'messaging_product': 'whatsapp',
