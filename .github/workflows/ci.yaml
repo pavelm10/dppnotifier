@@ -1,0 +1,83 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'bugfix/**'
+env:
+  PYTHON_VERSION: '3.9.14'
+
+jobs:
+  tests-build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Bootstrap poetry
+        run: |
+          curl -sL https://install.python-poetry.org | python - -y
+
+      - name: Update PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Set up cache
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: .venv
+          key: venv-poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          poetry env use $PYTHON_VERSION
+          poetry install
+
+      - name: Black Check
+        if: github.ref_name != 'main'
+        run: poetry run black --check --line-length 79 --skip-string-normalization .
+
+      - name: Isort Check
+        if: github.ref_name != 'main'
+        run: poetry run isort --check --line-length 79 --profile black .
+
+      - name: Pylint
+        if: github.ref_name != 'main'
+        run: poetry run pylint --rcfile=.pylintrc dppnotifier
+
+      - name: Pytest
+        if: github.ref_name != 'main'
+        run: poetry run pytest -vv tests/
+
+      - name: Create secrets
+        if: github.ref_name == 'main'
+        run: |
+          mkdir secrets
+          echo '{"token": "${{ secrets.TELEGRAM_TOKEN }}", "name": "${{ secrets.BOT_NAME_0 }}", "uri": "${{ secrets.BOT_URI_0 }}"}' >> secrets/telegram_token.json
+          echo '{"token": "${{ secrets.WHATSAPP_TOKEN }}", "phone_id": "${{ secrets.PHONE_ID }}", "account_id": "{{ secrets.ACCOUNT_ID }}"}' >> secrets/whatsapp_token.json
+
+      - name: Build package
+        if: github.ref_name == 'main'
+        run: |
+          chmod 700 scripts/build-package.sh
+          ./scripts/build-package.sh
+
+      - name: Deploy function
+        if: github.ref_name == 'main'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          chmod 700 scripts/deploy-function.sh
+          ./scripts/deploy-function.sh
