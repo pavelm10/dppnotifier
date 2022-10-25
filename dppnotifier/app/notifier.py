@@ -207,8 +207,7 @@ class WhatsAppNotifier(Notifier):
         """
         data = self._build_message(event=event, subscriber=subscriber)
         response = self._session.post(
-        """_summary_
-        """            self._api_url,
+            self._api_url,
             headers=self._headers,
             data=json.dumps(data),
             timeout=10,
