@@ -11,4 +11,4 @@ aws lambda update-function-code \
   --function-name dpp_notifier \
   --zip-file fileb://${PACKAGE_NAME_FULL} \
   --output json \
-  --no-paginate
+  --no-paginate | jq .LastModified
