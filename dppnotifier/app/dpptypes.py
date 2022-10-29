@@ -243,13 +243,15 @@ class Subscriber:
     def __repr__(self) -> str:
         return f'{self.notifier}, {self.user}, {self.uri}, {self.lines}'
 
-    def can_be_notified(self, event_start_datetime: datetime) -> bool:
+    def _check_time_filter(
+        self, event_start_datetime: Optional[datetime]
+    ) -> bool:
         """Checks whether the event started at the day and hour when the
         subscriber wants to receive notifications.
 
         Parameters
         ----------
-        event_start_datetime : datetime
+        event_start_datetime : Optional[datetime]
             Event start datetime
 
         Returns
@@ -257,6 +259,7 @@ class Subscriber:
         bool
             True if the subscriber wants to receive the event, else False
         """
+        start_datetime = event_start_datetime or utcnow_localized()
         if len(self.time_filter_expression) == 0:
             return True
 
@@ -267,15 +270,52 @@ class Subscriber:
             )
             return True
 
-        day = event_start_datetime.strftime('%A')
+        day = start_datetime.strftime('%A')
         day_idx = WEEKDAYS.index(day)
         day_enabled = bool(self.time_filter_expression[day_idx])
         if not day_enabled:
             return False
 
-        hour_idx = 7 + event_start_datetime.hour
-        hour_enabled = bool(self.time_filter_expression[hour_idx])
-        return hour_enabled
+        hour_idx = 7 + start_datetime.hour
+        return bool(self.time_filter_expression[hour_idx])
+
+    def _check_line_filter(self, event_lines: List[str]) -> bool:
+        """Checks if the subscriber subscribed to at least one line in the
+        event's lines.
+
+        Parameters
+        ----------
+        event_lines : List[str]
+            Lines affected by the event
+
+        Returns
+        -------
+        bool
+            True if the subscriber should be notified about the event, else
+            False.
+        """
+        if len(self.lines) == 0:
+            return True
+
+        return len(set(self.lines).intersection(set(event_lines))) > 0
+
+    def is_interested(self, event: TrafficEvent) -> bool:
+        """Checks whether the event started at the day, hour and line(s) of
+        event when the subscriber wants to receive notifications.
+
+        Parameters
+        ----------
+        event : TrafficEvent
+            Event to check if it should be notified
+
+        Returns
+        -------
+        bool
+            True if the subscriber wants to receive the event, else False
+        """
+        time_filter_ok = self._check_time_filter(event.start_date)
+        line_filter_ok = self._check_line_filter(event.lines)
+        return time_filter_ok and line_filter_ok
 
 
 @dataclass

@@ -3,8 +3,7 @@ from copy import deepcopy
 import pytest
 
 from dppnotifier.app import app
-from dppnotifier.app.app import filter_subscriber
-from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
+from dppnotifier.app.dpptypes import TrafficEvent
 from tests.common import DynamoSubscribersDbMock, DynamoTrafficEventsDbMock
 
 EVENT_A = TrafficEvent(
@@ -50,32 +49,6 @@ def job_mock(mocker):
     notify_mock = mocker.patch.object(app, 'notify', autospec=True)
 
     return events_db_mock, update_db_mock, notify_mock, fetch_events_mock
-
-
-def test_filter_subscriber():
-    subscribers = [
-        Subscriber(
-            notifier=Notifiers.AWS_SES, uri='all', user='user', lines=()
-        ),
-        Subscriber(
-            notifier=Notifiers.AWS_SES, uri='none', user='user', lines=('B',)
-        ),
-        Subscriber(
-            notifier=Notifiers.AWS_SES, uri='A7', user='user', lines=('A', '7')
-        ),
-        Subscriber(
-            notifier=Notifiers.AWS_SES,
-            uri='136',
-            user='user',
-            lines=('9', '136'),
-        ),
-    ]
-
-    out = filter_subscriber(EVENT_A, subscribers)
-    assert len(out) == 3
-    expected = sorted(['A7', 'all', '136'])
-    out_ids = sorted((sub.uri for sub in out))
-    assert out_ids == expected
 
 
 def test_handle_active_event_failed_scrape(mocker):

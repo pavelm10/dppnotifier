@@ -125,13 +125,7 @@ def filter_subscriber(
     Tuple[Subscriber]
         Filtered subscribers
     """
-    subs = []
-    for sub in subscribers:
-        if len(sub.lines) == 0:
-            subs.append(sub)
-            continue
-        if set(sub.lines).intersection(set(event.lines)):
-            subs.append(sub)
+    subs = [sub for sub in subscribers if sub.is_interested(event=event)]
     return tuple(subs)
 
 

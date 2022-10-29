@@ -13,7 +13,6 @@ from botocore.exceptions import ClientError
 from dppnotifier.app.constants import AWS_REGION
 from dppnotifier.app.credentials import TelegramCredential, WhatsAppCredential
 from dppnotifier.app.dpptypes import Notifiers, Subscriber, TrafficEvent
-from dppnotifier.app.utils import utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,26 +35,6 @@ class Notifier(ABC):
     @property
     def enabled(self) -> bool:
         pass
-
-    @staticmethod
-    def can_be_notified(event: TrafficEvent, subscriber: Subscriber) -> bool:
-        """Checks whether the subscriber can receive the event based on the
-        time filter of the subscriber.
-
-        Parameters
-        ----------
-        event : TrafficEvent
-            Traffic event to check the start datetime
-        subscriber : Subscriber
-            Subscriber being checked
-
-        Returns
-        -------
-        bool
-            True if to notify, else False
-        """
-        start_datetime = event.start_date or utcnow_localized()
-        return subscriber.can_be_notified(event_start_datetime=start_datetime)
 
 
 class AwsSesNotifier(Notifier):
@@ -114,14 +93,9 @@ class AwsSesNotifier(Notifier):
         subscribers : Tuple[Subscriber]
             The subscribers to be notified
         """
-        subs = []
-        for sub in subscribers:
-            if self.can_be_notified(event, sub):
-                subs.append(sub)
-
         self._client.send_email(
             Destination={
-                'ToAddresses': [r.uri for r in subs],
+                'ToAddresses': [r.uri for r in subscribers],
             },
             Message={
                 'Body': {
@@ -192,8 +166,7 @@ class WhatsAppNotifier(Notifier):
             The subscribers to be notified
         """
         for sub in subscribers:
-            if self.can_be_notified(event, sub):
-                self.send_message(event, sub)
+            self.send_message(event, sub)
 
     def send_message(self, event: Event, subscriber: Subscriber):
         """Sends the WhatsApp message about the event.
@@ -334,5 +307,4 @@ class TelegramNotifier(Notifier):
             The subscribers to be notified
         """
         for sub in subscribers:
-            if self.can_be_notified(event, sub):
-                self.send_message(event, sub)
+            self.send_message(event, sub)
