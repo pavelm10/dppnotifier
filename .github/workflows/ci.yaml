@@ -66,7 +66,7 @@ jobs:
         run: |
           mkdir secrets
           echo '{"token": "${{ secrets.TELEGRAM_TOKEN }}", "name": "${{ secrets.BOT_NAME_0 }}", "uri": "${{ secrets.BOT_URI_0 }}"}' >> secrets/telegram_token.json
-          echo '{"token": "${{ secrets.WHATSAPP_TOKEN }}", "phone_id": "${{ secrets.PHONE_ID }}", "account_id": "{{ secrets.ACCOUNT_ID }}"}' >> secrets/whatsapp_token.json
+          echo '{"token": "${{ secrets.WHATSAPP_TOKEN }}", "phone_id": "${{ secrets.PHONE_ID }}", "account_id": "${{ secrets.ACCOUNT_ID }}"}' >> secrets/whatsapp_token.json
 
       - name: Build package
         if: github.ref_name == 'main'
