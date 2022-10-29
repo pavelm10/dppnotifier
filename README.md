@@ -8,7 +8,8 @@ The events are for example delays of trams, or sudden outage of a metro line,
 and so on. The reason why this application was developed is that the
 public transport system provider in Prague provides these notifications
 on their web page as well as in the mobile application, but the user cannot
-set a filter of which lines she is interested in, i.e. the user either gets
+set a filter of which lines she is interested in, or set hours and days
+when she wants to receive notifications and when not, i.e. the user either gets
 all notifications or none. Clearly this is very inconvenient as during normal
 working day there are 20+ on average traffic events that the user would receive
 the notification for, but most of them are irrelevant. The developer of the
@@ -51,6 +52,13 @@ notifications. Each record contains:
 - `uri` - e.g. email, phone number, etc.
 - `lines` - list of lines the user wants to receive notifications for. If empty
 then the use will receive notification for every new event.
+- `time_filter_expression` - Time expression to enable/disable notification
+for particular days and hours. The format is tuple and each element can be 0
+or 1. The format of the tuple is (Mon, Tue, ... , Sun, 0, 1, 2, ... , 23).
+First 7 elements are days, if the day position is 1 the user will be notified,
+else won't be. The next 24 positions are for the day hour. The same
+notification logic applies as for the days. If the expression is empty, the
+subscriber will be notified any day and any hour.
 
 ## Notifiers
 
@@ -188,8 +196,3 @@ of this repository.
 ```
 aws lambda invoke --function-name dpp_notifier out --log-type Tail
 ```
-
-## TODO
-
-- unittests
-- scaling to multiple AWS lambdas
