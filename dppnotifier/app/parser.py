@@ -1,15 +1,12 @@
-import logging
 import re
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, ResultSet
 
 from dppnotifier.app.dpptypes import TrafficEvent
 from dppnotifier.app.utils import localize_datetime, utcnow_localized
-
-_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -29,32 +26,9 @@ class Search:
         return elements.find(self._type, class_=self._class)
 
 
-@dataclass
-class RawContainer:
-    """Container for holding raw parsed data
-
-    Parameters
-    ----------
-    dates : List[str]
-        List of events dates
-    lines : List[str]
-        List of events lines being affected
-    messages : List[str]
-        List of events messages describing the event
-    event_ids : List[str]
-        List of events IDs
-    urls : List[str]
-        List of events URL links
-    """
-
-    dates: List[str]
-    lines: List[str]
-    messages: List[str]
-    event_ids: List[str]
-    urls: List[str]
-
-
-def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
+def _parse_time(
+    time_str: str,
+) -> Tuple[Optional[datetime], Optional[datetime]]:
     """Parses found time string for start and end datetime.
 
     Parameters
@@ -64,7 +38,7 @@ def _parse_time(time_str: str) -> Tuple[datetime, Optional[datetime]]:
 
     Returns
     -------
-    Tuple[datetime, Optional[datetime]]
+    Tuple[Optional[datetime], Optional[datetime]]
         Start datetime and end datetime
     """
     if 'provoz obnoven' in time_str:
@@ -104,7 +78,7 @@ def _parse_today_date(time_str: str) -> Optional[datetime]:
     return time
 
 
-def _parse_start_date(time_str: str) -> datetime:
+def _parse_start_date(time_str: str) -> Optional[datetime]:
     """Parses start date from times string
 
     Parameters
@@ -114,7 +88,7 @@ def _parse_start_date(time_str: str) -> datetime:
 
     Returns
     -------
-    datetime
+    Optional[datetime]
         Start datetime
     """
     today = datetime.today()
@@ -131,34 +105,83 @@ def _parse_start_date(time_str: str) -> datetime:
     return start_time
 
 
-def _get_events_ids(links: List[str]) -> Tuple[List[str], List[str]]:
-    """Parses URL links to get events IDs
+def get_raw_events(links: List[ResultSet]) -> Dict[str, Any]:
+    """Gets raw events from the list of links tags
 
     Parameters
     ----------
-    links : List[str]
-        List of URL links to parse
+    links : List[ResultSet]
+        Links tags
 
     Returns
     -------
-    Tuple[List[str], List[str]]
-        Event IDs and its URL links
+    Dict[str, Any]
+        Raw events
+
+    Raises
+    ------
+    ParserError
+        When the tag text is None
+    ParserError
+        When no expected content was in at least one link tag
+    """
+    events = {}
+    for tag in links:
+        extracted = False
+        key = tag['href']
+        attrs = tag.contents[1].attrs
+        raw_text = tag.text
+        if raw_text is None:
+            raise ParserError(f'No text in the tag for {key}')
+
+        if key not in events:
+            events[key] = {
+                'datetime': None,
+                'lines': None,
+                'text': None,
+                'id': _get_event_id(key),
+            }
+        if attrs.get('class') == ['date']:
+            events[key]['datetime'] = raw_text
+            extracted = True
+        elif attrs.get('alt') is not None:
+            events[key]['lines'] = raw_text
+            extracted = True
+        elif attrs == {}:
+            events[key]['text'] = raw_text
+            extracted = True
+        if not extracted:
+            raise ParserError(f'Failed to get raw events at parsing {key}')
+    return events
+
+
+def _get_event_id(link: str) -> str:
+    """Parses URL link to get event's ID
+
+    Parameters
+    ----------
+    link : str
+        ahref link of the event
+
+    Returns
+    -------
+    str
+        Event ID
+
+    Raises
+    ------
+    ParserError
+        When event's ID could not be extracted
     """
     pattern = r'id=[\d]+-[\d]+'
-    links_list = [l['href'] for l in links]
-    ids = []
-    urls = []
-    for link in links_list:
-        searched = re.search(pattern, link)
-        assert searched is not None
-        idx = searched.group()[3:]  # strip `id=` string
-        if idx not in ids:
-            ids.append(idx)
-            urls.append(link)
-    return ids, urls
+    searched = re.search(pattern, link)
+    if searched is None:
+        raise ParserError(f'ID not present in link {link}')
+    idx = searched.group()[3:]  # strip `id=` string
+    return idx
 
 
-def find_events(html_contents: bytes) -> RawContainer:
+def find_events(html_contents: bytes) -> Dict[str, Any]:
     """Finds all the events in the HTML contents and parses them.
 
     Parameters
@@ -168,17 +191,9 @@ def find_events(html_contents: bytes) -> RawContainer:
 
     Returns
     -------
-    RawContainer
-        Container of parsed data
-
-    Raises
-    ------
-    ValueError
-        If the found elements are not of the same length.
+    Dict[str, Any]
+        Dictionary of raw events data
     """
-    dates_search = Search('div', 'date')
-    lines_search = Search('span', 'lines-single')
-    msg_search = Search('td', 'lines-title clickable')
     exceptions_search = Search('table', 'vyluka vyluka-expand vyluky-vymi')
     links_search = Search('a', href=True)
 
@@ -186,27 +201,9 @@ def find_events(html_contents: bytes) -> RawContainer:
 
     results = soup.find(id="st-container")
     exception_elements = exceptions_search.find(results)
-
-    dates = dates_search.find_all(exception_elements)
-    lines = lines_search.find_all(exception_elements)
-    messages = msg_search.find_all(exception_elements)
     links = links_search.find_all(exception_elements)
-    event_ids, urls = _get_events_ids(links)
-
-    # check all list are of the same length
-    base_length = len(dates)
-    for list_ in [lines, messages, event_ids, urls]:
-        if len(list_) != base_length:
-            _LOGGER.error('The elements are not of the same length')
-            raise ParserError(f'{len(list_)} != {base_length}')
-
-    return RawContainer(
-        dates=dates,
-        lines=lines,
-        messages=messages,
-        event_ids=event_ids,
-        urls=urls,
-    )
+    raw_events = get_raw_events(links)
+    return raw_events
 
 
 def fetch_events(
@@ -228,33 +225,26 @@ def fetch_events(
     """
     now = utcnow_localized()
 
-    raw_data = find_events(html_content)
-    dates = raw_data.dates
-    lines = raw_data.lines
-    messages = raw_data.messages
-    event_ids = raw_data.event_ids
-    urls = raw_data.urls
+    raw_events = find_events(html_content)
 
-    for date, line, message, ev_id, url in zip(
-        dates, lines, messages, event_ids, urls
-    ):
-        date = date.text.replace('\xa0', ' ')
+    for link, event in raw_events.items():
+        date = event['datetime'].replace('\xa0', ' ')
         start_date, end_date = _parse_time(date)
         active = end_date is None or end_date > now
 
         if active_only and not active:
             continue
 
-        line = line.text.strip().split(', ')
-        msg = message.text.strip()
+        line = event['lines'].strip().split(', ')
+        msg = event['text'].strip()
         yield TrafficEvent(
             start_date=start_date,
             end_date=end_date,
             active=active,
             lines=line,
             message=msg,
-            event_id=ev_id,
-            url=url,
+            event_id=event['id'],
+            url=link,
         )
 
 

@@ -2,8 +2,6 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-import pytest
-
 from dppnotifier.app.parser import fetch_events
 
 
@@ -39,7 +37,7 @@ def get_events(html_path):
 def test_parser_on_data():
     data_dir_path = Path(__file__).parent / 'data'
     files = list(data_dir_path.glob('*.html'))
-    assert len(files) == 20
+    assert len(files) == 21
     for file in files:
         meta_file = file.with_suffix('.json')
         reference = get_reference_events(meta_file)
