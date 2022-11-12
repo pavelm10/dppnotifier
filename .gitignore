@@ -5,3 +5,4 @@
 **/*.ipynb
 *_token.json
 *.zip
+**/.idea
