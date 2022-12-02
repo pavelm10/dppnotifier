@@ -1,9 +1,12 @@
 from copy import deepcopy
 
 import pytest
+from requests.exceptions import ReadTimeout
 
 from dppnotifier.app import app
+from dppnotifier.app.credentials import TelegramCredential
 from dppnotifier.app.dpptypes import TrafficEvent
+from dppnotifier.app.notifier import AlertTelegramNotifier
 from tests.common import DynamoSubscribersDbMock, DynamoTrafficEventsDbMock
 
 EVENT_A = TrafficEvent(
@@ -55,7 +58,9 @@ def test_handle_active_event_failed_scrape(mocker):
     mocker.patch.object(app, 'scrape', autospec=True, return_value=None)
     update_db_mock = mocker.patch.object(app, 'update_db', autospec=True)
     is_active_mock = mocker.patch.object(app, 'is_event_active', autospec=True)
-    out = app.handle_active_event(EVENT_A, None)
+    out = app.handle_active_event(
+        EVENT_A, mocker.Mock(), AlertTelegramNotifier()
+    )
     assert out is None
     update_db_mock.assert_not_called()
     is_active_mock.assert_not_called()
@@ -70,7 +75,9 @@ def test_handle_active_event(mocker, active):
     mocker.patch.object(
         app, 'is_event_active', autospec=True, return_value=active
     )
-    out = app.handle_active_event(deepcopy(EVENT_A), None)
+    out = app.handle_active_event(
+        deepcopy(EVENT_A), mocker.Mock(), AlertTelegramNotifier()
+    )
     assert out is None
     if not active:
         update_db_mock.assert_called()
@@ -80,7 +87,7 @@ def test_handle_active_event(mocker, active):
 
 def test_build_notifiers():
     sub_db_mock = DynamoSubscribersDbMock('table')
-    out = app.build_notifiers(sub_db_mock)
+    out = app.build_notifiers(sub_db_mock, AlertTelegramNotifier())
     subs_ids = []
     for notsub in out:
         subs = notsub.subscribers
@@ -97,16 +104,6 @@ def test_run_job_no_db_active(mocker, job_mock):
 
     assert update_db_mock.call_count == 2
     notify_mock.assert_called_with([], [EVENT_A, EVENT_B])
-
-
-def test_run_job_one_db_active(job_mock):
-    events_db_mock, update_db_mock, notify_mock, _ = job_mock
-    events_db_mock.return_value = DynamoTrafficEventsDbMock([EVENT_A], 'table')
-
-    app.run_job(None, None)
-
-    assert update_db_mock.call_count == 1
-    notify_mock.assert_called_with([], [EVENT_B])
 
 
 def test_run_job_one_db_active(job_mock):
@@ -149,3 +146,55 @@ def test_run_job_no_event(mocker, job_mock):
 
     assert handle_active_mock.call_count == 2
     notify_mock.assert_not_called()
+
+
+def test_build_notifiers_alerting(mocker):
+    sub_db = mocker.Mock()
+    sub_db.get_subscribers = mocker.Mock(return_value=[])
+
+    alert_notifier = AlertTelegramNotifier(
+        alert_subscriber_uri=42,
+        credential=TelegramCredential(token='token', name='name'),
+    )
+    alert_notifier.send_alert = mocker.Mock()
+    app.build_notifiers(sub_db, alert_notifier)
+    alert_notifier.send_alert.assert_called_with(
+        alert='No notifier built - no notification will be send'
+    )
+
+
+def test_scrape_alerting(mocker):
+    mocker.patch(
+        'dppnotifier.app.app.requests.get',
+        side_effect=ReadTimeout('Request timeout'),
+    )
+    alert_notifier = AlertTelegramNotifier(
+        alert_subscriber_uri=42,
+        credential=TelegramCredential(token='token', name='name'),
+    )
+    alert_notifier.send_alert = mocker.Mock()
+    app.scrape('dummy-url', alert_notifier)
+    alert_notifier.send_alert.assert_called_with(alert='Request timeout')
+
+
+def test_handle_active_event_alerting(mocker):
+    mocker.patch.object(
+        app, 'scrape', autospec=True, return_value=b'some data'
+    )
+    mocker.patch.object(
+        app, 'update_db', autospec=True, side_effect=app.FailedUpsertEvent
+    )
+    mocker.patch.object(
+        app, 'is_event_active', autospec=True, return_value=False
+    )
+    alert_notifier = AlertTelegramNotifier(
+        alert_subscriber_uri=42,
+        credential=TelegramCredential(token='token', name='name'),
+    )
+
+    alert_notifier.send_alert = mocker.Mock()
+
+    app.handle_active_event(deepcopy(EVENT_A), mocker.Mock(), alert_notifier)
+
+    msg = f'Failed to deactivate finished event {EVENT_A.event_id}'
+    alert_notifier.send_alert.assert_called_with(alert=msg)
