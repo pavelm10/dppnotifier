@@ -137,7 +137,8 @@ class WhatsAppNotifier(Notifier):
         return self
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
-        self._session.close()
+        if self._session is not None:
+            self._session.close()
 
     @property
     def enabled(self) -> bool:
@@ -145,6 +146,9 @@ class WhatsAppNotifier(Notifier):
 
     @property
     def _headers(self) -> Dict[str, str]:
+        if self._credential is None:
+            raise ValueError('Credential not defined')
+
         return {
             "Authorization": f"Bearer {self._credential.token}",
             'Content-Type': 'application/json',
@@ -152,6 +156,8 @@ class WhatsAppNotifier(Notifier):
 
     @property
     def _api_url(self) -> str:
+        if self._credential is None:
+            raise ValueError('Credential not defined')
         return f'https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages'
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
@@ -176,7 +182,15 @@ class WhatsAppNotifier(Notifier):
             The event to be sent
         subscriber : Subscriber
             The subscriber to be notified
+
+        Raises
+        ------
+        NotifierNotInitialized
+            When a method of notifier is not called under its context manager
         """
+        if self._session is None:
+            raise NotifierNotInitialized()
+
         data = self._build_message(event=event, subscriber=subscriber)
         response = self._session.post(
             self._api_url,
