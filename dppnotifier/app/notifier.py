@@ -2,9 +2,8 @@ import json
 import logging
 import os
 from abc import ABC, abstractmethod
-from multiprocessing import Event
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, Union
 
 import boto3
 import requests
@@ -34,7 +33,7 @@ class Notifier(ABC):
 
     @property
     def enabled(self) -> bool:
-        pass
+        return False
 
 
 class AwsSesNotifier(Notifier):
@@ -138,7 +137,8 @@ class WhatsAppNotifier(Notifier):
         return self
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
-        self._session.close()
+        if self._session is not None:
+            self._session.close()
 
     @property
     def enabled(self) -> bool:
@@ -146,6 +146,9 @@ class WhatsAppNotifier(Notifier):
 
     @property
     def _headers(self) -> Dict[str, str]:
+        if self._credential is None:
+            raise ValueError('Credential not defined')
+
         return {
             "Authorization": f"Bearer {self._credential.token}",
             'Content-Type': 'application/json',
@@ -153,6 +156,8 @@ class WhatsAppNotifier(Notifier):
 
     @property
     def _api_url(self) -> str:
+        if self._credential is None:
+            raise ValueError('Credential not defined')
         return f'https://graph.facebook.com/{self.API_VERSION}/{self._credential.phone_id}/messages'
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
@@ -168,7 +173,7 @@ class WhatsAppNotifier(Notifier):
         for sub in subscribers:
             self.send_message(event, sub)
 
-    def send_message(self, event: Event, subscriber: Subscriber):
+    def send_message(self, event: TrafficEvent, subscriber: Subscriber):
         """Sends the WhatsApp message about the event.
 
         Parameters
@@ -177,7 +182,15 @@ class WhatsAppNotifier(Notifier):
             The event to be sent
         subscriber : Subscriber
             The subscriber to be notified
+
+        Raises
+        ------
+        NotifierNotInitialized
+            When a method of notifier is not called under its context manager
         """
+        if self._session is None:
+            raise NotifierNotInitialized()
+
         data = self._build_message(event=event, subscriber=subscriber)
         response = self._session.post(
             self._api_url,
@@ -244,7 +257,7 @@ class WhatsAppNotifier(Notifier):
 
 
 class TelegramNotifier(Notifier):
-    """Telegram notifier that sends telegram messages about the events."""
+    """Telegram notifier that sends telegram messages."""
 
     NOTIFIER_TYPE = Notifiers.TELEGRAM
 
@@ -266,17 +279,55 @@ class TelegramNotifier(Notifier):
         return self
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
-        self._session.close()
+        if self._session is not None:
+            self._session.close()
 
     @property
     def enabled(self) -> bool:
         return self._enabled
 
     @property
-    def _api_url(self) -> str:
-        return (
-            f'https://api.telegram.org/bot{self._credential.token}/sendMessage'
-        )
+    def _api_url(self) -> Optional[str]:
+        if self._credential is not None:
+            return f'https://api.telegram.org/bot{self._credential.token}/sendMessage'
+        return None
+
+    def _send_message(
+        self, message: str, uri: Union[str, int]
+    ) -> requests.Response:
+        """Low level method for sending Telegram message.
+
+        Parameters
+        ----------
+        message : str
+            Message to send
+        uri : Union[str, int]
+            Telegram chat_id
+
+        Returns
+        -------
+        requests.Response
+            Server response
+
+        Raises
+        ------
+        NotifierNotInitialized
+            When a method of notifier is not called under its context manager
+        TelegramError
+            When Telegram API returns error code larger or equal 400
+        """
+        if self._session is None:
+            raise NotifierNotInitialized()
+
+        url = f"{self._api_url}?chat_id={int(uri)}&text={message}"
+        res = self._session.get(url, timeout=10)
+        if res.status_code >= 200:
+            raise TelegramError(f'{res.status_code} - {res.text}')
+        return res
+
+
+class EventTelegramNotifier(TelegramNotifier):
+    """Telegram notifier that sends telegram messages about the events."""
 
     def send_message(self, event: TrafficEvent, subscriber: Subscriber):
         """Sends the Telegram message about the event.
@@ -289,12 +340,13 @@ class TelegramNotifier(Notifier):
             The subscriber to be notified
         """
         message = event.to_message()
-        url = f"{self._api_url}?chat_id={int(subscriber.uri)}&text={message}"
-        res = self._session.get(url, timeout=10)
-        if res.status_code != 200:
-            _LOGGER.error(res.text)
+        try:
+            self._send_message(message=message, uri=subscriber.uri)
+        except TelegramError as exc:
+            _LOGGER.error(exc.args[0])
             return
-        _LOGGER.info('Telegram message sent')
+        else:
+            _LOGGER.info('Telegram message sent')
 
     def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
         """For each subscriber sends the WhatsApp message about the event.
@@ -308,3 +360,46 @@ class TelegramNotifier(Notifier):
         """
         for sub in subscribers:
             self.send_message(event, sub)
+
+
+class AlertTelegramNotifier(TelegramNotifier):
+    """Telegram notifier that sends telegram messages about the processing
+    alerts."""
+
+    def __init__(self, alert_subscriber_uri: Optional[int] = None, **kwargs):
+        super().__init__(**kwargs)
+        self.alert_subscriber_uri = alert_subscriber_uri
+
+    @property
+    def enabled(self) -> bool:
+        return super().enabled and self.alert_subscriber_uri is not None
+
+    def send_alert(self, alert: str):
+        """Sends the Telegram message about the alert.
+
+        Parameters
+        ----------
+        alert : str
+            The alert to be sent
+        """
+        if not self.enabled:
+            _LOGGER.info('Alert notifier not enabled')
+            return
+        try:
+            self._send_message(message=alert, uri=self.alert_subscriber_uri)
+        except TelegramError as exc:
+            _LOGGER.error(exc.args[0])
+            return
+        else:
+            _LOGGER.warning('Telegram alert message sent')
+
+    def notify(self, event: TrafficEvent, subscribers: Tuple[Subscriber]):
+        raise NotImplementedError()
+
+
+class NotifierNotInitialized(Exception):
+    """When a method of notifier is not called under its context manager"""
+
+
+class TelegramError(Exception):
+    """When Telegram API returns error code larger or equal 400"""

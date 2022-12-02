@@ -10,8 +10,9 @@ from dppnotifier.app.dpptypes import NotifierSubscribers, Subscriber
 from dppnotifier.app.historizer import store_html
 from dppnotifier.app.log import init_logger
 from dppnotifier.app.notifier import (
+    AlertTelegramNotifier,
     AwsSesNotifier,
-    TelegramNotifier,
+    EventTelegramNotifier,
     WhatsAppNotifier,
 )
 from dppnotifier.app.parser import (
@@ -27,8 +28,15 @@ _LOGGER = logging.getLogger(__name__)
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 
 
-def scrape(url: str) -> Optional[bytes]:
+def scrape(url: str, alert_notifier: AlertTelegramNotifier) -> Optional[bytes]:
     """Scraps the webpage url for the HTML content.
+
+    Parameters
+    ----------
+    url : str
+        URL to scrape
+    alert_notifier : AlertTelegramNotifier
+        Alerting notifier
 
     Returns
     -------
@@ -39,12 +47,13 @@ def scrape(url: str) -> Optional[bytes]:
         page = requests.get(url, timeout=30)
     except ReadTimeout as exc:
         _LOGGER.error(exc.args[0])
+        alert_notifier.send_alert(alert=exc.args[0])
         return None
     return page.content
 
 
 def build_notifiers(
-    subscribers_db: DynamoSubscribersDb,
+    subscribers_db: DynamoSubscribersDb, alert_notifier: AlertTelegramNotifier
 ) -> List[NotifierSubscribers]:
     """Based on the subscribers DB initializes particular notifiers and
     builds mapping between notifier and its subscribers.
@@ -53,13 +62,19 @@ def build_notifiers(
     ----------
     subscribers_db : DynamoSubscribersDb
         Subscribers DB client
+    alert_notifier : AlertTelegramNotifier
+        Alerting notifier
 
     Returns
     -------
     List[NotifierSubscribers]
         List of NotifierSubscribers instances
     """
-    possible_notifiers = (AwsSesNotifier, TelegramNotifier, WhatsAppNotifier)
+    possible_notifiers = (
+        AwsSesNotifier,
+        EventTelegramNotifier,
+        WhatsAppNotifier,
+    )
     notifiers = []
     for notifier_class in possible_notifiers:
         subscribers = subscribers_db.get_subscribers(
@@ -77,8 +92,12 @@ def build_notifiers(
                 _LOGGER.info(
                     '%s notifier registered', notifier.NOTIFIER_TYPE.value
                 )
-
-    _LOGGER.info('Notifiers and subscribers set up')
+    if len(notifiers) == 0:
+        msg = 'No notifier built - no notification will be send'
+        _LOGGER.warning(msg)
+        alert_notifier.send_alert(alert=msg)
+    else:
+        _LOGGER.info('Notifiers and subscribers set up')
     return notifiers
 
 
@@ -166,9 +185,17 @@ def run_job(
     """
     to_notify = []
     raw_data_bucket_name = os.environ['AWS_S3_RAW_DATA_BUCKET']
+    alert_subscriber_uri = os.environ.get('ALERT_SUBSCRIBER_URI')
+    if alert_subscriber_uri is not None:
+        alert_subscriber_uri = int(alert_subscriber_uri)
+
     enable_debug_input_storing = 'HISTORIZE' in os.environ
     save_html_content = False
     init_logger()
+
+    alert_notifier = AlertTelegramNotifier(
+        alert_subscriber_uri=alert_subscriber_uri
+    )
 
     events_db = DynamoTrafficEventsDb(
         table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
@@ -177,7 +204,7 @@ def run_job(
     db_active_events = events_db.get_active_events()
     current_events = set()
 
-    html_content = scrape(CURRENT_URL)
+    html_content = scrape(url=CURRENT_URL, alert_notifier=alert_notifier)
     if html_content is None:
         _LOGGER.error('Failed to scrape the traffic events - terminating')
         return
@@ -206,8 +233,9 @@ def run_job(
                     if event.active and db_event is None:
                         to_notify.append(event)
                         _LOGGER.info(event.to_log_message())
-    except ParserError:
+    except ParserError as exc:
         store_html(html_content, raw_data_bucket_name)
+        alert_notifier.send_alert(exc.args[0])
         raise
 
     if save_html_content and enable_debug_input_storing:
@@ -216,7 +244,11 @@ def run_job(
 
     db_active = set(db_active_events.keys()) - current_events
     db_active_events = {eid: db_active_events[eid] for eid in db_active}
-    handle_active_db_events(db_active_events, events_db)
+    handle_active_db_events(
+        events=db_active_events,
+        events_db=events_db,
+        alert_notifier=alert_notifier,
+    )
 
     if len(to_notify) == 0:
         _LOGGER.info('No new events - terminating')
@@ -225,14 +257,19 @@ def run_job(
     subs_db = DynamoSubscribersDb(
         table_name=os.getenv('SUBSCRIBERS_TABLE', 'dpp-notifier-recepients')
     )
-    notifiers = build_notifiers(subs_db)
-    notify(notifiers, to_notify)
 
+    notifiers = build_notifiers(
+        subscribers_db=subs_db, alert_notifier=alert_notifier
+    )
+
+    notify(notifiers, to_notify)
     _LOGGER.info('Job finished')
 
 
 def handle_active_db_events(
-    events: Dict[str, TrafficEvent], events_db: DynamoTrafficEventsDb
+    events: Dict[str, TrafficEvent],
+    events_db: DynamoTrafficEventsDb,
+    alert_notifier: AlertTelegramNotifier,
 ) -> None:
     """For each active event in the DB downloads the event HTML content
     and checks if the event is still active. If it is not active, sets it to
@@ -244,13 +281,19 @@ def handle_active_db_events(
         Mapping of event ID and the event instance
     events_db : DynamoTrafficEventsDb
         Events DB client
+    alert_notifier : AlertTelegramNotifier
+        Alerting notifier
     """
     for event in events.values():
-        handle_active_event(event, events_db)
+        handle_active_event(
+            event=event, events_db=events_db, alert_notifier=alert_notifier
+        )
 
 
 def handle_active_event(
-    event: TrafficEvent, events_db: DynamoTrafficEventsDb
+    event: TrafficEvent,
+    events_db: DynamoTrafficEventsDb,
+    alert_notifier: AlertTelegramNotifier,
 ) -> None:
     """For the active event downloads the event HTML content and checks if the
     event is still active. If it is not active, sets it to inactive state in
@@ -262,8 +305,10 @@ def handle_active_event(
         Mapping of event ID and the event instance
     events_db : DynamoTrafficEventsDb
         Events DB client
+    alert_notifier : AlertTelegramNotifier
+        Alerting notifier
     """
-    html_content = scrape(event.url)
+    html_content = scrape(url=event.url, alert_notifier=alert_notifier)
     if html_content is None:
         _LOGGER.error('Failed to scrape event web page - skipping')
         return
@@ -276,9 +321,9 @@ def handle_active_event(
             update_db(event=event, events_db=events_db)
             _LOGGER.info('Deactivated finished event %s', event.event_id)
         except FailedUpsertEvent:
-            _LOGGER.error(
-                'Failed to deactivate finished event %s', event.event_id
-            )
+            msg = f'Failed to deactivate finished event {event.event_id}'
+            _LOGGER.error(msg)
+            alert_notifier.send_alert(alert=msg)
 
 
 class FailedUpsertEvent(Exception):
