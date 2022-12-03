@@ -193,77 +193,81 @@ def run_job(
     save_html_content = False
     init_logger()
 
-    alert_notifier = AlertTelegramNotifier(
+    alerter_notifier = AlertTelegramNotifier(
         alert_subscriber_uri=alert_subscriber_uri
     )
+    with alerter_notifier as alerter:
 
-    events_db = DynamoTrafficEventsDb(
-        table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
-    )
+        events_db = DynamoTrafficEventsDb(
+            table_name=os.getenv('EVENTS_TABLE', 'dpp-notifier-events')
+        )
 
-    db_active_events = events_db.get_active_events()
-    current_events = set()
+        db_active_events = events_db.get_active_events()
+        current_events = set()
 
-    html_content = scrape(url=CURRENT_URL, alert_notifier=alert_notifier)
-    if html_content is None:
-        _LOGGER.error('Failed to scrape the traffic events - terminating')
-        return
+        html_content = scrape(url=CURRENT_URL, alert_notifier=alerter)
+        if html_content is None:
+            _LOGGER.error('Failed to scrape the traffic events - terminating')
+            return
 
-    _LOGGER.info('Fetching current events')
-    try:
-        for event in fetch_events(html_content):
-            db_event = db_active_events.get(event.event_id)
-            current_events.add(event.event_id)
+        _LOGGER.info('Fetching current events')
+        try:
+            for event in fetch_events(html_content):
+                db_event = db_active_events.get(event.event_id)
+                current_events.add(event.event_id)
 
-            if db_event is not None and db_event.start_date is not None:
-                # keep the original start date
-                event.start_date = db_event.start_date
+                if db_event is not None and db_event.start_date is not None:
+                    # keep the original start date
+                    event.start_date = db_event.start_date
 
-            if event != db_event:
-                save_html_content = True
-                try:
-                    update_db(event, events_db)
-                except FailedUpsertEvent:
-                    _LOGGER.error(
-                        'Failed to upsert the event %s', event.event_id
-                    )
-                    continue
-                else:
-                    _LOGGER.info('Upserted event %s', event.event_id)
-                    if event.active and db_event is None:
-                        to_notify.append(event)
-                        _LOGGER.info(event.to_log_message())
-    except ParserError as exc:
-        store_html(html_content, raw_data_bucket_name)
-        alert_notifier.send_alert(exc.args[0])
-        raise
+                if event != db_event:
+                    save_html_content = True
+                    try:
+                        update_db(event, events_db)
+                    except FailedUpsertEvent:
+                        _LOGGER.error(
+                            'Failed to upsert the event %s', event.event_id
+                        )
+                        continue
+                    else:
+                        _LOGGER.info('Upserted event %s', event.event_id)
+                        if event.active and db_event is None:
+                            to_notify.append(event)
+                            _LOGGER.info(event.to_log_message())
+        except ParserError as exc:
+            _LOGGER.error(exc.args[0])
+            store_html(html_content, raw_data_bucket_name)
+            alerter.send_alert(exc.args[0])
+            raise
 
-    if save_html_content and enable_debug_input_storing:
-        # Temporarily store HTML to S3 bucket to collect some test data
-        store_html(html_content, raw_data_bucket_name)
+        if save_html_content and enable_debug_input_storing:
+            # Temporarily store HTML to S3 bucket to collect some test data
+            store_html(html_content, raw_data_bucket_name)
 
-    db_active = set(db_active_events.keys()) - current_events
-    db_active_events = {eid: db_active_events[eid] for eid in db_active}
-    handle_active_db_events(
-        events=db_active_events,
-        events_db=events_db,
-        alert_notifier=alert_notifier,
-    )
+        db_active = set(db_active_events.keys()) - current_events
+        db_active_events = {eid: db_active_events[eid] for eid in db_active}
+        handle_active_db_events(
+            events=db_active_events,
+            events_db=events_db,
+            alert_notifier=alerter,
+        )
 
-    if len(to_notify) == 0:
-        _LOGGER.info('No new events - terminating')
-        return
+        if len(to_notify) == 0:
+            _LOGGER.info('No new events - terminating')
+            return
 
-    subs_db = DynamoSubscribersDb(
-        table_name=os.getenv('SUBSCRIBERS_TABLE', 'dpp-notifier-recepients')
-    )
+        subs_db = DynamoSubscribersDb(
+            table_name=os.getenv(
+                'SUBSCRIBERS_TABLE', 'dpp-notifier-recepients'
+            )
+        )
 
-    notifiers = build_notifiers(
-        subscribers_db=subs_db, alert_notifier=alert_notifier
-    )
+        notifiers = build_notifiers(
+            subscribers_db=subs_db, alert_notifier=alerter
+        )
 
-    notify(notifiers, to_notify)
-    _LOGGER.info('Job finished')
+        notify(notifiers, to_notify)
+        _LOGGER.info('Job finished')
 
 
 def handle_active_db_events(
