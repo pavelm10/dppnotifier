@@ -144,12 +144,14 @@ def get_raw_events(links: List[ResultSet]) -> Dict[str, Any]:
         if attrs.get('class') == ['date']:
             events[key]['datetime'] = raw_text
             extracted = True
-        elif attrs.get('alt') is not None:
-            events[key]['lines'] = raw_text
-            extracted = True
         elif attrs == {}:
             events[key]['text'] = raw_text
             extracted = True
+        else:
+            lines_data = tag.find_all('span', {'class': ['lines-single']})
+            if lines_data:
+                events[key]['lines'] = raw_text
+                extracted = True
         if not extracted:
             raise ParserError(f'Failed to get raw events at parsing {key}')
     return events
