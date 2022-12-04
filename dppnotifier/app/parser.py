@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
-from bs4 import BeautifulSoup, ResultSet
+from bs4 import BeautifulSoup, ResultSet, Tag, element
 
 from dppnotifier.app.dpptypes import TrafficEvent
 from dppnotifier.app.utils import localize_datetime, utcnow_localized
@@ -127,9 +127,7 @@ def get_raw_events(links: List[ResultSet]) -> Dict[str, Any]:
     """
     events = {}
     for tag in links:
-        extracted = False
         key = tag['href']
-        attrs = tag.contents[1].attrs
         raw_text = tag.text
         if raw_text is None:
             raise ParserError(f'No text in the tag for {key}')
@@ -141,19 +139,22 @@ def get_raw_events(links: List[ResultSet]) -> Dict[str, Any]:
                 'text': None,
                 'id': _get_event_id(key),
             }
-        if attrs.get('class') == ['date']:
-            events[key]['datetime'] = raw_text
-            extracted = True
-        elif attrs == {}:
+
+        date_tag = tag.find('div', {'class': ['date']})
+        if date_tag:
+            events[key]['datetime'] = date_tag.text
+            continue
+
+        lines_tag = tag.find('span', {'class': ['lines-single']})
+        if lines_tag:
+            events[key]['lines'] = lines_tag.text
+            continue
+
+        if type(tag.contents[0]) == element.NavigableString:
             events[key]['text'] = raw_text
-            extracted = True
-        else:
-            lines_data = tag.find_all('span', {'class': ['lines-single']})
-            if lines_data:
-                events[key]['lines'] = raw_text
-                extracted = True
-        if not extracted:
-            raise ParserError(f'Failed to get raw events at parsing {key}')
+            continue
+
+        raise ParserError(f'Failed to get raw events at parsing {key}')
     return events
 
 
