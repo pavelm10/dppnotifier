@@ -1,3 +1,4 @@
+import time
 from copy import deepcopy
 
 import pytest
@@ -163,18 +164,46 @@ def test_build_notifiers_alerting(mocker):
     )
 
 
-def test_scrape_alerting(mocker):
-    mocker.patch(
-        'dppnotifier.app.app.requests.get',
-        side_effect=ReadTimeout('Request timeout'),
+@pytest.mark.parametrize(
+    'exception_cls, exception_msg, raises',
+    (
+        (ReadTimeout, 'Request timeout', False),
+        (IOError, 'Some other error', True),
+    ),
+)
+def test_scrape_alerting_with_exceptions(
+    mocker, exception_cls, exception_msg, raises
+):
+    mocker.patch.object(
+        app,
+        '_get_request',
+        side_effect=exception_cls(exception_msg),
     )
     alert_notifier = AlertTelegramNotifier(
         alert_subscriber_uri=42,
         credential=TelegramCredential(token='token', name='name'),
     )
     alert_notifier.send_alert = mocker.Mock()
-    app.scrape('dummy-url', alert_notifier)
-    alert_notifier.send_alert.assert_called_with(alert='Request timeout')
+    if raises:
+        with pytest.raises(exception_cls):
+            app.scrape('dummy-url', alert_notifier)
+            alert_notifier.send_alert.assert_called_with(alert=exception_msg)
+    else:
+        app.scrape('dummy-url', alert_notifier)
+        alert_notifier.send_alert.assert_called_with(alert=exception_msg)
+
+
+def test_get_request_retrying(mocker):
+    mocker.patch(
+        'dppnotifier.app.app.requests.get',
+        side_effect=[ReadTimeout('Request timeout'), 'dummy_response'],
+    )
+    start_time = time.perf_counter()
+    out = app._get_request('some-url')
+    duration = time.perf_counter() - start_time
+    dt = abs(duration - 5)
+    assert dt < 0.2  # tolerance
+    assert out == 'dummy_response'
 
 
 def test_handle_active_event_alerting(mocker):
