@@ -3,6 +3,7 @@ import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
+import tenacity
 from requests.exceptions import ReadTimeout
 
 from dppnotifier.app.db import DynamoSubscribersDb, DynamoTrafficEventsDb
@@ -28,6 +29,27 @@ _LOGGER = logging.getLogger(__name__)
 CURRENT_URL = 'https://pid.cz/mimoradnosti/'
 
 
+@tenacity.retry(
+    retry=tenacity.retry_if_exception_type(ReadTimeout),
+    stop=tenacity.stop_after_attempt(5),
+    wait=tenacity.wait.wait_exponential(multiplier=5),
+)
+def _get_request(url: str) -> requests.Response:
+    """Wraps requests.get in order to implement retrying on timeout
+
+    Parameters
+    ----------
+    url : str
+        URL to call the request to
+
+    Returns
+    -------
+    requests.Response
+        Server response
+    """
+    return requests.get(url, timeout=5)
+
+
 def scrape(url: str, alert_notifier: AlertTelegramNotifier) -> Optional[bytes]:
     """Scraps the webpage url for the HTML content.
 
@@ -43,12 +65,19 @@ def scrape(url: str, alert_notifier: AlertTelegramNotifier) -> Optional[bytes]:
     Optional[bytes]
         HTML content, if times out returns None
     """
+    last_exception = None
     try:
-        page = requests.get(url, timeout=30)
+        page = _get_request(url)
     except ReadTimeout as exc:
-        _LOGGER.error(exc.args[0])
-        alert_notifier.send_alert(alert=exc.args[0])
+        last_exception = exc
         return None
+    except Exception as exc:
+        last_exception = exc
+        raise
+    finally:
+        if last_exception is not None:
+            _LOGGER.error(last_exception.args[0])
+            alert_notifier.send_alert(alert=last_exception.args[0])
     return page.content
 
 
