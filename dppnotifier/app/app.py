@@ -16,12 +16,7 @@ from dppnotifier.app.notifier import (
     EventTelegramNotifier,
     WhatsAppNotifier,
 )
-from dppnotifier.app.parser import (
-    ParserError,
-    TrafficEvent,
-    fetch_events,
-    is_event_active,
-)
+from dppnotifier.app.parser import TrafficEvent, fetch_events, is_event_active
 from dppnotifier.app.utils import utcnow_localized
 
 _LOGGER = logging.getLogger(__name__)
@@ -263,7 +258,7 @@ def run_job(
                         if event.active and db_event is None:
                             to_notify.append(event)
                             _LOGGER.info(event.to_log_message())
-        except ParserError as exc:
+        except Exception as exc:
             _LOGGER.error(exc.args[0])
             store_html(html_content, raw_data_bucket_name)
             alerter.send_alert(exc.args[0])
