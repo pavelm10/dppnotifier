@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -13,6 +13,8 @@ def get_reference_events(file_path):
     with file_path.open('r') as fo:
         data = json.load(fo)
         for event in data.values():
+            event['start_date'] = event['start_date'].split('+')[0]
+            event['end_date'] = event['end_date'].split('+')[0]
             del event['updated']
             del event['active']
         return data
@@ -25,13 +27,21 @@ def get_events(html_path):
         for event in fetch_events(fo):
             ev = event.to_entity()
             if ev['start_date'] != 'NULL':
-                start_date = datetime.fromisoformat(ev['start_date']).date()
+                sd = datetime.fromisoformat(ev['start_date'])
+                start_date = sd.date()
                 if start_date == today:
                     ev['start_date'] = 'today'
+                else:
+                    sd -= timedelta(days=365)
+                    ev['start_date'] = sd.isoformat().split('+')[0]
             if ev['end_date'] != 'NULL':
-                event_date = datetime.fromisoformat(ev['end_date']).date()
+                ed = datetime.fromisoformat(ev['end_date'])
+                event_date = ed.date()
                 if event_date == today:
                     ev['end_date'] = 'today'
+                else:
+                    ed -= timedelta(days=365)
+                    ev['end_date'] = ed.isoformat().split('+')[0]
             del ev['updated']
             del ev['active']
             events[event.event_id] = ev
