@@ -258,11 +258,12 @@ def run_job(
                         if event.active and db_event is None:
                             to_notify.append(event)
                             _LOGGER.info(event.to_log_message())
+        # pylint: disable=broad-except
         except Exception as exc:
             _LOGGER.error(exc.args[0])
             store_html(html_content, raw_data_bucket_name)
             alerter.send_alert(exc.args[0])
-            raise
+            return
 
         if save_html_content and enable_debug_input_storing:
             # Temporarily store HTML to S3 bucket to collect some test data

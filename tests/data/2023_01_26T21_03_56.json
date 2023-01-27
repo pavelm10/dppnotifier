@@ -1,0 +1,69 @@
+{
+    "19496-1":{
+       "lines":[
+          "C"
+       ],
+       "message":"KA\u010cEROV - H\u00c1JE (metro linka C, oba sm\u011bry) - Provoz zastaven",
+       "event_id":"19496-1",
+       "url":"https://pid.cz/mimoradnost/?id=19496-1",
+       "start_date":"today",
+       "end_date":"NULL"
+    },
+    "6769-4":{
+       "lines":[
+          "496"
+       ],
+       "message":"Blatn\u00e1,S\u00e1dlov - B\u0159eznice,\u017eel.st. - Zru\u0161en\u00ed zast\u00e1vky",
+       "event_id":"6769-4",
+       "url":"https://pid.cz/mimoradnost/?id=6769-4",
+       "start_date":"today",
+       "end_date":"NULL"
+    },
+    "19497-1":{
+       "lines":[
+          "113",
+          "134",
+          "135",
+          "136",
+          "170",
+          "189",
+          "215"
+       ],
+       "message":"nepravidelnost spoj\u016f v s\u00edti autobus\u016f DPP - Neodjet\u00ed spoje, Zpo\u017ed\u011bn\u00ed spoj\u016f",
+       "event_id":"19497-1",
+       "url":"https://pid.cz/mimoradnost/?id=19497-1",
+       "start_date":"today",
+       "end_date":"NULL"
+    },
+    "6770-4":{
+       "lines":[
+          "711"
+       ],
+       "message":"T\u0159eboc,D\u017eb\u00e1n - Rakovn\u00edk,\u017eel.zast.z\u00e1pad - Zpo\u017ed\u011bn\u00ed spoje",
+       "event_id":"6770-4",
+       "url":"https://pid.cz/mimoradnost/?id=6770-4",
+       "start_date":"today",
+       "end_date":"today"
+    },
+    "6768-4":{
+       "lines":[
+          "521"
+       ],
+       "message":"L\u00e1z,Doln\u00ed - L\u00e1z,Horn\u00ed - Zru\u0161en\u00ed zast\u00e1vky",
+       "event_id":"6768-4",
+       "url":"https://pid.cz/mimoradnost/?id=6768-4",
+       "start_date":"today",
+       "end_date":"NULL"
+    },
+    "6767-4":{
+       "lines":[
+          "517"
+       ],
+       "message":"H\u00e1je,oto\u010di\u0161t\u011b (PB) - Zru\u0161en\u00ed zast\u00e1vky",
+       "event_id":"6767-4",
+       "url":"https://pid.cz/mimoradnost/?id=6767-4",
+       "start_date":"today",
+       "end_date":"NULL"
+    }
+ }
+ 

@@ -15,8 +15,11 @@ def get_reference_events(file_path):
         for event in data.values():
             event['start_date'] = event['start_date'].split('+')[0]
             event['end_date'] = event['end_date'].split('+')[0]
-            del event['updated']
-            del event['active']
+            try:
+                del event['updated']
+                del event['active']
+            except KeyError:
+                pass
         return data
 
 
@@ -42,8 +45,11 @@ def get_events(html_path):
                 else:
                     ed -= timedelta(days=365)
                     ev['end_date'] = ed.isoformat().split('+')[0]
-            del ev['updated']
-            del ev['active']
+            try:
+                del ev['updated']
+                del ev['active']
+            except KeyError:
+                pass
             events[event.event_id] = ev
         return events
 
