@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="cs-CZ" prefix="og: http://ogp.me/ns#">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta charset="UTF-8" />
+		<title>Mimořádnosti v provozu | Pražská integrovaná doprava</title>
+		<meta property="og:title" content="Mimořádnosti v provozu | Pražská integrovaná doprava" />
+		<meta property="og:url" content="https://pid.cz/mimoradnosti/" />
+		<meta name="author" content="ROPID" />
+		<!--	<meta name="robots" content="all" />-->
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="PID, Pražská integrovaná doprava, ROPID, MHD, městská hromadná doprava, integrovaný dopravní systém, integrovaná doprava, organizátor, koordinátor, Praha, Střední Čechy, Středočeský kraj, metro, vlaky, železnice, tramvaje, autobusy, přívozy, lanovka, jízdné, tarif, jízdenky, jízdní doklady, tarifní pásma, předprodej jízdenek, mapy, schémata, preference, trvalé změny, výluky, mimořádnosti, doprava, vyhledání spojení, jízdní řády, JŘ, intervaly, linky, noční doprava, noční provoz, pražská doprava, zastávková tabla, tarifní zóny, příměsto, příměstské autobusy, příměstská doprava, zastávky, DP, dopravní podnik" />
+		<meta name="format-detection" content="telephone=no">
+<!--		<script type="text/javascript" src="http://fast.fonts.net/jsapi/11ed2e01-65b1-4317-b9db-7091d980cac7.js"></script>-->
+		<!--<link href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,300italic,400italic,700,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>-->
+		<!--<link href="//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i&amp;subset=latin-ext" rel="stylesheet" type="text/css">-->
+		<link rel="stylesheet" type="text/css" media="all" href="https://pid.cz/wp-content/themes/ropid/style.css" />
+		<link rel="stylesheet" type="text/css" media="all" href="https://pid.cz/wp-content/themes/ropid/css/font-awesome.css" />
+		<link rel="stylesheet" type="text/css" media="all" href="https://pid.cz/wp-content/themes/ropid/css/style.css" />
+		<link rel="stylesheet" type="text/css" media="print" href="https://pid.cz/wp-content/themes/ropid/css/print.css" />
+		<link href="https://pid.cz/wp-content/themes/ropid/css/font-awesome.css" rel="stylesheet" />
+		<link href="https://pid.cz/wp-content/themes/ropid/css/example.wink.css" rel="stylesheet" />
+		<link href="https://pid.cz/wp-content/themes/ropid/css/jquery-ui.min.css" rel="stylesheet" />
+		<link href="https://pid.cz/wp-content/themes/ropid/css/jquery-ui-timepicker-addon.css" rel="stylesheet" />
+		<link href="https://pid.cz/wp-content/themes/ropid/css/jquery.timepicker.css" rel="stylesheet" />
+		<link rel="apple-touch-icon" sizes="57x57" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="https://pid.cz/wp-content/themes/ropid/favicons/apple-touch-icon-180x180.png">
+		<link rel="icon" type="image/png" href="https://pid.cz/wp-content/themes/ropid/favicons/favicon-32x32.png" sizes="32x32">
+		<link rel="icon" type="image/png" href="https://pid.cz/wp-content/themes/ropid/favicons/favicon-194x194.png" sizes="194x194">
+		<link rel="icon" type="image/png" href="https://pid.cz/wp-content/themes/ropid/favicons/favicon-96x96.png" sizes="96x96">
+		<link rel="icon" type="image/png" href="https://pid.cz/wp-content/themes/ropid/favicons/android-chrome-192x192.png" sizes="192x192">
+		<link rel="icon" type="image/png" href="https://pid.cz/wp-content/themes/ropid/favicons/favicon-16x16.png" sizes="16x16">
+		<link rel="manifest" href="https://pid.cz/wp-content/themes/ropid/favicons/manifest.json">
+		<link rel="mask-icon" href="https://pid.cz/wp-content/themes/ropid/favicons/safari-pinned-tab.svg" color="#5bbad5">
+		<link rel="shortcut icon" href="https://pid.cz/wp-content/themes/ropid/favicons/favicon.ico">
+		<meta name="msapplication-TileColor" content="#004990">
+		<meta name="msapplication-TileImage" content="https://pid.cz/wp-content/themes/ropid/favicons/mstile-144x144.png">
+		<meta name="msapplication-config" content="https://pid.cz/wp-content/themes/ropid/favicons/browserconfig.xml">
+		<meta name="theme-color" content="#ed1d30">
+		<script src="https://pid.cz/wp-content/themes/ropid/js/lib/modernizr.custom.js"></script>
+		
+	<style type="text/css">
+		#fancybox-close{right:-15px;top:-15px}
+		div#fancybox-content{border-color:#FFFFFF}
+		div#fancybox-title{background-color:#FFFFFF}
+		div#fancybox-outer{background-color:#FFFFFF}
+		div#fancybox-title-inside{color:#333333}
+	</style>
+
+	<link rel="alternate" hreflang="cs-cz" href="https://pid.cz/mimoradnosti/" />
+<link rel="alternate" hreflang="en-us" href="https://pid.cz/en/service-disruptions/" />
+		<script type="text/javascript">
+		var ajaxurl = 'https://pid.cz/wp-admin/admin-ajax.php';
+		</script>
+		
+<!-- This site is optimized with the Yoast SEO plugin v5.7.1 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="description" content="Operativní mimořádnosti v provozu na linkách PID. Nehody, zpoždění, technické problémy. Aktualizované informace o dopravní situaci z dispečinku."/>
+<link rel="canonical" href="https://pid.cz/mimoradnosti/" />
+<meta property="og:locale" content="cs_CZ" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Mimořádnosti v provozu | Pražská integrovaná doprava" />
+<meta property="og:description" content="Operativní mimořádnosti v provozu na linkách PID. Nehody, zpoždění, technické problémy. Aktualizované informace o dopravní situaci z dispečinku." />
+<meta property="og:url" content="https://pid.cz/mimoradnosti/" />
+<meta property="og:site_name" content="Pražská integrovaná doprava" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="Operativní mimořádnosti v provozu na linkách PID. Nehody, zpoždění, technické problémy. Aktualizované informace o dopravní situaci z dispečinku." />
+<meta name="twitter:title" content="Mimořádnosti v provozu | Pražská integrovaná doprava" />
+<script type='application/ld+json'>{"@context":"http:\/\/schema.org","@type":"WebSite","@id":"#website","url":"https:\/\/pid.cz\/","name":"Pra\u017esk\u00e1 integrovan\u00e1 doprava","potentialAction":{"@type":"SearchAction","target":"https:\/\/pid.cz\/?s={search_term_string}","query-input":"required name=search_term_string"}}</script>
+<!-- / Yoast SEO plugin. -->
+
+<link rel='dns-prefetch' href='//s.w.org' />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.3\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.3\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/pid.cz\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.8.21"}};
+			!function(t,a,e){var r,i,n,o=a.createElement("canvas"),l=o.getContext&&o.getContext("2d");function c(t){var e=a.createElement("script");e.src=t,e.defer=e.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(e)}for(n=Array("flag","emoji4"),e.supports={everything:!0,everythingExceptFlag:!0},i=0;i<n.length;i++)e.supports[n[i]]=function(t){var e,a=String.fromCharCode;if(!l||!l.fillText)return!1;switch(l.clearRect(0,0,o.width,o.height),l.textBaseline="top",l.font="600 32px Arial",t){case"flag":return(l.fillText(a(55356,56826,55356,56819),0,0),e=o.toDataURL(),l.clearRect(0,0,o.width,o.height),l.fillText(a(55356,56826,8203,55356,56819),0,0),e===o.toDataURL())?!1:(l.clearRect(0,0,o.width,o.height),l.fillText(a(55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447),0,0),e=o.toDataURL(),l.clearRect(0,0,o.width,o.height),l.fillText(a(55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447),0,0),e!==o.toDataURL());case"emoji4":return l.fillText(a(55358,56794,8205,9794,65039),0,0),e=o.toDataURL(),l.clearRect(0,0,o.width,o.height),l.fillText(a(55358,56794,8203,9794,65039),0,0),e!==o.toDataURL()}return!1}(n[i]),e.supports.everything=e.supports.everything&&e.supports[n[i]],"flag"!==n[i]&&(e.supports.everythingExceptFlag=e.supports.everythingExceptFlag&&e.supports[n[i]]);e.supports.everythingExceptFlag=e.supports.everythingExceptFlag&&!e.supports.flag,e.DOMReady=!1,e.readyCallback=function(){e.DOMReady=!0},e.supports.everything||(r=function(){e.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",r,!1),t.addEventListener("load",r,!1)):(t.attachEvent("onload",r),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&e.readyCallback()})),(r=e.source||{}).concatemoji?c(r.concatemoji):r.wpemoji&&r.twemoji&&(c(r.twemoji),c(r.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='contact-form-7-css'  href='https://pid.cz/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=4.9.1' type='text/css' media='all' />
+<link rel='stylesheet' id='fancybox-css'  href='https://pid.cz/wp-content/plugins/fancybox-for-wordpress/fancybox/fancybox.css?ver=4.8.21' type='text/css' media='all' />
+<link rel='stylesheet' id='menu-image-css'  href='https://pid.cz/wp-content/plugins/menu-image/menu-image.css?ver=1.1' type='text/css' media='all' />
+<link rel='stylesheet' id='pid-ewing-css-css'  href='https://pid.cz/wp-content/plugins/pid-ewing/assets/style/pid-ewing.css?v=8&#038;ver=4.8.21' type='text/css' media='all' />
+<link rel='stylesheet' id='wpml-legacy-horizontal-list-0-css'  href='https://pid.cz/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/legacy-list-horizontal/style.css?ver=1' type='text/css' media='all' />
+<style id='wpml-legacy-horizontal-list-0-inline-css' type='text/css'>
+.wpml-ls-sidebars-lang{background-color:#ffffff;}.wpml-ls-sidebars-lang, .wpml-ls-sidebars-lang .wpml-ls-sub-menu, .wpml-ls-sidebars-lang a {border-color:#cdcdcd;}.wpml-ls-sidebars-lang a {color:#444444;background-color:#ffffff;}.wpml-ls-sidebars-lang a:hover,.wpml-ls-sidebars-lang a:focus {color:#000000;background-color:#eeeeee;}.wpml-ls-sidebars-lang .wpml-ls-current-language>a {color:#444444;background-color:#ffffff;}.wpml-ls-sidebars-lang .wpml-ls-current-language:hover>a, .wpml-ls-sidebars-lang .wpml-ls-current-language>a:focus {color:#000000;background-color:#eeeeee;}
+.wpml-ls-statics-shortcode_actions{background-color:#ffffff;}.wpml-ls-statics-shortcode_actions, .wpml-ls-statics-shortcode_actions .wpml-ls-sub-menu, .wpml-ls-statics-shortcode_actions a {border-color:#cdcdcd;}.wpml-ls-statics-shortcode_actions a {color:#444444;background-color:#ffffff;}.wpml-ls-statics-shortcode_actions a:hover,.wpml-ls-statics-shortcode_actions a:focus {color:#000000;background-color:#eeeeee;}.wpml-ls-statics-shortcode_actions .wpml-ls-current-language>a {color:#444444;background-color:#ffffff;}.wpml-ls-statics-shortcode_actions .wpml-ls-current-language:hover>a, .wpml-ls-statics-shortcode_actions .wpml-ls-current-language>a:focus {color:#000000;background-color:#eeeeee;}
+</style>
+<link rel='stylesheet' id='wp-pagenavi-css'  href='https://pid.cz/wp-content/plugins/wp-pagenavi/pagenavi-css.css?ver=2.70' type='text/css' media='all' />
+<script type='text/javascript' src='https://pid.cz/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://pid.cz/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript' src='https://pid.cz/wp-content/plugins/fancybox-for-wordpress/fancybox/jquery.fancybox.js?ver=1.3.8'></script>
+<script type='text/javascript' src='https://pid.cz/wp-content/plugins/pid-ewing/assets/script/jquery.validate.min.js?ver=4.8.21'></script>
+<script type='text/javascript' src='https://pid.cz/wp-content/plugins/pid-ewing/assets/script/pid-ewing.js?ver=4.8.21'></script>
+<link rel='https://api.w.org/' href='https://pid.cz/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://pid.cz/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://pid.cz/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 4.8.21" />
+<link rel='shortlink' href='https://pid.cz/?p=2543' />
+<link rel="alternate" type="application/json+oembed" href="https://pid.cz/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fpid.cz%2Fmimoradnosti%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://pid.cz/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fpid.cz%2Fmimoradnosti%2F&#038;format=xml" />
+<meta name="generator" content="WPML ver:3.8.4 stt:9,1;" />
+
+<!-- Fancybox for WordPress -->
+<script type="text/javascript">
+jQuery(function(){
+
+jQuery.fn.getTitle = function() { // Copy the title of every IMG tag and add it to its parent A so that fancybox can show titles
+	var arr = jQuery("a.fancybox");
+	jQuery.each(arr, function() {
+		var title = jQuery(this).children("img").attr("title");
+		jQuery(this).attr('title',title);
+	})
+}
+
+// Supported file extensions
+var thumbnails = jQuery("a:has(img)").not(".nolightbox").filter( function() { return /\.(jpe?g|png|gif|bmp)$/i.test(jQuery(this).attr('href')) });
+
+thumbnails.addClass("fancybox").attr("rel","fancybox").getTitle();
+jQuery("a.fancybox").fancybox({
+	'cyclic': false,
+	'autoScale': true,
+	'padding': 10,
+	'opacity': true,
+	'speedIn': 500,
+	'speedOut': 500,
+	'changeSpeed': 300,
+	'overlayShow': true,
+	'overlayOpacity': "0.3",
+	'overlayColor': "#666666",
+	'titleShow': true,
+	'titlePosition': 'inside',
+	'enableEscapeButton': true,
+	'showCloseButton': true,
+	'showNavArrows': true,
+	'hideOnOverlayClick': true,
+	'hideOnContentClick': false,
+	'width': 560,
+	'height': 340,
+	'transitionIn': "fade",
+	'transitionOut': "fade",
+	'centerOnScroll': true
+});
+
+
+})
+</script>
+<!-- END Fancybox for WordPress -->
+		<meta property="og:title" content="Mimořádnosti v provozu | Pražská integrovaná doprava" />
+		<meta property="og:url" content="https://pid.cz/mimoradnosti/" />
+				<!-- Tracking Code for www.pid.cz -->
+		<script>
+			(function(h,o,t,j,a,r){
+				h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+				h._hjSettings={hjid:610519,hjsv:5};
+				a=o.getElementsByTagName('head')[0];
+				r=o.createElement('script');r.async=1;
+				r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+				a.appendChild(r);
+			})(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+		</script>
+	</head>
+	<body class="page-template page-template-tpl-mimoradnosti page-template-tpl-mimoradnosti-php page page-id-2543 locale-cs-cz">
+		<div id="st-container" class="st-container">
+			<div class="navMobile size1000 st-menu st-effect-10" id="menu-10">
+				<div class="search">
+					<span id="startSearch2"><img src="https://pid.cz/wp-content/themes/ropid/images/search.png" alt="Vyhledat" /></span>
+
+					<form role="search" method="get" id="searchform2" class="searchform2" action="https://pid.cz/">
+						<div>
+							<input placeholder="Vyhledat" type="text" value="" name="s" id="s2" />
+							<input type="submit" id="searchsubmit2" value="Hledat" />
+						</div>
+					</form>
+				</div>
+				<div class="icons main">
+					<ul>
+						<li><a href="https://pid.cz/metro/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/metro.png" alt=""></a></li>
+						<li><a href="https://pid.cz/tramvaje/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/tram.png" alt=""></a></li>
+						<li><a href="https://pid.cz/autobusy/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/bus.png" alt=""></a></li>
+						<li><a href="https://pid.cz/vlaky/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/train.png" alt=""></a></li>
+						<li><a href="https://pid.cz/lanova-draha/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/lanovka.png" alt=""></a></li>
+						<li><a href="https://pid.cz/privozy/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/kotva.png" alt=""></a></li>
+					</ul>
+				</div>
+				<ul id="menu-hlavni-menu" class="menu"><li id="menu-item-876" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-876"><a href="https://pid.cz/jizdni-rady-podle-linek/" class="menu-image-title-after"><span class="menu-image-title">Jízdní řády</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-863" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-863"><a href="https://pid.cz/jizdni-rady-podle-linek/" class="menu-image-title-after"><span class="menu-image-title">Linky</span></a>
+	<ul  class="sub-menu">
+		<li id="menu-item-197" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-197"><a href="https://pid.cz/jizdni-rady-podle-linek/metro/" class="menu-image-title-after"><span class="menu-image-title">Metro</span></a></li>
+		<li id="menu-item-205" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-205"><a href="https://pid.cz/jizdni-rady-podle-linek/tramvaje/" class="menu-image-title-after"><span class="menu-image-title">Tramvaje</span></a></li>
+		<li id="menu-item-241" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-241"><a href="https://pid.cz/jizdni-rady-podle-linek/autobusy-mestske/" class="menu-image-title-after"><span class="menu-image-title">Autobusy městské</span></a></li>
+		<li id="menu-item-268" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-268"><a href="https://pid.cz/jizdni-rady-podle-linek/autobusy-primestske/" class="menu-image-title-after"><span class="menu-image-title">Autobusy příměstské</span></a></li>
+		<li id="menu-item-12555" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12555"><a href="https://pid.cz/jizdni-rady-podle-linek/trolejbusy/" class="menu-image-title-after"><span class="menu-image-title">Trolejbusy</span></a></li>
+		<li id="menu-item-261" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-261"><a href="https://pid.cz/jizdni-rady-podle-linek/zeleznice/" class="menu-image-title-after"><span class="menu-image-title">Vlaky</span></a></li>
+		<li id="menu-item-267" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-267"><a href="https://pid.cz/jizdni-rady-podle-linek/nocni-doprava/" class="menu-image-title-after"><span class="menu-image-title">Noční doprava</span></a></li>
+		<li id="menu-item-266" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-266"><a href="https://pid.cz/jizdni-rady-podle-linek/nahradni-doprava/" class="menu-image-title-after"><span class="menu-image-title">Náhradní doprava</span></a></li>
+		<li id="menu-item-265" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-265"><a href="https://pid.cz/jizdni-rady-podle-linek/lanova-draha/" class="menu-image-title-after"><span class="menu-image-title">Lanová dráha</span></a></li>
+		<li id="menu-item-264" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-264"><a href="https://pid.cz/jizdni-rady-podle-linek/privozy/" class="menu-image-title-after"><span class="menu-image-title">Přívozy</span></a></li>
+		<li id="menu-item-263" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-263"><a href="https://pid.cz/jizdni-rady-podle-linek/skolni-linky/" class="menu-image-title-after"><span class="menu-image-title">Školní linky</span></a></li>
+		<li id="menu-item-262" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-262"><a href="https://pid.cz/jizdni-rady-podle-linek/pro-telesne-postizene/" class="menu-image-title-after"><span class="menu-image-title">Pro tělesně postižené</span></a></li>
+		<li id="menu-item-453" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-453"><a href="https://pid.cz/jizdni-rady-podle-linek/ostatni/" class="menu-image-title-after"><span class="menu-image-title">Ostatní</span></a></li>
+	</ul>
+</li>
+	<li id="menu-item-7219" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-7219"><a href="https://pid.cz/zastavky-pid/" class="menu-image-title-after"><span class="menu-image-title">Zastávky</span></a>
+	<ul  class="sub-menu">
+		<li id="menu-item-454" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-454"><a href="https://pid.cz/zastavky-pid/zastavky-v-praze/" class="menu-image-title-after"><span class="menu-image-title">Zastávky v Praze</span></a></li>
+		<li id="menu-item-471" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-471"><a href="https://pid.cz/zastavky-pid/zastavky-mimo-prahu/" class="menu-image-title-after"><span class="menu-image-title">Zastávky mimo Prahu</span></a></li>
+	</ul>
+</li>
+	<li id="menu-item-415" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-415"><a href="https://pid.cz/aktuality/" class="menu-image-title-after"><span class="menu-image-title">Aktuality</span></a></li>
+	<li id="menu-item-166" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-166"><a href="https://pid.cz/hledani-spojeni/" class="menu-image-title-after"><span class="menu-image-title">Hledání spojení</span></a></li>
+	<li id="menu-item-7224" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7224"><a href="https://pid.cz/zastavkova-tabla/" class="menu-image-title-after"><span class="menu-image-title">Odjezdové tabule</span></a></li>
+	<li id="menu-item-482" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-482"><a href="https://pid.cz/souhrne-jizdni-rady/" class="menu-image-title-after"><span class="menu-image-title">Souhrnné jízdní řády</span></a></li>
+	<li id="menu-item-793" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-793"><a href="http://pid.idos.cz/osj/" class="menu-image-title-after"><span class="menu-image-title">Vytvořit osobní JŘ</span></a></li>
+	<li id="menu-item-6400" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6400"><a href="https://pid.cz/kalendar-provozu/" class="menu-image-title-after"><span class="menu-image-title">Kalendář provozu</span></a></li>
+</ul>
+</li>
+<li id="menu-item-2413" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2413"><a href="https://pid.cz/praha/" class="menu-image-title-after"><span class="menu-image-title">Jízdné a tarif</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-322" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-322"><a href="https://pid.cz/praha/" class="menu-image-title-after"><span class="menu-image-title">Cestování po Praze</span></a></li>
+	<li id="menu-item-321" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-321"><a href="https://pid.cz/primestske-cestovani/" class="menu-image-title-after"><span class="menu-image-title">Příměstské cestování</span></a></li>
+	<li id="menu-item-1076" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1076"><a href="https://pid.cz/kde-koupit-jizdenky/" class="menu-image-title-after"><span class="menu-image-title">Kde koupit jízdenky</span></a></li>
+	<li id="menu-item-13528" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-13528"><a href="https://pid.cz/slevy/" class="menu-image-title-after"><span class="menu-image-title">Slevy</span></a></li>
+	<li id="menu-item-1048" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1048"><a href="https://pid.cz/zavazadla-a-psi/" class="menu-image-title-after"><span class="menu-image-title">Zavazadla a psi</span></a></li>
+	<li id="menu-item-323" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-323"><a href="https://pid.cz/tarif-web" class="menu-image-title-after"><span class="menu-image-title">Tarifní průvodce</span></a></li>
+	<li id="menu-item-445" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-445"><a href="https://pid.cz/tarif-web/calc.php" class="menu-image-title-after"><span class="menu-image-title">Tarifní kalkulačka</span></a></li>
+	<li id="menu-item-722" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-722"><a href="https://pid.cz/tarifni-pojmy/" class="menu-image-title-after"><span class="menu-image-title">Tarifní pojmy</span></a>
+	<ul  class="sub-menu">
+		<li id="menu-item-723" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-723"><a href="https://pid.cz/tarifni-pojmy/odbaveni-v-primestskych-autobusech/" class="menu-image-title-after"><span class="menu-image-title">Odbavení v příměstských autobusech</span></a></li>
+		<li id="menu-item-1051" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1051"><a href="https://pid.cz/tarifni-pojmy/odbaveni-ve-vlacich-pid/" class="menu-image-title-after"><span class="menu-image-title">Odbavení ve vlacích PID</span></a></li>
+		<li id="menu-item-724" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-724"><a href="https://pid.cz/tarifni-pojmy/prukazky-pid/" class="menu-image-title-after"><span class="menu-image-title">Průkazky PID</span></a></li>
+		<li id="menu-item-725" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-725"><a href="https://pid.cz/tarifni-pojmy/tarifni-pasma-pid/" class="menu-image-title-after"><span class="menu-image-title">Tarifní pásma PID</span></a></li>
+		<li id="menu-item-726" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-726"><a href="https://pid.cz/tarifni-pojmy/jednotlive-jizdne/" class="menu-image-title-after"><span class="menu-image-title">Jednotlivé (krátkodobé) jízdné</span></a></li>
+		<li id="menu-item-727" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-727"><a href="https://pid.cz/tarifni-pojmy/predplatne-jizdne/" class="menu-image-title-after"><span class="menu-image-title">Předplatné jízdné</span></a></li>
+		<li id="menu-item-1072" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1072"><a href="https://pid.cz/tarifni-pojmy/prenosne-predplatne-jizdne/" class="menu-image-title-after"><span class="menu-image-title">Přenosné předplatné jízdné</span></a></li>
+		<li id="menu-item-1817" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1817"><a href="https://pid.cz/tarifni-pojmy/deti-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Děti v PID</span></a></li>
+		<li id="menu-item-3191" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3191"><a href="https://pid.cz/tarifni-pojmy/studenti-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Studenti v PID</span></a></li>
+		<li id="menu-item-1604" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1604"><a href="https://pid.cz/tarifni-pojmy/seniori-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Senioři v PID</span></a></li>
+		<li id="menu-item-3286" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3286"><a href="https://pid.cz/tarifni-pojmy/preprava-za-0-kc-v-praze/" class="menu-image-title-after"><span class="menu-image-title">Přeprava za 0 Kč v Praze</span></a></li>
+		<li id="menu-item-729" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-729"><a href="https://pid.cz/tarifni-pojmy/pokuty/" class="menu-image-title-after"><span class="menu-image-title">Pokuty</span></a></li>
+	</ul>
+</li>
+	<li id="menu-item-496" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-496"><a href="/ke-stazeni/?type=tarif" class="menu-image-title-after"><span class="menu-image-title">Dokumenty</span></a></li>
+</ul>
+</li>
+<li id="menu-item-2414" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-ancestor current-menu-parent current_page_parent current_page_ancestor menu-item-has-children menu-item-2414"><a href="https://pid.cz/vyluky/" class="menu-image-title-after"><span class="menu-image-title">Změny v dopravě</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-44" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-44"><a href="https://pid.cz/vyluky/" class="menu-image-title-after"><span class="menu-image-title">Výluky</span></a></li>
+	<li id="menu-item-2559" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-2543 current_page_item menu-item-2559"><a href="https://pid.cz/mimoradnosti/" class="menu-image-title-after"><span class="menu-image-title">Mimořádnosti</span></a></li>
+	<li id="menu-item-783" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-783"><a href="/trvale_zmeny/" class="menu-image-title-after"><span class="menu-image-title">Trvalé změny</span></a></li>
+	<li id="menu-item-15804" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-15804"><a href="https://pid.cz/category/pripravovane_zmeny/" class="menu-image-title-after"><span class="menu-image-title">Připravované změny</span></a></li>
+	<li id="menu-item-8076" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-8076"><a href="https://pid.cz/category/zmeny-podrobneji/" class="menu-image-title-after"><span class="menu-image-title">Vysvětlení změn</span></a></li>
+</ul>
+</li>
+<li id="menu-item-2405" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-2405"><a href="https://pid.cz/ke-stazeni/?type=mapy" class="menu-image-title-after"><span class="menu-image-title">Mapy a schémata</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-2401" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2401"><a href="https://pid.cz/ke-stazeni/?type=mapy" class="menu-image-title-after"><span class="menu-image-title">Schémata dopravy</span></a></li>
+	<li id="menu-item-2402" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2402"><a href="https://pid.cz/ke-stazeni/?type=mapy-uzly-praha" class="menu-image-title-after"><span class="menu-image-title">Přestupní uzly Praha</span></a></li>
+	<li id="menu-item-2403" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2403"><a href="https://pid.cz/ke-stazeni/?type=mapy-uzly-region" class="menu-image-title-after"><span class="menu-image-title">Přestupní uzly Region</span></a></li>
+	<li id="menu-item-8879" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8879"><a href="https://pid.cz/ke-stazeni/?type=mapy-mesta" class="menu-image-title-after"><span class="menu-image-title">Mapy měst</span></a></li>
+	<li id="menu-item-23558" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-23558"><a href="https://mapa.pid.cz" class="menu-image-title-after"><span class="menu-image-title">Online mapa provozu</span></a></li>
+</ul>
+</li>
+<li id="menu-item-885" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-885"><a href="https://pid.cz/prakticke-informace/" class="menu-image-title-after"><span class="menu-image-title">Praktické info</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-10338" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10338"><a href="https://pid.cz/mobilni-aplikace/" class="menu-image-title-after"><span class="menu-image-title">Mobilní aplikace PID</span></a></li>
+	<li id="menu-item-348" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-348"><a href="https://pid.cz/prakticke-informace/bezbarierove-s-pid/" class="menu-image-title-after"><span class="menu-image-title">Bezbariérově s PID</span></a></li>
+	<li id="menu-item-684" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-684"><a href="https://pid.cz/prakticke-informace/pid-s-kocarkem/" class="menu-image-title-after"><span class="menu-image-title">PID s kočárkem</span></a></li>
+	<li id="menu-item-347" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-347"><a href="https://pid.cz/prakticke-informace/cykliste-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Cyklisté v PID</span></a></li>
+	<li id="menu-item-412" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-412"><a href="https://pid.cz/prakticke-informace/doprava-na-letiste/" class="menu-image-title-after"><span class="menu-image-title">Doprava na letiště</span></a></li>
+	<li id="menu-item-346" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-346"><a href="https://pid.cz/prakticke-informace/doprava-do-troji/" class="menu-image-title-after"><span class="menu-image-title">Doprava do Troji</span></a></li>
+	<li id="menu-item-344" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-344"><a href="https://pid.cz/prakticke-informace/nocni-doprava-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Noční doprava v PID</span></a></li>
+	<li id="menu-item-686" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-686"><a href="https://pid.cz/prakticke-informace/pr-br-kr/" class="menu-image-title-after"><span class="menu-image-title">P+R, B+R, K+R</span></a></li>
+	<li id="menu-item-685" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-685"><a href="https://pid.cz/prakticke-informace/zastavky-na-znameni/" class="menu-image-title-after"><span class="menu-image-title">Zastávky &#8222;na znamení&#8220;</span></a></li>
+	<li id="menu-item-28826" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-28826"><a href="https://pid.cz/prakticke-informace/sdilenakola/" class="menu-image-title-after"><span class="menu-image-title">Sdílená kola</span></a></li>
+</ul>
+</li>
+<li id="menu-item-869" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-869"><a href="https://pid.cz/pro-turisty/" class="menu-image-title-after"><span class="menu-image-title">Pro turisty</span></a></li>
+<li id="menu-item-23087" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-23087"><a href="https://pid.cz/kontakty/" class="menu-image-title-after"><span class="menu-image-title">Kontakty</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-23560" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23560"><a href="https://pid.cz/kontakty/" class="menu-image-title-after"><span class="menu-image-title">Kontakty pro informace</span></a></li>
+	<li id="menu-item-23063" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23063"><a href="https://pid.cz/kontakty/kontakty-ropid/" class="menu-image-title-after"><span class="menu-image-title">Kontakty ROPID</span></a></li>
+	<li id="menu-item-23062" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23062"><a href="https://pid.cz/kontakty/kontakty-idsk/" class="menu-image-title-after"><span class="menu-image-title">Kontakty IDSK</span></a></li>
+	<li id="menu-item-185" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-185"><a href="https://pid.cz/kontakty/infocentra/" class="menu-image-title-after"><span class="menu-image-title">Infocentra</span></a></li>
+	<li id="menu-item-1896" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1896"><a href="https://pid.cz/kontakty/prodejni-mista/" class="menu-image-title-after"><span class="menu-image-title">Prodejní místa</span></a></li>
+	<li id="menu-item-303" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-303"><a href="https://pid.cz/kontakty/podnety-a-pripominky/" class="menu-image-title-after"><span class="menu-image-title">Podněty a připomínky</span></a></li>
+	<li id="menu-item-1316" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1316"><a href="https://pid.cz/kontakty/ztraty-a-nalezy/" class="menu-image-title-after"><span class="menu-image-title">Ztráty a nálezy</span></a></li>
+</ul>
+</li>
+</ul>				<ul id="menu-menu-v-paticce" class="menu no-image-menu"><li id="menu-item-468" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-468"><a href="https://pid.cz/category/tiskove-informace/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/icko.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">Novinky</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-4229" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-4229"><a href="https://pid.cz/category/tiskove-informace/" class="menu-image-title-after"><span class="menu-image-title">Tiskové informace</span></a></li>
+	<li id="menu-item-2097" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2097"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=casopid" class="menu-image-title-after"><span class="menu-image-title">ČasoPID</span></a></li>
+	<li id="menu-item-2098" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2098"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=zpravodaj" class="menu-image-title-after"><span class="menu-image-title">Zpravodaj PID</span></a></li>
+	<li id="menu-item-16396" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16396"><a href="https://pid.cz/category/lide-z-pidu/" class="menu-image-title-after"><span class="menu-image-title">Lidé z PIDu</span></a></li>
+	<li id="menu-item-2099" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2099"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=tiskoviny" class="menu-image-title-after"><span class="menu-image-title">Informační materiály</span></a></li>
+</ul>
+</li>
+<li id="menu-item-360" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-360"><a href="https://pid.cz/o-systemu/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/system.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">O systému</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-11822" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-11822"><a href="https://pid.cz/standardy-kvality/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID</span></a>
+	<ul  class="sub-menu">
+		<li id="menu-item-11827" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11827"><a href="https://pid.cz/standardy-kvality/autobusy/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (autobusy)</span></a></li>
+		<li id="menu-item-11825" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11825"><a href="https://pid.cz/standardy-kvality/tramvaje/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (tramvaje)</span></a></li>
+		<li id="menu-item-11823" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11823"><a href="https://pid.cz/standardy-kvality/metro/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (metro)</span></a></li>
+		<li id="menu-item-11826" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11826"><a href="https://pid.cz/standardy-kvality/zeleznice/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (železnice)</span></a></li>
+		<li id="menu-item-11824" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11824"><a href="https://pid.cz/standardy-kvality/privozy/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (přívozy)</span></a></li>
+	</ul>
+</li>
+	<li id="menu-item-34967" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-34967"><a href="https://pid.cz/ceny-cng-pid/" class="menu-image-title-after"><span class="menu-image-title">Ceny CNG v PID</span></a></li>
+	<li id="menu-item-11960" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11960"><a href="https://pid.cz/o-systemu/opendata/" class="menu-image-title-after"><span class="menu-image-title">Otevřená data PID</span></a></li>
+	<li id="menu-item-374" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-374"><a href="https://pid.cz/o-systemu/preference/" class="menu-image-title-after"><span class="menu-image-title">Preference</span></a></li>
+	<li id="menu-item-1556" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1556"><a href="https://pid.cz/o-systemu/historicky-prehled-pid/" class="menu-image-title-after"><span class="menu-image-title">Historický přehled PID</span></a></li>
+	<li id="menu-item-3445" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3445"><a href="https://pid.cz/o-systemu/dopravci-a-partneri/" class="menu-image-title-after"><span class="menu-image-title">Dopravci a partneři</span></a></li>
+	<li id="menu-item-16787" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16787"><a href="https://pid.cz/o-systemu/dopravni-pruzkumy/" class="menu-image-title-after"><span class="menu-image-title">Přepravní průzkumy</span></a></li>
+	<li id="menu-item-10148" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-10148"><a href="http://standardzastavek.pid.cz/" class="menu-image-title-after"><span class="menu-image-title">Standard zastávek PID</span></a></li>
+	<li id="menu-item-11133" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11133"><a href="https://pid.cz/o-systemu/dopravni-plan-hmp/" class="menu-image-title-after"><span class="menu-image-title">Dopravní plán HMP</span></a></li>
+	<li id="menu-item-33075" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33075"><a href="https://pid.cz/o-systemu/rozvoj-linek-2022-2032/" class="menu-image-title-after"><span class="menu-image-title">Rozvoj linek PID v Praze 2022-2032</span></a></li>
+	<li id="menu-item-31830" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-31830"><a href="https://pid.cz/o-systemu/rozvoj-linek-pid-praze-2019-2029/" class="menu-image-title-after"><span class="menu-image-title">Rozvoj linek PID v Praze 2019-2029</span></a></li>
+	<li id="menu-item-17911" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17911"><a href="https://pid.cz/rebrandpid/" class="menu-image-title-after"><span class="menu-image-title">Rebrand PID</span></a></li>
+	<li id="menu-item-3186" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3186"><a href="https://pid.cz/ke-stazeni/?type=system-pid" class="menu-image-title-after"><span class="menu-image-title">Dokumenty</span></a></li>
+	<li id="menu-item-21933" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-21933"><a href="https://pid.cz/prehled-vydanych-tarifu-spp-pid/" class="menu-image-title-after"><span class="menu-image-title">Přehled vydaných Tarifů a SPP PID</span></a></li>
+	<li id="menu-item-6239" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6239"><a href="https://pid.cz/o-systemu/loga-pid-ropid/" class="menu-image-title-after"><span class="menu-image-title">Loga PID a ROPID</span></a></li>
+	<li id="menu-item-27496" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-27496"><a href="https://pid.cz/prohlaseni/" class="menu-image-title-after"><span class="menu-image-title">Prohlášení o přístupnosti</span></a></li>
+</ul>
+</li>
+<li id="menu-item-732" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-732"><a href="https://pid.cz/ke-stazeni/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/arrow.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">Ke stažení</span></a></li>
+<li id="menu-item-358" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-358"><a href="https://pid.cz/zabava-a-zajimavosti/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/fun.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">Zábava a zajímavosti</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-2408" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2408"><a href="https://pid.cz/zabava-a-zajimavosti/akce/" class="menu-image-title-after"><span class="menu-image-title">Akce</span></a></li>
+	<li id="menu-item-1207" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1207"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=vystrihovanky" class="menu-image-title-after"><span class="menu-image-title">Vystřihovánky</span></a></li>
+	<li id="menu-item-1798" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1798"><a href="https://pid.cz/zabava-a-zajimavosti/vylety-a-kultura/" class="menu-image-title-after"><span class="menu-image-title">Výlety a kulturní akce</span></a></li>
+	<li id="menu-item-1800" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1800"><a href="https://pid.cz/zabava-a-zajimavosti/cyklohracek/" class="menu-image-title-after"><span class="menu-image-title">Cyklohráček</span></a></li>
+	<li id="menu-item-1799" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1799"><a href="https://pid.cz/zabava-a-zajimavosti/prazsky-motoracek/" class="menu-image-title-after"><span class="menu-image-title">Pražský motoráček</span></a></li>
+</ul>
+</li>
+<li id="menu-item-357" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-357"><a href="https://pid.cz/o-organizaci/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/about.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">O organizacích</span></a>
+<ul  class="sub-menu">
+	<li id="menu-item-23072" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-23072"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/" class="menu-image-title-after"><span class="menu-image-title">O organizaci ROPID</span></a>
+	<ul  class="sub-menu">
+		<li id="menu-item-1123" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1123"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/povinne-zverejnovane-informace/" class="menu-image-title-after"><span class="menu-image-title">Povinně zveřejňované informace</span></a></li>
+		<li id="menu-item-1121" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1121"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/zrizovaci-listina-organizace-ropid/" class="menu-image-title-after"><span class="menu-image-title">Zřizovací listina organizace ROPID</span></a></li>
+		<li id="menu-item-1122" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1122"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/organizacni-struktura-ropid/" class="menu-image-title-after"><span class="menu-image-title">Organizační struktura ROPID</span></a></li>
+		<li id="menu-item-1127" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1127"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/informace-dle-zakona-c-1061999-sb/" class="menu-image-title-after"><span class="menu-image-title">Informace dle zákona č. 106/1999 Sb.</span></a></li>
+		<li id="menu-item-31495" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-31495"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/whistleblowing/" class="menu-image-title-after"><span class="menu-image-title">Whistleblowing</span></a></li>
+		<li id="menu-item-12344" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12344"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/informace-o-gdpr/" class="menu-image-title-after"><span class="menu-image-title">Informace o GDPR</span></a></li>
+		<li id="menu-item-16541" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16541"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/projekty/" class="menu-image-title-after"><span class="menu-image-title">Projekty</span></a></li>
+		<li id="menu-item-1138" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1138"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/verejne-zakazky/" class="menu-image-title-after"><span class="menu-image-title">Veřejné zakázky</span></a></li>
+		<li id="menu-item-19410" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-19410"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/autobusova-stanovistezastavky-mimo-pid/" class="menu-image-title-after"><span class="menu-image-title">Autobusová stanoviště/zastávky (mimo PID)</span></a></li>
+		<li id="menu-item-26406" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26406"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/objednavka-zajezdove-dopravy/" class="menu-image-title-after"><span class="menu-image-title">Objednávka zájezdové dopravy</span></a></li>
+		<li id="menu-item-24053" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24053"><a href="https://pid.cz/odprodej-nepotrebneho-moviteho-majetku/" class="menu-image-title-after"><span class="menu-image-title">Odprodej nepotřebného movitého majetku</span></a></li>
+		<li id="menu-item-3029" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3029"><a href="https://pid.cz/ke-stazeni/?type=organizace" class="menu-image-title-after"><span class="menu-image-title">Dokumenty</span></a></li>
+	</ul>
+</li>
+	<li id="menu-item-23071" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-23071"><a href="https://pid.cz/o-organizaci/o-organizaci-idsk/" class="menu-image-title-after"><span class="menu-image-title">O organizaci IDSK</span></a>
+	<ul  class="sub-menu">
+		<li id="menu-item-23077" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-23077"><a href="https://www.idsk.cz" class="menu-image-title-after"><span class="menu-image-title">Web IDSK</span></a></li>
+	</ul>
+</li>
+	<li id="menu-item-1137" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1137"><a href="https://pid.cz/o-organizaci/nabidka-volnych-pracovnich-mist/" class="menu-image-title-after"><span class="menu-image-title">Nabídka volných pracovních míst</span></a></li>
+</ul>
+</li>
+<li id="menu-item-9205" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9205"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/verejne-zakazky/" class="menu-image-title-after menu-image-not-hovered"><img width="30" height="36" src="https://pid.cz/wp-content/uploads/2017/06/paper-30x36.png" class="menu-image menu-image-title-after" alt="" srcset="https://pid.cz/wp-content/uploads/2017/06/paper-30x36.png 30w, https://pid.cz/wp-content/uploads/2017/06/paper-20x24.png 20w, https://pid.cz/wp-content/uploads/2017/06/paper-41x48.png 41w, https://pid.cz/wp-content/uploads/2017/06/paper.png 108w" sizes="(max-width: 30px) 100vw, 30px" /><span class="menu-image-title">Veřejné zakázky</span></a></li>
+</ul>				<div class="form find">
+	<span class="title">Kam jedete?</span>
+	<span class="quote">Najdeme nejkratší cestu<br/>
+		k Vašemu cíli:</span>
+	<form action="http://pid.idos.cz/spojeni/" method="get" autocomplete="off">
+		<input type="hidden" name="lng" value="c" />
+		<input type="text" id="from_m" name="f" placeholder="Odkud" required="required" />
+		<input id="fc_m" name="fc" type="hidden" />
+		<input type="text" id="to_m" name="t" placeholder="Kam" required="required" />
+		<input id="tc_m" name="tc" type="hidden" />
+		<input type="text" name="date" class="datepicker today-datepicker" value="Dnes" data-today="Dnes" data-tomorrow="Zítra" readonly="true" placeholder="Kdy" />
+		<input type="text" name="time" class="timepicker" disabled placeholder="V kolik" />
+		<input id="submit" name="submit" type="hidden" value="1" />
+		<input type="submit" value="Vyhledat" />
+	</form>
+</div>
+<aside role="complementary">
+	<span class="blue">Která linka Vás zajímá?</span>
+	<div class="form blue">
+		<span>Zvolte linku:</span>
+		<form method="post" autocomplete="off" class="form-relative">
+			<input type="hidden" name="search-line" value="1" />
+			<input required type="text" name="line" id="line_name_mo" placeholder="Číslo" />
+				<ul id="tablo_links_listholder-mobile" class="form-autocomplete-list is-stops"></ul>
+			<input type="submit" value="Vyhledat" />
+		</form>
+	</div>
+	<span>Najděte si odjezdy</span>
+	<div class="form red">
+		<span>Zvolte zastávku:</span>
+		<form action="https://pid.cz/zastavkova-tabla/" autocomplete="off" class="form-relative">
+			<input required type="text" name="stop" placeholder="Jméno zastávky" id="tablo_stop_m" />
+			<ul id="tablo_stop_listholder-mobile" class="form-autocomplete-list"></ul>
+			<input type="submit" value="Vyhledat" />
+		</form>
+	</div>
+				<div id="controler2">
+			<span data-id="tab1b">Registrace</span>
+			<span class="deactive" data-id="tab2b">Přihlásit se</span>
+		</div>
+		<div class="form gray tabsform2 scrollHere" id="tab1b">
+			<p>Registrací získáte možnost odebírat náš newsletter a nechat si zasílat změny ve vámi vybraných jízdních řádech.</p>
+			<span>Zadejte Váš e-mail:</span>
+			<form name="registerform" action="" method="post">
+				<input type="text" name="user_email" id="user_email_mob" placeholder="E-mail" value="" required="required">
+				<input type="password" name="user_password" id="user_password_mob" placeholder="Heslo" value="" required="required">
+				<div id="rec2" class="g-recaptcha"></div>
+				<input type="submit" name="wp-submit" id="wp-submit_mob" value="Registrovat se" />
+			</form>
+		</div>
+		<div class="form gray tabsform2 deactive" id="tab2b">
+			<span>Zadejte Váš e-mail:</span>
+			<form name="loginform" action="" method="post">
+				<input type="text" name="user_login" id="user_login_mob" placeholder="E-mail" value="" required="required">
+				<input type="password" name="user_pass_log" id="user_pass_log_mob" placeholder="Heslo" value="" required="required">
+				<input type="submit" name="wp-submit-log" id="wp-submit-log_mob" value="Přihlásit se" />
+				<a class="log" href="/wp-login.php?action=lostpassword">Zapomněli jste heslo?</a>
+			</form>
+		</div>
+	
+</aside>
+
+
+			</div>
+			<div class="wrapper st-pusher">
+				<div class="st-content"><!-- this is the wrapper for the content -->
+					<div class="page-wrap">
+						<div class="st-content-inner"><!-- extra div for emulating position:fixed of the menu -->
+							<header class="is-fixed">
+								<div class="inner">
+									<div class="top">
+										<a href="#" id="st-trigger-effects" role="complementary" tabindex="1">
+											<div id="nav-icon3" class="openMenu size1000" data-effect="st-effect-10" title="Menu" role="navigation">
+												<span>menu</span>
+												<span></span>
+												<span></span>
+												<span></span>
+											</div>
+										</a>
+										<a href="//pid.cz/" id="logo" tabindex="2" role="banner">
+											<span style="color:white;font-size:1px">Domů</span>
+																					</a>
+										<div class="top-right">
+											<div class="search">
+												<span id="startSearch"><img src="https://pid.cz/wp-content/themes/ropid/images/search.png" alt="Vyhledat" tabindex="2" /></span>
+
+												<form role="search" role="search" method="get" id="searchform" class="searchform" action="https://pid.cz/">
+													<div>
+														<input placeholder="Vyhledat" type="text" value="" name="s" id="s" />
+														<input type="submit" id="searchsubmit" value="Hledat" />
+													</div>
+												</form>
+											</div>
+											<ul class="lang_selector"><li class="active"><a href="https://pid.cz/mimoradnosti/">cz</a></li><li><a href="https://pid.cz/en/service-disruptions/">en</a></li></ul>										</div>
+									</div>
+									<nav role="navigation">
+										<ul id="menu-hlavni-menu-1" class="menu" role="menubar"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-876" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/jizdni-rady-podle-linek/" class="menu-image-title-after"><span class="menu-image-title">Jízdní řády</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-863" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/jizdni-rady-podle-linek/" class="menu-image-title-after"><span class="menu-image-title">Linky</span></a>
+	<ul  class="sub-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-197"><a href="https://pid.cz/jizdni-rady-podle-linek/metro/" class="menu-image-title-after"><span class="menu-image-title">Metro</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-205"><a href="https://pid.cz/jizdni-rady-podle-linek/tramvaje/" class="menu-image-title-after"><span class="menu-image-title">Tramvaje</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-241"><a href="https://pid.cz/jizdni-rady-podle-linek/autobusy-mestske/" class="menu-image-title-after"><span class="menu-image-title">Autobusy městské</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-268"><a href="https://pid.cz/jizdni-rady-podle-linek/autobusy-primestske/" class="menu-image-title-after"><span class="menu-image-title">Autobusy příměstské</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12555"><a href="https://pid.cz/jizdni-rady-podle-linek/trolejbusy/" class="menu-image-title-after"><span class="menu-image-title">Trolejbusy</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-261"><a href="https://pid.cz/jizdni-rady-podle-linek/zeleznice/" class="menu-image-title-after"><span class="menu-image-title">Vlaky</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-267"><a href="https://pid.cz/jizdni-rady-podle-linek/nocni-doprava/" class="menu-image-title-after"><span class="menu-image-title">Noční doprava</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-266"><a href="https://pid.cz/jizdni-rady-podle-linek/nahradni-doprava/" class="menu-image-title-after"><span class="menu-image-title">Náhradní doprava</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-265"><a href="https://pid.cz/jizdni-rady-podle-linek/lanova-draha/" class="menu-image-title-after"><span class="menu-image-title">Lanová dráha</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-264"><a href="https://pid.cz/jizdni-rady-podle-linek/privozy/" class="menu-image-title-after"><span class="menu-image-title">Přívozy</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-263"><a href="https://pid.cz/jizdni-rady-podle-linek/skolni-linky/" class="menu-image-title-after"><span class="menu-image-title">Školní linky</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-262"><a href="https://pid.cz/jizdni-rady-podle-linek/pro-telesne-postizene/" class="menu-image-title-after"><span class="menu-image-title">Pro tělesně postižené</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-453"><a href="https://pid.cz/jizdni-rady-podle-linek/ostatni/" class="menu-image-title-after"><span class="menu-image-title">Ostatní</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-7219" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/zastavky-pid/" class="menu-image-title-after"><span class="menu-image-title">Zastávky</span></a>
+	<ul  class="sub-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-454"><a href="https://pid.cz/zastavky-pid/zastavky-v-praze/" class="menu-image-title-after"><span class="menu-image-title">Zastávky v Praze</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-471"><a href="https://pid.cz/zastavky-pid/zastavky-mimo-prahu/" class="menu-image-title-after"><span class="menu-image-title">Zastávky mimo Prahu</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-415"><a href="https://pid.cz/aktuality/" class="menu-image-title-after"><span class="menu-image-title">Aktuality</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-166"><a href="https://pid.cz/hledani-spojeni/" class="menu-image-title-after"><span class="menu-image-title">Hledání spojení</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7224"><a href="https://pid.cz/zastavkova-tabla/" class="menu-image-title-after"><span class="menu-image-title">Odjezdové tabule</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-482"><a href="https://pid.cz/souhrne-jizdni-rady/" class="menu-image-title-after"><span class="menu-image-title">Souhrnné jízdní řády</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-793"><a href="http://pid.idos.cz/osj/" class="menu-image-title-after"><span class="menu-image-title">Vytvořit osobní JŘ</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6400"><a href="https://pid.cz/kalendar-provozu/" class="menu-image-title-after"><span class="menu-image-title">Kalendář provozu</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2413" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/praha/" class="menu-image-title-after"><span class="menu-image-title">Jízdné a tarif</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-322"><a href="https://pid.cz/praha/" class="menu-image-title-after"><span class="menu-image-title">Cestování po Praze</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-321"><a href="https://pid.cz/primestske-cestovani/" class="menu-image-title-after"><span class="menu-image-title">Příměstské cestování</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1076"><a href="https://pid.cz/kde-koupit-jizdenky/" class="menu-image-title-after"><span class="menu-image-title">Kde koupit jízdenky</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-13528"><a href="https://pid.cz/slevy/" class="menu-image-title-after"><span class="menu-image-title">Slevy</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1048"><a href="https://pid.cz/zavazadla-a-psi/" class="menu-image-title-after"><span class="menu-image-title">Zavazadla a psi</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-323"><a href="https://pid.cz/tarif-web" class="menu-image-title-after"><span class="menu-image-title">Tarifní průvodce</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-445"><a href="https://pid.cz/tarif-web/calc.php" class="menu-image-title-after"><span class="menu-image-title">Tarifní kalkulačka</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-722" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/tarifni-pojmy/" class="menu-image-title-after"><span class="menu-image-title">Tarifní pojmy</span></a>
+	<ul  class="sub-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-723"><a href="https://pid.cz/tarifni-pojmy/odbaveni-v-primestskych-autobusech/" class="menu-image-title-after"><span class="menu-image-title">Odbavení v příměstských autobusech</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1051"><a href="https://pid.cz/tarifni-pojmy/odbaveni-ve-vlacich-pid/" class="menu-image-title-after"><span class="menu-image-title">Odbavení ve vlacích PID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-724"><a href="https://pid.cz/tarifni-pojmy/prukazky-pid/" class="menu-image-title-after"><span class="menu-image-title">Průkazky PID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-725"><a href="https://pid.cz/tarifni-pojmy/tarifni-pasma-pid/" class="menu-image-title-after"><span class="menu-image-title">Tarifní pásma PID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-726"><a href="https://pid.cz/tarifni-pojmy/jednotlive-jizdne/" class="menu-image-title-after"><span class="menu-image-title">Jednotlivé (krátkodobé) jízdné</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-727"><a href="https://pid.cz/tarifni-pojmy/predplatne-jizdne/" class="menu-image-title-after"><span class="menu-image-title">Předplatné jízdné</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1072"><a href="https://pid.cz/tarifni-pojmy/prenosne-predplatne-jizdne/" class="menu-image-title-after"><span class="menu-image-title">Přenosné předplatné jízdné</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1817"><a href="https://pid.cz/tarifni-pojmy/deti-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Děti v PID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3191"><a href="https://pid.cz/tarifni-pojmy/studenti-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Studenti v PID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1604"><a href="https://pid.cz/tarifni-pojmy/seniori-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Senioři v PID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3286"><a href="https://pid.cz/tarifni-pojmy/preprava-za-0-kc-v-praze/" class="menu-image-title-after"><span class="menu-image-title">Přeprava za 0 Kč v Praze</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-729"><a href="https://pid.cz/tarifni-pojmy/pokuty/" class="menu-image-title-after"><span class="menu-image-title">Pokuty</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-496"><a href="/ke-stazeni/?type=tarif" class="menu-image-title-after"><span class="menu-image-title">Dokumenty</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-ancestor current-menu-parent current_page_parent current_page_ancestor menu-item-has-children menu-item-2414" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/vyluky/" class="menu-image-title-after"><span class="menu-image-title">Změny v dopravě</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-44"><a href="https://pid.cz/vyluky/" class="menu-image-title-after"><span class="menu-image-title">Výluky</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-2543 current_page_item menu-item-2559"><a href="https://pid.cz/mimoradnosti/" class="menu-image-title-after"><span class="menu-image-title">Mimořádnosti</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-783"><a href="/trvale_zmeny/" class="menu-image-title-after"><span class="menu-image-title">Trvalé změny</span></a></li>
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-15804"><a href="https://pid.cz/category/pripravovane_zmeny/" class="menu-image-title-after"><span class="menu-image-title">Připravované změny</span></a></li>
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-8076"><a href="https://pid.cz/category/zmeny-podrobneji/" class="menu-image-title-after"><span class="menu-image-title">Vysvětlení změn</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-2405" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/ke-stazeni/?type=mapy" class="menu-image-title-after"><span class="menu-image-title">Mapy a schémata</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2401"><a href="https://pid.cz/ke-stazeni/?type=mapy" class="menu-image-title-after"><span class="menu-image-title">Schémata dopravy</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2402"><a href="https://pid.cz/ke-stazeni/?type=mapy-uzly-praha" class="menu-image-title-after"><span class="menu-image-title">Přestupní uzly Praha</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2403"><a href="https://pid.cz/ke-stazeni/?type=mapy-uzly-region" class="menu-image-title-after"><span class="menu-image-title">Přestupní uzly Region</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8879"><a href="https://pid.cz/ke-stazeni/?type=mapy-mesta" class="menu-image-title-after"><span class="menu-image-title">Mapy měst</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-23558"><a href="https://mapa.pid.cz" class="menu-image-title-after"><span class="menu-image-title">Online mapa provozu</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-885" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/prakticke-informace/" class="menu-image-title-after"><span class="menu-image-title">Praktické info</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10338"><a href="https://pid.cz/mobilni-aplikace/" class="menu-image-title-after"><span class="menu-image-title">Mobilní aplikace PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-348"><a href="https://pid.cz/prakticke-informace/bezbarierove-s-pid/" class="menu-image-title-after"><span class="menu-image-title">Bezbariérově s PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-684"><a href="https://pid.cz/prakticke-informace/pid-s-kocarkem/" class="menu-image-title-after"><span class="menu-image-title">PID s kočárkem</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-347"><a href="https://pid.cz/prakticke-informace/cykliste-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Cyklisté v PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-412"><a href="https://pid.cz/prakticke-informace/doprava-na-letiste/" class="menu-image-title-after"><span class="menu-image-title">Doprava na letiště</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-346"><a href="https://pid.cz/prakticke-informace/doprava-do-troji/" class="menu-image-title-after"><span class="menu-image-title">Doprava do Troji</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-344"><a href="https://pid.cz/prakticke-informace/nocni-doprava-v-pid/" class="menu-image-title-after"><span class="menu-image-title">Noční doprava v PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-686"><a href="https://pid.cz/prakticke-informace/pr-br-kr/" class="menu-image-title-after"><span class="menu-image-title">P+R, B+R, K+R</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-685"><a href="https://pid.cz/prakticke-informace/zastavky-na-znameni/" class="menu-image-title-after"><span class="menu-image-title">Zastávky &#8222;na znamení&#8220;</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-28826"><a href="https://pid.cz/prakticke-informace/sdilenakola/" class="menu-image-title-after"><span class="menu-image-title">Sdílená kola</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-869"><a href="https://pid.cz/pro-turisty/" class="menu-image-title-after"><span class="menu-image-title">Pro turisty</span></a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-23087" aria-haspopup="true" aria-expanded="false" tabindex="0"><a href="https://pid.cz/kontakty/" class="menu-image-title-after"><span class="menu-image-title">Kontakty</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23560"><a href="https://pid.cz/kontakty/" class="menu-image-title-after"><span class="menu-image-title">Kontakty pro informace</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23063"><a href="https://pid.cz/kontakty/kontakty-ropid/" class="menu-image-title-after"><span class="menu-image-title">Kontakty ROPID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23062"><a href="https://pid.cz/kontakty/kontakty-idsk/" class="menu-image-title-after"><span class="menu-image-title">Kontakty IDSK</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-185"><a href="https://pid.cz/kontakty/infocentra/" class="menu-image-title-after"><span class="menu-image-title">Infocentra</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1896"><a href="https://pid.cz/kontakty/prodejni-mista/" class="menu-image-title-after"><span class="menu-image-title">Prodejní místa</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-303"><a href="https://pid.cz/kontakty/podnety-a-pripominky/" class="menu-image-title-after"><span class="menu-image-title">Podněty a připomínky</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1316"><a href="https://pid.cz/kontakty/ztraty-a-nalezy/" class="menu-image-title-after"><span class="menu-image-title">Ztráty a nálezy</span></a></li>
+</ul>
+</li>
+</ul>									</nav>
+									<div class="icons main">
+										<ul role="navigation">
+											<li><a href="https://pid.cz/metro/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/metro.png" alt=""></a></li>
+											<li><a href="https://pid.cz/tramvaje/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/tram.png" alt=""></a></li>
+											<li><a href="https://pid.cz/autobusy/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/bus.png" alt=""></a></li>
+											<li><a href="https://pid.cz/vlaky/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/train.png" alt=""></a></li>
+											<li><a href="https://pid.cz/lanova-draha/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/lanovka.png" alt=""></a></li>
+											<li><a href="https://pid.cz/privozy/"><img src="https://pid.cz/wp-content/themes/ropid/images/pictograms/kotva.png" alt=""></a></li>
+										</ul>
+									</div>
+								</div>
+								<div id="idcko" class="hidden">2543</div>
+								<div id="arrows">
+									<div class="arrowsInput">
+										<span class="up"></span>
+										<span class="down"></span>
+									</div>
+								</div>
+							</header>
+																																																		<div class="breadcrumbs"><div class="inner"><ul id="breadcrumbs" class="breadcrumbs"><li class="item-home"><a class="bread-link bread-home" href="https://pid.cz" title="Úvodní stránka">Úvodní stránka</a></li><li class="separator separator-home"> / </li><li class="item-current item-2543"><strong class="bread-current bread-2543"> Mimořádnosti</strong></li></ul></div></div>		<section>
+			<div class="inner">
+				<div class="content" role="main">
+						<h1  style="background-color: #004489">
+									Mimořádnosti					
+		<span class="after" style="background-color: #bf0c1d;"> <span style=""></span></span>
+	</h1>
+					<form class="filter" method="post">
+						<div class="column">
+														<input type="text" name="search" class="not-lower" value="" placeholder="linka" />
+						</div>
+						<div class="column">
+							<select name="transport">
+								<option value="">druh dopravy</option>
+								<option value="">vše</option>
+																		<option value="1" >metro</option>
+																				<option value="2" >tramvaj</option>
+																				<option value="5" >vlak</option>
+																				<option value="3" >autobus</option>
+																				<option value="4" >lanovka</option>
+																				<option value="6" >loď</option>
+																				<option value="7" >trolejbus</option>
+																	</select>
+						</div>
+						<div class="column">
+							<div class="bottomSubmit">
+								<input type="submit" value="filtrovat"/>
+							</div>
+						</div>
+						
+					</form>
+										<table class="vyluka vyluka-expand vyluky-vymi">
+						<tr>
+							<th>Datum</th>
+							<th>Linky</th>
+							<th>Popis</th>
+						</tr>
+														<tr>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=19496-1">
+
+<div class="date"><span>dnes 21:10</span> - do&nbsp;odvolání</div><span class="vyluka-edited-before">aktualizováno před 17 min.</span>
+										</a>
+									</td>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=19496-1">
+											<img width="22" height="22" src="https://pid.cz/wp-content/themes/ropid/images/WEB-PID_ikona-M-C.png" alt="Metro C" />
+											<span class="lines-single">
+C											</span>
+										</a>
+									</td>
+									<td class="lines-title clickable">
+										<a href="https://pid.cz/mimoradnost/?id=19496-1">KAČEROV - HÁJE (metro linka C, oba směry) - <em>Provoz zastaven</em></a>
+								<i class="fa fa-exclamation" aria-hidden="true" title="Nejvyšší důležitost"></i><i class="fa fa-exclamation" aria-hidden="true" title="Nejvyšší důležitost"></i>
+									</td>
+								</tr>
+															<tr>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6769-4">
+
+<div class="date"><span>dnes 21:35</span></div><span class="vyluka-edited-before">aktualizováno před 19 min.</span>
+										</a>
+									</td>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6769-4">
+											<img width="22" height="22" src="https://pid.cz/wp-content/themes/ropid/images/bus.png" alt="Autobus" />
+											<span class="lines-single">
+496											</span>
+										</a>
+									</td>
+									<td class="lines-title clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6769-4">Blatná,Sádlov - Březnice,žel.st. - <em>Zrušení zastávky</em></a>
+								<i class="fa fa-exclamation" aria-hidden="true" title="Vyšší důležitost"></i>
+									</td>
+								</tr>
+															<tr>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=19497-1">
+
+<div class="date"><span>dnes 21:20</span> - do&nbsp;odvolání</div><span class="vyluka-edited-before">aktualizováno před 19 min.</span>
+										</a>
+									</td>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=19497-1">
+											<img width="22" height="22" src="https://pid.cz/wp-content/themes/ropid/images/bus.png" alt="Autobus" />
+											<span class="lines-single">
+113, 134, 135, 136, 170, 189, 215											</span>
+										</a>
+									</td>
+									<td class="lines-title clickable">
+										<a href="https://pid.cz/mimoradnost/?id=19497-1">nepravidelnost spojů v síti autobusů DPP - <em>Neodjetí spoje, Zpoždění spojů</em></a>
+								<i class="fa fa-exclamation" aria-hidden="true" title="Vyšší důležitost"></i>
+									</td>
+								</tr>
+															<tr>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6770-4">
+
+<div class="date"><span>dnes 21:09</span> - 22:21</div><span class="vyluka-edited-before">aktualizováno před 12 min.</span>
+										</a>
+									</td>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6770-4">
+											<img width="22" height="22" src="https://pid.cz/wp-content/themes/ropid/images/bus.png" alt="Autobus" />
+											<span class="lines-single">
+711											</span>
+										</a>
+									</td>
+									<td class="lines-title clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6770-4">Třeboc,Džbán - Rakovník,žel.zast.západ - <em>Zpoždění spoje</em></a>
+								<i class="fa fa-exclamation" aria-hidden="true" title="Vyšší důležitost"></i>
+									</td>
+								</tr>
+															<tr>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6768-4">
+
+<div class="date"><span>dnes 21:07</span> - do&nbsp;odvolání</div><span class="vyluka-edited-before">aktualizováno před 53 min.</span>
+										</a>
+									</td>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6768-4">
+											<img width="22" height="22" src="https://pid.cz/wp-content/themes/ropid/images/bus.png" alt="Autobus" />
+											<span class="lines-single">
+521											</span>
+										</a>
+									</td>
+									<td class="lines-title clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6768-4">Láz,Dolní - Láz,Horní - <em>Zrušení zastávky</em></a>
+								<i class="fa fa-exclamation" aria-hidden="true" title="Vyšší důležitost"></i>
+									</td>
+								</tr>
+															<tr>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6767-4">
+
+<div class="date"><span>dnes 20:53</span> - do&nbsp;odvolání</div><span class="vyluka-edited-before">aktualizováno před 1 hod.</span>
+										</a>
+									</td>
+									<td class="clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6767-4">
+											<img width="22" height="22" src="https://pid.cz/wp-content/themes/ropid/images/bus.png" alt="Autobus" />
+											<span class="lines-single">
+517											</span>
+										</a>
+									</td>
+									<td class="lines-title clickable">
+										<a href="https://pid.cz/mimoradnost/?id=6767-4">Háje,otočiště (PB) - <em>Zrušení zastávky</em></a>
+								<i class="fa fa-exclamation" aria-hidden="true" title="Vyšší důležitost"></i>
+									</td>
+								</tr>
+																		</table>
+										<div class="vyluka-archivelink">
+						<a href="https://pid.cz/mimoradnosti/?archive=1">Archiv mimořádností za posledních 24 hodin</a>
+					</div>
+									</div>
+				
+<aside role="complementary" class="higher">
+	<ul id="submenu" role="navigation">
+			</ul>
+	<span class="blue">Která linka Vás zajímá?</span>
+	<div class="form blue">
+		<span>Zvolte linku:</span>
+		<form method="post" autocomplete="off" class="form-relative">
+			<input type="hidden" name="search-line" value="1" />
+			<input required type="text" name="line" id="line_name" placeholder="Číslo" />
+			<ul id="tablo_links_listholder" class="form-autocomplete-list is-stops"></ul>
+			<input type="submit" value="Vyhledat" />
+		</form>
+	</div>
+	<span>Najděte si odjezdy</span>
+	<div class="form red">
+		<span>Zvolte zastávku:</span>
+		<form action="https://pid.cz/zastavkova-tabla/" autocomplete="off" class="form-relative">
+			<input required type="text" name="stop" placeholder="Jméno zastávky" id="tablo_stop" />
+			<ul id="tablo_stop_listholder" class="form-autocomplete-list"></ul>
+			<input type="submit" value="Vyhledat" />
+		</form>
+	</div>
+				<div id="controler">
+			<span class="deactive" data-id="tab1a">Registrace</span>
+			<span data-id="tab2a">Přihlásit se</span>
+		</div>
+		<div class="form gray tabsform deactive scrollHere" id="tab1a">
+			<p>Registrací získáte možnost odebírat náš newsletter a nechat si zasílat změny ve vámi vybraných jízdních řádech.</p>
+			<span>Zadejte Váš e-mail:</span>
+			<form name="registerform" action="" method="post">
+				<input type="text" name="user_email" id="user_email" placeholder="E-mail" value="" required="required">
+				<input type="password" name="user_password" id="user_password" placeholder="Heslo" value="" required="required">
+				<div id="rec1" class="g-recaptcha"></div>
+				<input type="submit" name="wp-submit" id="wp-submit" value="Registrovat se" />
+			</form>
+		</div>
+		<div class="form gray tabsform" id="tab2a">
+			<span>Zadejte Váš e-mail:</span>
+			<form name="loginform" action="" method="post">
+				<input type="text" name="user_login" id="user_login" placeholder="E-mail" value="" required="required">
+				<input type="password" name="user_pass_log" id="user_pass_log" placeholder="Heslo" value="" required="required">
+				<input type="submit" name="wp-submit-log" id="wp-submit-log" value="Přihlásit se" />
+				<a class="log" href="/wp-login.php?action=lostpassword">Zapomněli jste heslo?</a>
+			</form>
+		</div>
+	
+</aside>
+
+
+			</div>
+		</section>
+		
+</div>
+<footer>
+	<div class="top">
+		<div class="inner" role="navigation">
+			<ul id="menu-menu-v-paticce-1" class="menu"><li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-468"><a href="https://pid.cz/category/tiskove-informace/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/icko.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">Novinky</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-4229"><a href="https://pid.cz/category/tiskove-informace/" class="menu-image-title-after"><span class="menu-image-title">Tiskové informace</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2097"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=casopid" class="menu-image-title-after"><span class="menu-image-title">ČasoPID</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2098"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=zpravodaj" class="menu-image-title-after"><span class="menu-image-title">Zpravodaj PID</span></a></li>
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16396"><a href="https://pid.cz/category/lide-z-pidu/" class="menu-image-title-after"><span class="menu-image-title">Lidé z PIDu</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2099"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=tiskoviny" class="menu-image-title-after"><span class="menu-image-title">Informační materiály</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-360"><a href="https://pid.cz/o-systemu/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/system.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">O systému</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-11822"><a href="https://pid.cz/standardy-kvality/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID</span></a>
+	<ul  class="sub-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11827"><a href="https://pid.cz/standardy-kvality/autobusy/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (autobusy)</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11825"><a href="https://pid.cz/standardy-kvality/tramvaje/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (tramvaje)</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11823"><a href="https://pid.cz/standardy-kvality/metro/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (metro)</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11826"><a href="https://pid.cz/standardy-kvality/zeleznice/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (železnice)</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11824"><a href="https://pid.cz/standardy-kvality/privozy/" class="menu-image-title-after"><span class="menu-image-title">Standardy kvality PID (přívozy)</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-34967"><a href="https://pid.cz/ceny-cng-pid/" class="menu-image-title-after"><span class="menu-image-title">Ceny CNG v PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11960"><a href="https://pid.cz/o-systemu/opendata/" class="menu-image-title-after"><span class="menu-image-title">Otevřená data PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-374"><a href="https://pid.cz/o-systemu/preference/" class="menu-image-title-after"><span class="menu-image-title">Preference</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1556"><a href="https://pid.cz/o-systemu/historicky-prehled-pid/" class="menu-image-title-after"><span class="menu-image-title">Historický přehled PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3445"><a href="https://pid.cz/o-systemu/dopravci-a-partneri/" class="menu-image-title-after"><span class="menu-image-title">Dopravci a partneři</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16787"><a href="https://pid.cz/o-systemu/dopravni-pruzkumy/" class="menu-image-title-after"><span class="menu-image-title">Přepravní průzkumy</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-10148"><a href="http://standardzastavek.pid.cz/" class="menu-image-title-after"><span class="menu-image-title">Standard zastávek PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-11133"><a href="https://pid.cz/o-systemu/dopravni-plan-hmp/" class="menu-image-title-after"><span class="menu-image-title">Dopravní plán HMP</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33075"><a href="https://pid.cz/o-systemu/rozvoj-linek-2022-2032/" class="menu-image-title-after"><span class="menu-image-title">Rozvoj linek PID v Praze 2022-2032</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-31830"><a href="https://pid.cz/o-systemu/rozvoj-linek-pid-praze-2019-2029/" class="menu-image-title-after"><span class="menu-image-title">Rozvoj linek PID v Praze 2019-2029</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17911"><a href="https://pid.cz/rebrandpid/" class="menu-image-title-after"><span class="menu-image-title">Rebrand PID</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3186"><a href="https://pid.cz/ke-stazeni/?type=system-pid" class="menu-image-title-after"><span class="menu-image-title">Dokumenty</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-21933"><a href="https://pid.cz/prehled-vydanych-tarifu-spp-pid/" class="menu-image-title-after"><span class="menu-image-title">Přehled vydaných Tarifů a SPP PID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6239"><a href="https://pid.cz/o-systemu/loga-pid-ropid/" class="menu-image-title-after"><span class="menu-image-title">Loga PID a ROPID</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-27496"><a href="https://pid.cz/prohlaseni/" class="menu-image-title-after"><span class="menu-image-title">Prohlášení o přístupnosti</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-732"><a href="https://pid.cz/ke-stazeni/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/arrow.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">Ke stažení</span></a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-358"><a href="https://pid.cz/zabava-a-zajimavosti/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/fun.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">Zábava a zajímavosti</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2408"><a href="https://pid.cz/zabava-a-zajimavosti/akce/" class="menu-image-title-after"><span class="menu-image-title">Akce</span></a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1207"><a href="https://pid.cz/ke-stazeni/?search=&amp;type=vystrihovanky" class="menu-image-title-after"><span class="menu-image-title">Vystřihovánky</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1798"><a href="https://pid.cz/zabava-a-zajimavosti/vylety-a-kultura/" class="menu-image-title-after"><span class="menu-image-title">Výlety a kulturní akce</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1800"><a href="https://pid.cz/zabava-a-zajimavosti/cyklohracek/" class="menu-image-title-after"><span class="menu-image-title">Cyklohráček</span></a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1799"><a href="https://pid.cz/zabava-a-zajimavosti/prazsky-motoracek/" class="menu-image-title-after"><span class="menu-image-title">Pražský motoráček</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-357"><a href="https://pid.cz/o-organizaci/" class="menu-image-title-after menu-image-not-hovered"><img src="https://pid.cz/wp-content/uploads/2016/07/about.svg" class="menu-image menu-image-title-after" alt="" /><span class="menu-image-title">O organizacích</span></a>
+<ul  class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-23072"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/" class="menu-image-title-after"><span class="menu-image-title">O organizaci ROPID</span></a>
+	<ul  class="sub-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1123"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/povinne-zverejnovane-informace/" class="menu-image-title-after"><span class="menu-image-title">Povinně zveřejňované informace</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1121"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/zrizovaci-listina-organizace-ropid/" class="menu-image-title-after"><span class="menu-image-title">Zřizovací listina organizace ROPID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1122"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/organizacni-struktura-ropid/" class="menu-image-title-after"><span class="menu-image-title">Organizační struktura ROPID</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1127"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/informace-dle-zakona-c-1061999-sb/" class="menu-image-title-after"><span class="menu-image-title">Informace dle zákona č. 106/1999 Sb.</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-31495"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/whistleblowing/" class="menu-image-title-after"><span class="menu-image-title">Whistleblowing</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12344"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/informace-o-gdpr/" class="menu-image-title-after"><span class="menu-image-title">Informace o GDPR</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16541"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/projekty/" class="menu-image-title-after"><span class="menu-image-title">Projekty</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1138"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/verejne-zakazky/" class="menu-image-title-after"><span class="menu-image-title">Veřejné zakázky</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-19410"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/autobusova-stanovistezastavky-mimo-pid/" class="menu-image-title-after"><span class="menu-image-title">Autobusová stanoviště/zastávky (mimo PID)</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26406"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/objednavka-zajezdove-dopravy/" class="menu-image-title-after"><span class="menu-image-title">Objednávka zájezdové dopravy</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24053"><a href="https://pid.cz/odprodej-nepotrebneho-moviteho-majetku/" class="menu-image-title-after"><span class="menu-image-title">Odprodej nepotřebného movitého majetku</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3029"><a href="https://pid.cz/ke-stazeni/?type=organizace" class="menu-image-title-after"><span class="menu-image-title">Dokumenty</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-23071"><a href="https://pid.cz/o-organizaci/o-organizaci-idsk/" class="menu-image-title-after"><span class="menu-image-title">O organizaci IDSK</span></a>
+	<ul  class="sub-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-23077"><a href="https://www.idsk.cz" class="menu-image-title-after"><span class="menu-image-title">Web IDSK</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1137"><a href="https://pid.cz/o-organizaci/nabidka-volnych-pracovnich-mist/" class="menu-image-title-after"><span class="menu-image-title">Nabídka volných pracovních míst</span></a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9205"><a href="https://pid.cz/o-organizaci/o-organizaci-ropid/verejne-zakazky/" class="menu-image-title-after menu-image-not-hovered"><img width="30" height="36" src="https://pid.cz/wp-content/uploads/2017/06/paper-30x36.png" class="menu-image menu-image-title-after" alt="" srcset="https://pid.cz/wp-content/uploads/2017/06/paper-30x36.png 30w, https://pid.cz/wp-content/uploads/2017/06/paper-20x24.png 20w, https://pid.cz/wp-content/uploads/2017/06/paper-41x48.png 41w, https://pid.cz/wp-content/uploads/2017/06/paper.png 108w" sizes="(max-width: 30px) 100vw, 30px" /><span class="menu-image-title">Veřejné zakázky</span></a></li>
+</ul>		</div>
+	</div>
+	<div class="middle" role="contentinfo">
+		<div class="inner">
+			<ul class="social">
+				<li class="rss">
+					<a href="https://pid.cz/rss-kanal/" title="RSS feedy">
+						<i class="fa fa-rss-square"></i>
+					</a>
+				</li>
+				<li class="yt">
+					<a target="_blank" href="https://www.youtube.com/channel/UCv4t24ufNzNrIKHP_WVccyQ" title="Youtube">
+						<i class="fa fa-youtube-square"></i>
+					</a>
+				</li>
+				<li class="fb">
+					<a target="_blank" href="https://www.facebook.com/prazskaintegrovanadoprava" title="Facebook">
+						<i class="fa fa-facebook-official"></i>
+
+					</a>
+				</li>
+				<li class="tw">
+					<a target="_blank" href="https://twitter.com/PIDoficialni" title="Twitter">
+						<i class="fa fa-twitter-square"></i>
+					</a>
+				</li>
+				<li class="insta">
+					<a target="_blank" href="https://www.instagram.com/pidoficialni/" title="Instagram">
+						<i class="fa fa-instagram"></i>
+					</a>
+				</li>
+			</ul>
+			<ul class="sponsors">
+				<li><a href="https://ropid.cz/"><img src="https://pid.cz/wp-content/themes/ropid/images/ropid.png" alt="" /><img class="hover" src="https://pid.cz/wp-content/themes/ropid/images/ropidhover.png" alt="" /></a></li>
+				<li><a target="_blank" href="http://www.praha-mesto.cz/"><img src="https://pid.cz/wp-content/themes/ropid/images/znakpraha_white.png" alt="" /><img class="hover" src="https://pid.cz/wp-content/themes/ropid/images/znakpraha.png" alt="" /></a></li>
+				<li><a target="_blank" href="http://www.idsk.cz/"><img src="https://pid.cz/wp-content/themes/ropid/images/idsk_logo_white_new.png" alt="" /><img class="hover" src="https://pid.cz/wp-content/themes/ropid/images/idsk_logo.png" alt="" /></a></li>
+				<li><a target="_blank" href="http://www.kr-stredocesky.cz/"><img src="https://pid.cz/wp-content/themes/ropid/images/company_logo_white.png" alt="" /><img class="hover" src="https://pid.cz/wp-content/themes/ropid/images/company_logo.png" alt="" /></a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="bottom" role="contentinfo">
+		<div class="inner">
+			<div class="copyright">
+				&copy; 2023 ROPID
+				<a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank">
+				<img alt="Licence Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a>
+				<a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank">Creative Commons Uveďte původ 4.0 Mezinárodní Licence</a>.
+			</div>
+			<div class="created">
+<a target="_blank" href="http://pixelfield.cz/">Vytvořil Pixelfield, s.r.o.</a> -
+<a target="_blank" href="http://pixelfield.cz/tvorba-webovych-stranek/" title="tvorba webových stránek">tvorba webových stránek</a>,
+<a target="_blank" href="http://pixelfield.cz/webove-aplikace/" title="webové aplikace">webové aplikace</a> a
+<a target="_blank" href="http://pixelfield.cz/vyvoj-mobilnich-aplikaci/" title="vývoj mobilních aplikací">vývoj mobilních aplikací</a>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+</footer>
+</div></div>
+</div>
+</div>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/jquery.ba-throttle-debounce.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/hideShowPassword.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/slick.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/chosen.jquery.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/smooth-scroll.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/selectordie.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/jquery-ui.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/datepicker-cs.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/jquery.timepicker.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/infobubble-compiled.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/markerclusterer.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/script.js?v6"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/classie.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/lib/sidebarEffects.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/compiled-dist.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/jquery-migrate-1.2.1.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/jquery.autocomplete.min.js"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/autocomplete.js?v2"></script>
+<script src="https://pid.cz/wp-content/themes/ropid/js/autocomplete.chaps.min.js"></script>
+<!--<script type="text/javascript" src="//maps.googleapis.com/maps/api/js"></script>-->
+<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyBeV4JQMNzsG4Ja7xyMJ-rg3DQrx9_tLt8"></script>
+<script type="text/javascript">
+var widgetId1;
+var widgetId2;
+var onloadCallback = function() {
+  widgetId1 = grecaptcha.render(document.getElementById('rec1'), {
+	'sitekey' : '6Ld-rRUUAAAAAD8y1TCVYwO18mPCsG54ve-D5yLu',
+	'size' : 'compact'
+  });
+  widgetId2 = grecaptcha.render(document.getElementById('rec2'), {
+	'sitekey' : '6Ld-rRUUAAAAAD8y1TCVYwO18mPCsG54ve-D5yLu',
+	'size' : 'compact'
+  });
+};
+</script>
+<!--<script src="//www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer>-->
+<!-- google analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9518865-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<!-- konec google analytics -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var seznam_retargeting_id = 38683;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//c.imedia.cz/js/retargeting.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    //console.log("Test test test. Na stránce je právě " + $("#logo").length + " logo.");
+});</script>
+
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpcf7 = {"apiSettings":{"root":"https:\/\/pid.cz\/wp-json\/contact-form-7\/v1","namespace":"contact-form-7\/v1"},"recaptcha":{"messages":{"empty":"Potvr\u010fte pros\u00edm, \u017ee nejste robot."}}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://pid.cz/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=4.9.1'></script>
+<script type='text/javascript' src='https://pid.cz/wp-includes/js/wp-embed.min.js?ver=4.8.21'></script>
+<!-- Tracking Code for www.pid.cz -->
+<script type="text/javascript">
+    window._pt_lt = new Date().getTime();
+    window._pt_sp_2 = [];
+    _pt_sp_2.push('setAccount,4274823a');
+    var _protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    (function() {
+        var atag = document.createElement('script'); atag.type = 'text/javascript'; atag.async = true;
+        atag.src = _protocol + 'cjs.ptengine.com/pta_en.js';
+        var stag = document.createElement('script'); stag.type = 'text/javascript'; stag.async = true;
+        stag.src = _protocol + 'cjs.ptengine.com/pts.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(atag, s); s.parentNode.insertBefore(stag, s);
+    })();
+</script>
+
+</body>
+</html>

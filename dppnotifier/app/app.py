@@ -258,6 +258,7 @@ def run_job(
                         if event.active and db_event is None:
                             to_notify.append(event)
                             _LOGGER.info(event.to_log_message())
+        # pylint: disable=broad-except
         except Exception as exc:
             _LOGGER.error(exc.args[0])
             store_html(html_content, raw_data_bucket_name)

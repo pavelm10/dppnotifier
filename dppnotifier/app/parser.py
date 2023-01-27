@@ -45,7 +45,18 @@ def _parse_time(
         start_str = ''
         end_str = time_str
     else:
-        start_str, end_str = time_str.split(' - ')
+        try:
+            start_str, end_str = time_str.split(' - ')
+        except ValueError as exc:
+            if 'dnes' in time_str:
+                start_str = re.search(r'\d{1,2}:\d{2}', time_str)
+                if start_str is None:
+                    # pylint: disable=raise-missing-from
+                    raise ParserError(f'Cannot parse {time_str}')
+                start_str = start_str.group()
+                end_str = ''
+            else:
+                raise ParserError(f'Cannot parse {time_str}') from exc
 
     start_date = _parse_start_date(start_str)
     end_date = _parse_today_date(end_str)
